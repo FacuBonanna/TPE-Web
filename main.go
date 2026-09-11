@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"net/http"
+	
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
 
