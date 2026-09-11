@@ -1,0 +1,30 @@
+services:
+  api:
+    build: . # <--- CAMBIADO: Busca el Dockerfile en la raíz actual
+    container_name: go-api
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_HOST=database # Nombre del servicio de abajo
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=apirest
+    depends_on:
+      - database
+
+  # Tu Base de Datos Postgres
+  database:
+    image: postgres:15-alpine # <--- NOTA: Se recomienda alpine por rendimiento y peso
+    container_name: postgres-db
+    environment:
+      - POSTGRES_DB=apirest
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data # <--- Mantiene tus datos a salvo
+
+volumes:
+  pgdata: # Declara el volumen para que Docker lo gestione
