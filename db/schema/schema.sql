@@ -16,7 +16,7 @@ CREATE TABLE cliente (
     id bigserial  NOT NULL,
     nombre varchar(20)  NOT NULL,
     apellido varchar(20)  NOT NULL,
-    deuda decimal(10,10)  NOT NULL,
+    deuda decimal(10,3)  NOT NULL,
     nro_telefono int  NOT NULL,
     CONSTRAINT PK_CLIENTE PRIMARY KEY (id)
 );

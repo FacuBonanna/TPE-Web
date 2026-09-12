@@ -71,10 +71,10 @@ RETURNING id, nombre, apellido, deuda, nro_telefono
 `
 
 type CreateUserParams struct {
-	Nombre      string `json:"nombre"`
-	Apellido    string `json:"apellido"`
-	Deuda       string `json:"deuda"`
-	NroTelefono int32  `json:"nro_telefono"`
+	Nombre      string  `json:"nombre"`
+	Apellido    string  `json:"apellido"`
+	Deuda       float64 `json:"deuda"`
+	NroTelefono int32   `json:"nro_telefono"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (Cliente, error) {
@@ -402,11 +402,11 @@ WHERE id = $1
 `
 
 type UpdateUserParams struct {
-	ID          int64  `json:"id"`
-	Nombre      string `json:"nombre"`
-	Apellido    string `json:"apellido"`
-	Deuda       string `json:"deuda"`
-	NroTelefono int32  `json:"nro_telefono"`
+	ID          int64   `json:"id"`
+	Nombre      string  `json:"nombre"`
+	Apellido    string  `json:"apellido"`
+	Deuda       float64 `json:"deuda"`
+	NroTelefono int32   `json:"nro_telefono"`
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {

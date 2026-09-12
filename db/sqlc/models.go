@@ -16,11 +16,11 @@ type Calendario struct {
 }
 
 type Cliente struct {
-	ID          int64  `json:"id"`
-	Nombre      string `json:"nombre"`
-	Apellido    string `json:"apellido"`
-	Deuda       string `json:"deuda"`
-	NroTelefono int32  `json:"nro_telefono"`
+	ID          int64   `json:"id"`
+	Nombre      string  `json:"nombre"`
+	Apellido    string  `json:"apellido"`
+	Deuda       float64 `json:"deuda"`
+	NroTelefono int32   `json:"nro_telefono"`
 }
 
 type Tratamiento struct {

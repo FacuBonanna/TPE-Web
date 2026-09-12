@@ -3,7 +3,8 @@ FROM golang:1.26.5-alpine AS builder
 WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
-COPY . .
+COPY /src .
+COPY /db/sqlc ./db/sqlc
 RUN CGO_ENABLED=0 go build -o /app/api .
 
 # Etapa 2: imagen final (solo el binario)

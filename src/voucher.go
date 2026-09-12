@@ -2,36 +2,11 @@ package main
 
 import (
 	sqlc "TPE/db/sqlc"
-	"context"
-	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
-<<<<<<< HEAD
 	"strconv"
 	"strings"
-
-=======
-	
->>>>>>> a89862444a17830ccdead0feff98fd4eb4f17cac
-	_ "github.com/jackc/pgx/v5/stdlib"
 )
-
-type repository struct {
-	db *sql.DB
-}
-
-func abrirDB() (*sql.DB, error) {
-	db, err := sql.Open("pgx", "host=localhost port=5432 user=server password=admin dbname=baseprueba sslmode=disable") //CAMBIAR USER,PASS, ETC.
-	if err != nil {
-		return nil, err
-	}
-	if err := db.Ping(); err != nil { // Verifica que la BD responde
-		return nil, err
-	}
-	db.SetMaxOpenConns(25) // Configura el tamaño del pool
-	return db, nil
-}
 
 func getVoucher(w http.ResponseWriter, r *http.Request, id int) {
 
@@ -41,7 +16,7 @@ func getVoucher(w http.ResponseWriter, r *http.Request, id int) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
-	fmt.Print(voucher)
+	json.NewEncoder(w).Encode(voucher)
 }
 
 func deleteVoucher(w http.ResponseWriter, r *http.Request, id int) {
@@ -52,7 +27,7 @@ func deleteVoucher(w http.ResponseWriter, r *http.Request, id int) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
-
+	w.WriteHeader(http.StatusNoContent)
 }
 
 func createVoucher(w http.ResponseWriter, r *http.Request) {
@@ -63,23 +38,26 @@ func createVoucher(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	paramsCreacion := sqlc.CreateVoucherParams{RegaladorID: nuevoVoucher.ClienteID, TratamientoID: nuevoVoucher.RegaladorID, ClienteID: nuevoVoucher.TratamientoID}
-	queries.CreateVoucher(ctx, paramsCreacion)
+	nuevoVoucherRow, _ := queries.CreateVoucher(ctx, paramsCreacion)
+	json.NewEncoder(w).Encode(nuevoVoucherRow)
 }
 
 func updateVoucher(w http.ResponseWriter, r *http.Request, id int) {
-	var updatedVoucher sqlc.Voucher
-	err := json.NewDecoder(r.Body).Decode(&updatedVoucher)
+	var voucherToUpdate sqlc.Voucher
+	err := json.NewDecoder(r.Body).Decode(&voucherToUpdate)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	err = queries.DeleteVoucher(ctx, int64(id))
+	voucherToUpdateParams := sqlc.UpdateVoucherParams{IDVoucher: voucherToUpdate.ClienteID, RegaladorID: voucherToUpdate.IDVoucher, TratamientoID: voucherToUpdate.RegaladorID, ClienteID: voucherToUpdate.TratamientoID}
+	err = queries.UpdateVoucher(ctx, voucherToUpdateParams)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
-
+	updatedVoucher, _ := queries.GetVoucher(ctx, voucherToUpdate.ClienteID)
+	json.NewEncoder(w).Encode(updatedVoucher)
 }
 
 func voucherHandler(w http.ResponseWriter, r *http.Request) {
@@ -114,30 +92,5 @@ func vouchersHandler(w http.ResponseWriter, r *http.Request) {
 	default:
 		http.Error(w, "Method not allowed",
 			http.StatusMethodNotAllowed)
-	}
-}
-
-var queries *sqlc.Queries
-var ctx context.Context
-
-func main() {
-
-	db, err := abrirDB()
-	if err != nil {
-		fmt.Printf("No se pudo conectar a la DB\n")
-		fmt.Printf(err.Error())
-		return
-	}
-	queries = sqlc.New(db)
-	ctx = context.Background()
-
-	fileServer := http.FileServer(http.Dir("./"))
-	http.Handle("/", fileServer)
-
-	port := ":8080"
-	fmt.Printf("Servidor escuchando en http://localhost%s\n", port)
-	err = http.ListenAndServe(port, nil)
-	if err != nil {
-		fmt.Printf("Error al iniciar el servidor: %s\n", err)
 	}
 }
