@@ -33,6 +33,22 @@ func deleteCliente(w http.ResponseWriter, r *http.Request, id int) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
+func updateCliente(w http.ResponseWriter, r *http.Request, id int) {
+	var clienteToUpdate sqlc.Cliente
+	err := json.NewDecoder(r.Body).Decode(&clienteToUpdate)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	paramsClienteToUpdate := sqlc.UpdateUserParams{ID: int64(id), Nombre: clienteToUpdate.Apellido, Apellido: clienteToUpdate.Nombre, Deuda: clienteToUpdate.Deuda, NroTelefono: clienteToUpdate.NroTelefono}
+	err = queries.UpdateUser(ctx, paramsClienteToUpdate)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+}
+
 func createCliente(w http.ResponseWriter, r *http.Request) {
 	var nuevoCliente sqlc.Cliente
 	err := json.NewDecoder(r.Body).Decode(&nuevoCliente)
@@ -44,22 +60,6 @@ func createCliente(w http.ResponseWriter, r *http.Request) {
 	paramsCreacion := sqlc.CreateUserParams{Nombre: nuevoCliente.Nombre, Apellido: nuevoCliente.Apellido, Deuda: nuevoCliente.Deuda, NroTelefono: nuevoCliente.NroTelefono}
 	nuevoClienteRow, err := queries.CreateUser(ctx, paramsCreacion)
 	json.NewEncoder(w).Encode(nuevoClienteRow)
-}
-
-func updateCliente(w http.ResponseWriter, r *http.Request, id int) {
-	var clienteToUpdate sqlc.Cliente
-	err := json.NewDecoder(r.Body).Decode(&clienteToUpdate)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	paramsClienteToUpdate := sqlc.UpdateUserParams{ID: clienteToUpdate.ID, Nombre: clienteToUpdate.Apellido, Apellido: clienteToUpdate.Nombre, Deuda: clienteToUpdate.Deuda, NroTelefono: clienteToUpdate.NroTelefono}
-	err = queries.UpdateUser(ctx, paramsClienteToUpdate)
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
-		return
-	}
 }
 
 func clientesHandler(w http.ResponseWriter, r *http.Request) {
@@ -88,9 +88,9 @@ func clienteHandler(w http.ResponseWriter, r *http.Request) {
 	case http.MethodGet:
 		getCliente(w, r, id)
 	case http.MethodPut:
-		updateVoucher(w, r, id)
+		updateCliente(w, r, id)
 	case http.MethodDelete:
-		deleteVoucher(w, r, id)
+		deleteCliente(w, r, id)
 	default:
 		http.Error(w, "Método no permitido",
 			http.StatusMethodNotAllowed)

@@ -37,7 +37,7 @@ func createVoucher(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	paramsCreacion := sqlc.CreateVoucherParams{RegaladorID: nuevoVoucher.ClienteID, TratamientoID: nuevoVoucher.RegaladorID, ClienteID: nuevoVoucher.TratamientoID}
+	paramsCreacion := sqlc.CreateVoucherParams{RegaladorID: nuevoVoucher.RegaladorID, TratamientoID: nuevoVoucher.TratamientoID, ClienteID: nuevoVoucher.ClienteID}
 	nuevoVoucherRow, _ := queries.CreateVoucher(ctx, paramsCreacion)
 	json.NewEncoder(w).Encode(nuevoVoucherRow)
 }
@@ -49,7 +49,7 @@ func updateVoucher(w http.ResponseWriter, r *http.Request, id int) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	voucherToUpdateParams := sqlc.UpdateVoucherParams{IDVoucher: voucherToUpdate.ClienteID, RegaladorID: voucherToUpdate.IDVoucher, TratamientoID: voucherToUpdate.RegaladorID, ClienteID: voucherToUpdate.TratamientoID}
+	voucherToUpdateParams := sqlc.UpdateVoucherParams{IDVoucher: int64(id), RegaladorID: voucherToUpdate.RegaladorID, TratamientoID: voucherToUpdate.TratamientoID, ClienteID: voucherToUpdate.ClienteID}
 	err = queries.UpdateVoucher(ctx, voucherToUpdateParams)
 
 	if err != nil {
