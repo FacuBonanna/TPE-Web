@@ -1,5 +1,6 @@
-## Como ejecutar
+## ¿Cómo ejecutar?
+**En una computadora con Docker Engine previamente instalado, pararse sobre la raiz de la carpeta y ejecutar el comando:**
+                
+                    make test
 
-En una terminal sobre la carpeta raíz del proyecto, ejecutar:
-
-                                        go run .
+nota: es importante contar también con algun motor (como VSCode) que soporte lenguaje Go
