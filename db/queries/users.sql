@@ -74,31 +74,31 @@ RETURNING id_voucher, regalador_id, tratamiento_id, cliente_id;
 DELETE FROM voucher
 WHERE id_voucher = $1;
 
---TABLA CALENDARIO
+--TABLA turno
 
--- name: GetCalendar :one
+-- name: GetTurno :one
 SELECT fecha, hora, tratamiento_id, cliente_id
-FROM calendario 
+FROM turno 
 WHERE fecha = $1 AND hora = $2;
 
--- name: CreateCalendar :one
-INSERT INTO calendario (fecha, hora, tratamiento_id, cliente_id)
+-- name: CreateTurno :one
+INSERT INTO turno (fecha, hora, tratamiento_id, cliente_id)
 VALUES ($1, $2, $3, $4)
 RETURNING fecha, hora, tratamiento_id, cliente_id;
 
--- name: UpdateCalendar :one
-UPDATE calendario
+-- name: UpdateTurno :one
+UPDATE turno
 SET tratamiento_id = $3, cliente_id = $4
 WHERE fecha = $1 AND hora = $2
 RETURNING fecha, hora, tratamiento_id, cliente_id;
 
--- name: DeleteCalendar :exec
-DELETE FROM calendario
+-- name: DeleteTurno :exec
+DELETE FROM turno
 WHERE fecha = $1 AND hora = $2;
 
--- name: ListCalendar :many
+-- name: ListTurno :many
 SELECT fecha, hora, tratamiento_id, cliente_id
-FROM calendario
+FROM turno
 ORDER BY fecha, hora;   
 
 

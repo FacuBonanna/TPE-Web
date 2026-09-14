@@ -2,13 +2,13 @@
 -- Last modification date: 2026-08-31 19:18:58.011
 
 -- tables
--- Table: calendario
-CREATE TABLE calendario (
+-- Table: turno
+CREATE TABLE turno (
     fecha date  NOT NULL,
     hora timestamp  NOT NULL,
     tratamiento_id bigserial  NOT NULL,
     cliente_id bigserial  NOT NULL,
-    CONSTRAINT PK_CALENDARIO PRIMARY KEY (fecha,hora)
+    CONSTRAINT PK_turno PRIMARY KEY (fecha,hora)
 );
 
 -- Table: cliente
@@ -40,16 +40,16 @@ CREATE TABLE voucher (
 );
 
 -- foreign keys
--- Reference: calendario_cliente (table: calendario)
-ALTER TABLE calendario ADD CONSTRAINT calendario_cliente
+-- Reference: turno_cliente (table: turno)
+ALTER TABLE turno ADD CONSTRAINT turno_cliente
     FOREIGN KEY (cliente_id)
     REFERENCES cliente (id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
 
--- Reference: calendario_tratamiento (table: calendario)
-ALTER TABLE calendario ADD CONSTRAINT calendario_tratamiento
+-- Reference: turno_tratamiento (table: turno)
+ALTER TABLE turno ADD CONSTRAINT turno_tratamiento
     FOREIGN KEY (tratamiento_id)
     REFERENCES tratamiento (id)  
     NOT DEFERRABLE 

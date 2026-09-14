@@ -10,27 +10,27 @@ import (
 	"time"
 )
 
-const createCalendar = `-- name: CreateCalendar :one
-INSERT INTO calendario (fecha, hora, tratamiento_id, cliente_id)
+const createTurno = `-- name: CreateTurno :one
+INSERT INTO turno (fecha, hora, tratamiento_id, cliente_id)
 VALUES ($1, $2, $3, $4)
 RETURNING fecha, hora, tratamiento_id, cliente_id
 `
 
-type CreateCalendarParams struct {
+type CreateTurnoParams struct {
 	Fecha         time.Time `json:"fecha"`
 	Hora          time.Time `json:"hora"`
 	TratamientoID int64     `json:"tratamiento_id"`
 	ClienteID     int64     `json:"cliente_id"`
 }
 
-func (q *Queries) CreateCalendar(ctx context.Context, arg CreateCalendarParams) (Calendario, error) {
-	row := q.db.QueryRowContext(ctx, createCalendar,
+func (q *Queries) CreateTurno(ctx context.Context, arg CreateTurnoParams) (Turno, error) {
+	row := q.db.QueryRowContext(ctx, createTurno,
 		arg.Fecha,
 		arg.Hora,
 		arg.TratamientoID,
 		arg.ClienteID,
 	)
-	var i Calendario
+	var i Turno
 	err := row.Scan(
 		&i.Fecha,
 		&i.Hora,
@@ -119,18 +119,18 @@ func (q *Queries) CreateVoucher(ctx context.Context, arg CreateVoucherParams) (V
 	return i, err
 }
 
-const deleteCalendar = `-- name: DeleteCalendar :exec
-DELETE FROM calendario
+const deleteTurno = `-- name: DeleteTurno :exec
+DELETE FROM turno
 WHERE fecha = $1 AND hora = $2
 `
 
-type DeleteCalendarParams struct {
+type DeleteTurnoParams struct {
 	Fecha time.Time `json:"fecha"`
 	Hora  time.Time `json:"hora"`
 }
 
-func (q *Queries) DeleteCalendar(ctx context.Context, arg DeleteCalendarParams) error {
-	_, err := q.db.ExecContext(ctx, deleteCalendar, arg.Fecha, arg.Hora)
+func (q *Queries) DeleteTurno(ctx context.Context, arg DeleteTurnoParams) error {
+	_, err := q.db.ExecContext(ctx, deleteTurno, arg.Fecha, arg.Hora)
 	return err
 }
 
@@ -164,22 +164,22 @@ func (q *Queries) DeleteVoucher(ctx context.Context, idVoucher int64) error {
 	return err
 }
 
-const getCalendar = `-- name: GetCalendar :one
+const getTurno = `-- name: GetTurno :one
 
 SELECT fecha, hora, tratamiento_id, cliente_id
-FROM calendario 
+FROM turno 
 WHERE fecha = $1 AND hora = $2
 `
 
-type GetCalendarParams struct {
+type GetTurnoParams struct {
 	Fecha time.Time `json:"fecha"`
 	Hora  time.Time `json:"hora"`
 }
 
-// TABLA CALENDARIO
-func (q *Queries) GetCalendar(ctx context.Context, arg GetCalendarParams) (Calendario, error) {
-	row := q.db.QueryRowContext(ctx, getCalendar, arg.Fecha, arg.Hora)
-	var i Calendario
+// TABLA turno
+func (q *Queries) GetTurno(ctx context.Context, arg GetTurnoParams) (Turno, error) {
+	row := q.db.QueryRowContext(ctx, getTurno, arg.Fecha, arg.Hora)
+	var i Turno
 	err := row.Scan(
 		&i.Fecha,
 		&i.Hora,
@@ -250,21 +250,21 @@ func (q *Queries) GetVoucher(ctx context.Context, idVoucher int64) (Voucher, err
 	return i, err
 }
 
-const listCalendar = `-- name: ListCalendar :many
+const listTurno = `-- name: ListTurno :many
 SELECT fecha, hora, tratamiento_id, cliente_id
-FROM calendario
+FROM turno
 ORDER BY fecha, hora
 `
 
-func (q *Queries) ListCalendar(ctx context.Context) ([]Calendario, error) {
-	rows, err := q.db.QueryContext(ctx, listCalendar)
+func (q *Queries) ListTurno(ctx context.Context) ([]Turno, error) {
+	rows, err := q.db.QueryContext(ctx, listTurno)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Calendario
+	var items []Turno
 	for rows.Next() {
-		var i Calendario
+		var i Turno
 		if err := rows.Scan(
 			&i.Fecha,
 			&i.Hora,
@@ -353,28 +353,28 @@ func (q *Queries) ListUsers(ctx context.Context) ([]Cliente, error) {
 	return items, nil
 }
 
-const updateCalendar = `-- name: UpdateCalendar :one
-UPDATE calendario
+const updateTurno = `-- name: UpdateTurno :one
+UPDATE turno
 SET tratamiento_id = $3, cliente_id = $4
 WHERE fecha = $1 AND hora = $2
 RETURNING fecha, hora, tratamiento_id, cliente_id
 `
 
-type UpdateCalendarParams struct {
+type UpdateTurnoParams struct {
 	Fecha         time.Time `json:"fecha"`
 	Hora          time.Time `json:"hora"`
 	TratamientoID int64     `json:"tratamiento_id"`
 	ClienteID     int64     `json:"cliente_id"`
 }
 
-func (q *Queries) UpdateCalendar(ctx context.Context, arg UpdateCalendarParams) (Calendario, error) {
-	row := q.db.QueryRowContext(ctx, updateCalendar,
+func (q *Queries) UpdateTurno(ctx context.Context, arg UpdateTurnoParams) (Turno, error) {
+	row := q.db.QueryRowContext(ctx, updateTurno,
 		arg.Fecha,
 		arg.Hora,
 		arg.TratamientoID,
 		arg.ClienteID,
 	)
-	var i Calendario
+	var i Turno
 	err := row.Scan(
 		&i.Fecha,
 		&i.Hora,

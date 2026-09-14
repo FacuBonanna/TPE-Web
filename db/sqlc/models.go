@@ -8,13 +8,6 @@ import (
 	"time"
 )
 
-type Calendario struct {
-	Fecha         time.Time `json:"fecha"`
-	Hora          time.Time `json:"hora"`
-	TratamientoID int64     `json:"tratamiento_id"`
-	ClienteID     int64     `json:"cliente_id"`
-}
-
 type Cliente struct {
 	ID          int64   `json:"id"`
 	Nombre      string  `json:"nombre"`
@@ -28,6 +21,13 @@ type Tratamiento struct {
 	Nombre           string `json:"nombre"`
 	DescripcionCorta string `json:"descripcion_corta"`
 	Costo            int32  `json:"costo"`
+}
+
+type Turno struct {
+	Fecha         time.Time `json:"fecha"`
+	Hora          time.Time `json:"hora"`
+	TratamientoID int64     `json:"tratamiento_id"`
+	ClienteID     int64     `json:"cliente_id"`
 }
 
 type Voucher struct {
