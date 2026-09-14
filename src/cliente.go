@@ -40,13 +40,14 @@ func updateCliente(w http.ResponseWriter, r *http.Request, id int) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	paramsClienteToUpdate := sqlc.UpdateUserParams{ID: int64(id), Nombre: clienteToUpdate.Apellido, Apellido: clienteToUpdate.Nombre, Deuda: clienteToUpdate.Deuda, NroTelefono: clienteToUpdate.NroTelefono}
-	err = queries.UpdateUser(ctx, paramsClienteToUpdate)
+	paramsClienteToUpdate := sqlc.UpdateUserParams{ID: int64(id), Nombre: clienteToUpdate.Nombre, Apellido: clienteToUpdate.Apellido, Deuda: clienteToUpdate.Deuda, NroTelefono: clienteToUpdate.NroTelefono}
+	updatedCliente, err := queries.UpdateUser(ctx, paramsClienteToUpdate)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
+	json.NewEncoder(w).Encode(updatedCliente)
 }
 
 func createCliente(w http.ResponseWriter, r *http.Request) {
@@ -59,7 +60,11 @@ func createCliente(w http.ResponseWriter, r *http.Request) {
 	}
 	paramsCreacion := sqlc.CreateUserParams{Nombre: nuevoCliente.Nombre, Apellido: nuevoCliente.Apellido, Deuda: nuevoCliente.Deuda, NroTelefono: nuevoCliente.NroTelefono}
 	nuevoClienteRow, err := queries.CreateUser(ctx, paramsCreacion)
-	json.NewEncoder(w).Encode(nuevoClienteRow)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	} else {
+		json.NewEncoder(w).Encode(nuevoClienteRow)
+	}
 }
 
 func clientesHandler(w http.ResponseWriter, r *http.Request) {

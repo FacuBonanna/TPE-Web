@@ -50,12 +50,13 @@ func updateCalendario(w http.ResponseWriter, r *http.Request) {
 	}
 
 	updateParams := sqlc.UpdateCalendarParams{Fecha: calendarioToUpdate.Fecha, Hora: calendarioToUpdate.Hora, TratamientoID: calendarioToUpdate.TratamientoID, ClienteID: calendarioToUpdate.ClienteID}
-	err = queries.UpdateCalendar(ctx, updateParams)
+	updatedCalendar, err := queries.UpdateCalendar(ctx, updateParams)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
+	json.NewEncoder(w).Encode(updatedCalendar)
 }
 
 func createCalendario(w http.ResponseWriter, r *http.Request) {
@@ -67,7 +68,11 @@ func createCalendario(w http.ResponseWriter, r *http.Request) {
 	}
 	paramsCreacion := sqlc.CreateCalendarParams{Fecha: nuevoCalendario.Fecha, Hora: nuevoCalendario.Hora, TratamientoID: nuevoCalendario.TratamientoID, ClienteID: nuevoCalendario.ClienteID}
 	nuevoCalendarioRow, err := queries.CreateCalendar(ctx, paramsCreacion)
-	json.NewEncoder(w).Encode(nuevoCalendarioRow)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	} else {
+		json.NewEncoder(w).Encode(nuevoCalendarioRow)
+	}
 }
 
 func calendarioHandler(w http.ResponseWriter, r *http.Request) {

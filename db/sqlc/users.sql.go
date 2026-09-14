@@ -165,6 +165,7 @@ func (q *Queries) DeleteVoucher(ctx context.Context, idVoucher int64) error {
 }
 
 const getCalendar = `-- name: GetCalendar :one
+
 SELECT fecha, hora, tratamiento_id, cliente_id
 FROM calendario 
 WHERE fecha = $1 AND hora = $2
@@ -189,6 +190,7 @@ func (q *Queries) GetCalendar(ctx context.Context, arg GetCalendarParams) (Calen
 }
 
 const getTreatment = `-- name: GetTreatment :one
+
 SELECT id, nombre, descripcion_corta, costo
 FROM tratamiento
 WHERE id = $1
@@ -208,6 +210,7 @@ func (q *Queries) GetTreatment(ctx context.Context, id int64) (Tratamiento, erro
 }
 
 const getUser = `-- name: GetUser :one
+
 SELECT id, nombre, apellido, deuda, nro_telefono
 FROM cliente
 WHERE id = $1
@@ -228,6 +231,7 @@ func (q *Queries) GetUser(ctx context.Context, id int64) (Cliente, error) {
 }
 
 const getVoucher = `-- name: GetVoucher :one
+
 SELECT id_voucher, regalador_id, tratamiento_id, cliente_id
 FROM voucher
 WHERE id_voucher = $1
@@ -349,10 +353,11 @@ func (q *Queries) ListUsers(ctx context.Context) ([]Cliente, error) {
 	return items, nil
 }
 
-const updateCalendar = `-- name: UpdateCalendar :exec
+const updateCalendar = `-- name: UpdateCalendar :one
 UPDATE calendario
 SET tratamiento_id = $3, cliente_id = $4
 WHERE fecha = $1 AND hora = $2
+RETURNING fecha, hora, tratamiento_id, cliente_id
 `
 
 type UpdateCalendarParams struct {
@@ -362,20 +367,28 @@ type UpdateCalendarParams struct {
 	ClienteID     int64     `json:"cliente_id"`
 }
 
-func (q *Queries) UpdateCalendar(ctx context.Context, arg UpdateCalendarParams) error {
-	_, err := q.db.ExecContext(ctx, updateCalendar,
+func (q *Queries) UpdateCalendar(ctx context.Context, arg UpdateCalendarParams) (Calendario, error) {
+	row := q.db.QueryRowContext(ctx, updateCalendar,
 		arg.Fecha,
 		arg.Hora,
 		arg.TratamientoID,
 		arg.ClienteID,
 	)
-	return err
+	var i Calendario
+	err := row.Scan(
+		&i.Fecha,
+		&i.Hora,
+		&i.TratamientoID,
+		&i.ClienteID,
+	)
+	return i, err
 }
 
-const updateTreatment = `-- name: UpdateTreatment :exec
+const updateTreatment = `-- name: UpdateTreatment :one
 UPDATE tratamiento
 SET nombre = $2, descripcion_corta = $3, costo = $4
 WHERE id = $1
+RETURNING id, nombre, descripcion_corta, costo
 `
 
 type UpdateTreatmentParams struct {
@@ -385,20 +398,28 @@ type UpdateTreatmentParams struct {
 	Costo            int32  `json:"costo"`
 }
 
-func (q *Queries) UpdateTreatment(ctx context.Context, arg UpdateTreatmentParams) error {
-	_, err := q.db.ExecContext(ctx, updateTreatment,
+func (q *Queries) UpdateTreatment(ctx context.Context, arg UpdateTreatmentParams) (Tratamiento, error) {
+	row := q.db.QueryRowContext(ctx, updateTreatment,
 		arg.ID,
 		arg.Nombre,
 		arg.DescripcionCorta,
 		arg.Costo,
 	)
-	return err
+	var i Tratamiento
+	err := row.Scan(
+		&i.ID,
+		&i.Nombre,
+		&i.DescripcionCorta,
+		&i.Costo,
+	)
+	return i, err
 }
 
-const updateUser = `-- name: UpdateUser :exec
+const updateUser = `-- name: UpdateUser :one
 UPDATE cliente
 SET nombre = $2, apellido = $3, deuda = $4, nro_telefono = $5
 WHERE id = $1
+RETURNING id, nombre, apellido, deuda, nro_telefono
 `
 
 type UpdateUserParams struct {
@@ -409,21 +430,30 @@ type UpdateUserParams struct {
 	NroTelefono int32   `json:"nro_telefono"`
 }
 
-func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
-	_, err := q.db.ExecContext(ctx, updateUser,
+func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (Cliente, error) {
+	row := q.db.QueryRowContext(ctx, updateUser,
 		arg.ID,
 		arg.Nombre,
 		arg.Apellido,
 		arg.Deuda,
 		arg.NroTelefono,
 	)
-	return err
+	var i Cliente
+	err := row.Scan(
+		&i.ID,
+		&i.Nombre,
+		&i.Apellido,
+		&i.Deuda,
+		&i.NroTelefono,
+	)
+	return i, err
 }
 
-const updateVoucher = `-- name: UpdateVoucher :exec
+const updateVoucher = `-- name: UpdateVoucher :one
 UPDATE voucher
 SET regalador_id = $2, tratamiento_id = $3, cliente_id = $4
 WHERE id_voucher = $1
+RETURNING id_voucher, regalador_id, tratamiento_id, cliente_id
 `
 
 type UpdateVoucherParams struct {
@@ -433,12 +463,19 @@ type UpdateVoucherParams struct {
 	ClienteID     int64 `json:"cliente_id"`
 }
 
-func (q *Queries) UpdateVoucher(ctx context.Context, arg UpdateVoucherParams) error {
-	_, err := q.db.ExecContext(ctx, updateVoucher,
+func (q *Queries) UpdateVoucher(ctx context.Context, arg UpdateVoucherParams) (Voucher, error) {
+	row := q.db.QueryRowContext(ctx, updateVoucher,
 		arg.IDVoucher,
 		arg.RegaladorID,
 		arg.TratamientoID,
 		arg.ClienteID,
 	)
-	return err
+	var i Voucher
+	err := row.Scan(
+		&i.IDVoucher,
+		&i.RegaladorID,
+		&i.TratamientoID,
+		&i.ClienteID,
+	)
+	return i, err
 }

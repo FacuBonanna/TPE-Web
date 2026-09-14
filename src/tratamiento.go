@@ -41,12 +41,13 @@ func updateTratamiento(w http.ResponseWriter, r *http.Request, id int) {
 		return
 	}
 	paramsTratamientoToUpdate := sqlc.UpdateTreatmentParams{ID: int64(id), Nombre: tratamientoToUpdate.Nombre, DescripcionCorta: tratamientoToUpdate.DescripcionCorta, Costo: tratamientoToUpdate.Costo}
-	err = queries.UpdateTreatment(ctx, paramsTratamientoToUpdate)
+	updatedTreatment, err := queries.UpdateTreatment(ctx, paramsTratamientoToUpdate)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
+	json.NewEncoder(w).Encode(updatedTreatment)
 }
 
 func createTratamiento(w http.ResponseWriter, r *http.Request) {
@@ -59,7 +60,12 @@ func createTratamiento(w http.ResponseWriter, r *http.Request) {
 	}
 	paramsCreacion := sqlc.CreateTreatmentParams{Nombre: nuevoTratamiento.Nombre, DescripcionCorta: nuevoTratamiento.DescripcionCorta, Costo: nuevoTratamiento.Costo}
 	nuevoTratamientoRow, err := queries.CreateTreatment(ctx, paramsCreacion)
-	json.NewEncoder(w).Encode(nuevoTratamientoRow)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	} else {
+		json.NewEncoder(w).Encode(nuevoTratamientoRow)
+	}
+
 }
 
 func tratamientoHandler(w http.ResponseWriter, r *http.Request) {

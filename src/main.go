@@ -44,6 +44,11 @@ func main() {
 	http.Handle("/", fileServer)
 	http.HandleFunc("/cliente/", clienteHandler)
 	http.HandleFunc("/cliente", clientesHandler)
+	http.HandleFunc("/voucher/", voucherHandler)
+	http.HandleFunc("/voucher", vouchersHandler)
+	http.HandleFunc("/tratamiento/", tratamientoHandler)
+	http.HandleFunc("/tratamiento", tratamientosHandler)
+	http.HandleFunc("/calendario/", calendarioHandler)
 
 	port := ":8080"
 	fmt.Printf("Servidor escuchando en http://localhost%s\n", port)
