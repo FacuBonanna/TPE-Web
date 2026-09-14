@@ -58,14 +58,6 @@ ALTER TABLE turno ADD CONSTRAINT turno_tratamiento
 
 -- Reference: vocuher_cliente (table: voucher)
 ALTER TABLE voucher ADD CONSTRAINT vocuher_cliente
-    FOREIGN KEY (regalador_id)
-    REFERENCES cliente (id)  
-    NOT DEFERRABLE 
-    INITIALLY IMMEDIATE
-;
-
--- Reference: vocuher_cliente (table: voucher)
-ALTER TABLE voucher ADD CONSTRAINT vocuher_cliente
     FOREIGN KEY (cliente_id)
     REFERENCES cliente (id)  
     NOT DEFERRABLE 

@@ -42,7 +42,7 @@ func deleteturno(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateturno(w http.ResponseWriter, r *http.Request) {
-	var turnoToUpdate sqlc.turno
+	var turnoToUpdate sqlc.Turno
 	err := json.NewDecoder(r.Body).Decode(&turnoToUpdate)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -55,11 +55,11 @@ func updateturno(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
-	json.NewEncoder(w).Encode(updatedTurno)
+	json.NewEncoder(w).Encode(updateParams) //capaz es updatedTurno
 }
 
 func createturno(w http.ResponseWriter, r *http.Request) {
-	var nuevoturno sqlc.turno
+	var nuevoturno sqlc.Turno
 	err := json.NewDecoder(r.Body).Decode(&nuevoturno)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)

@@ -74,7 +74,7 @@ RETURNING id_voucher, regalador_id, tratamiento_id, cliente_id;
 DELETE FROM voucher
 WHERE id_voucher = $1;
 
---TABLA turno
+--TABLA TURNO
 
 -- name: GetTurno :one
 SELECT fecha, hora, tratamiento_id, cliente_id

@@ -1,42 +1,34 @@
-APP_NAME := "GLAM"
-BD_URL := 
+APP_NAME := GLAM
 CONTAINER_NAME := postgres-db
+
+.PHONY: generate build clean test pre-test run-test post-test
+
+all: 
+	build
 
 generate:
 	@sqlc generate
 
 build: generate
 	@mkdir -p tmp
-	@go build -o tmp/$(APP_NAME) .
+	@go build -o tmp/$(APP_NAME) ./src
 
-# Limpia los artefactos de construcción
 clean:
-@rm -rf tmp
-
-.PHONY generate build clean test pre-test run-test post-test
+	@rm -rf tmp
 
 test: pre-test run-test post-test 
 
-#tareas previas, levantar el docker (¿hay q borrar anteriores?), generar el sql, etc
 pre-test: build
 	docker compose down -v 2>/dev/null || true
 	docker compose up -d --force-recreate api
-
+	@sleep 5 
 	@echo "[PRE-TEST] Inyectando esquema SQL..."
-	docker exec -i $(CONTAINER_NAME) psql -U postgres -d apirest < db/schema.sql
-
-#se ejecuta con make test
+	docker exec -i $(CONTAINER_NAME) psql -U postgres -d apirest < ./db/schema/schema.sql
 
 run-test:
 	@echo "[RUN-TEST] ejecutando pruebas"
 	hurl --test ./requests.hurl
 
-
-
-
-#dar de baja el docker 
 post-test:
 	@echo "[POST-TEST] pruebas terminadas, limpiando"
 	docker compose down -v
-
-

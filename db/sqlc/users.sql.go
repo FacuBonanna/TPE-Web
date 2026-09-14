@@ -10,6 +10,30 @@ import (
 	"time"
 )
 
+const createTreatment = `-- name: CreateTreatment :one
+INSERT INTO tratamiento (nombre, descripcion_corta, costo)
+VALUES ($1, $2, $3)
+RETURNING id, nombre, descripcion_corta, costo
+`
+
+type CreateTreatmentParams struct {
+	Nombre           string `json:"nombre"`
+	DescripcionCorta string `json:"descripcion_corta"`
+	Costo            int32  `json:"costo"`
+}
+
+func (q *Queries) CreateTreatment(ctx context.Context, arg CreateTreatmentParams) (Tratamiento, error) {
+	row := q.db.QueryRowContext(ctx, createTreatment, arg.Nombre, arg.DescripcionCorta, arg.Costo)
+	var i Tratamiento
+	err := row.Scan(
+		&i.ID,
+		&i.Nombre,
+		&i.DescripcionCorta,
+		&i.Costo,
+	)
+	return i, err
+}
+
 const createTurno = `-- name: CreateTurno :one
 INSERT INTO turno (fecha, hora, tratamiento_id, cliente_id)
 VALUES ($1, $2, $3, $4)
@@ -36,30 +60,6 @@ func (q *Queries) CreateTurno(ctx context.Context, arg CreateTurnoParams) (Turno
 		&i.Hora,
 		&i.TratamientoID,
 		&i.ClienteID,
-	)
-	return i, err
-}
-
-const createTreatment = `-- name: CreateTreatment :one
-INSERT INTO tratamiento (nombre, descripcion_corta, costo)
-VALUES ($1, $2, $3)
-RETURNING id, nombre, descripcion_corta, costo
-`
-
-type CreateTreatmentParams struct {
-	Nombre           string `json:"nombre"`
-	DescripcionCorta string `json:"descripcion_corta"`
-	Costo            int32  `json:"costo"`
-}
-
-func (q *Queries) CreateTreatment(ctx context.Context, arg CreateTreatmentParams) (Tratamiento, error) {
-	row := q.db.QueryRowContext(ctx, createTreatment, arg.Nombre, arg.DescripcionCorta, arg.Costo)
-	var i Tratamiento
-	err := row.Scan(
-		&i.ID,
-		&i.Nombre,
-		&i.DescripcionCorta,
-		&i.Costo,
 	)
 	return i, err
 }
@@ -119,6 +119,16 @@ func (q *Queries) CreateVoucher(ctx context.Context, arg CreateVoucherParams) (V
 	return i, err
 }
 
+const deleteTreatment = `-- name: DeleteTreatment :exec
+DELETE FROM tratamiento
+WHERE id = $1
+`
+
+func (q *Queries) DeleteTreatment(ctx context.Context, id int64) error {
+	_, err := q.db.ExecContext(ctx, deleteTreatment, id)
+	return err
+}
+
 const deleteTurno = `-- name: DeleteTurno :exec
 DELETE FROM turno
 WHERE fecha = $1 AND hora = $2
@@ -131,16 +141,6 @@ type DeleteTurnoParams struct {
 
 func (q *Queries) DeleteTurno(ctx context.Context, arg DeleteTurnoParams) error {
 	_, err := q.db.ExecContext(ctx, deleteTurno, arg.Fecha, arg.Hora)
-	return err
-}
-
-const deleteTreatment = `-- name: DeleteTreatment :exec
-DELETE FROM tratamiento
-WHERE id = $1
-`
-
-func (q *Queries) DeleteTreatment(ctx context.Context, id int64) error {
-	_, err := q.db.ExecContext(ctx, deleteTreatment, id)
 	return err
 }
 
@@ -164,31 +164,6 @@ func (q *Queries) DeleteVoucher(ctx context.Context, idVoucher int64) error {
 	return err
 }
 
-const getTurno = `-- name: GetTurno :one
-
-SELECT fecha, hora, tratamiento_id, cliente_id
-FROM turno 
-WHERE fecha = $1 AND hora = $2
-`
-
-type GetTurnoParams struct {
-	Fecha time.Time `json:"fecha"`
-	Hora  time.Time `json:"hora"`
-}
-
-// TABLA turno
-func (q *Queries) GetTurno(ctx context.Context, arg GetTurnoParams) (Turno, error) {
-	row := q.db.QueryRowContext(ctx, getTurno, arg.Fecha, arg.Hora)
-	var i Turno
-	err := row.Scan(
-		&i.Fecha,
-		&i.Hora,
-		&i.TratamientoID,
-		&i.ClienteID,
-	)
-	return i, err
-}
-
 const getTreatment = `-- name: GetTreatment :one
 
 SELECT id, nombre, descripcion_corta, costo
@@ -205,6 +180,31 @@ func (q *Queries) GetTreatment(ctx context.Context, id int64) (Tratamiento, erro
 		&i.Nombre,
 		&i.DescripcionCorta,
 		&i.Costo,
+	)
+	return i, err
+}
+
+const getTurno = `-- name: GetTurno :one
+
+SELECT fecha, hora, tratamiento_id, cliente_id
+FROM turno 
+WHERE fecha = $1 AND hora = $2
+`
+
+type GetTurnoParams struct {
+	Fecha time.Time `json:"fecha"`
+	Hora  time.Time `json:"hora"`
+}
+
+// TABLA TURNO
+func (q *Queries) GetTurno(ctx context.Context, arg GetTurnoParams) (Turno, error) {
+	row := q.db.QueryRowContext(ctx, getTurno, arg.Fecha, arg.Hora)
+	var i Turno
+	err := row.Scan(
+		&i.Fecha,
+		&i.Hora,
+		&i.TratamientoID,
+		&i.ClienteID,
 	)
 	return i, err
 }
@@ -250,40 +250,6 @@ func (q *Queries) GetVoucher(ctx context.Context, idVoucher int64) (Voucher, err
 	return i, err
 }
 
-const listTurno = `-- name: ListTurno :many
-SELECT fecha, hora, tratamiento_id, cliente_id
-FROM turno
-ORDER BY fecha, hora
-`
-
-func (q *Queries) ListTurno(ctx context.Context) ([]Turno, error) {
-	rows, err := q.db.QueryContext(ctx, listTurno)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []Turno
-	for rows.Next() {
-		var i Turno
-		if err := rows.Scan(
-			&i.Fecha,
-			&i.Hora,
-			&i.TratamientoID,
-			&i.ClienteID,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
 const listTreatments = `-- name: ListTreatments :many
 SELECT id, nombre, descripcion_corta, costo
 FROM tratamiento
@@ -304,6 +270,40 @@ func (q *Queries) ListTreatments(ctx context.Context) ([]Tratamiento, error) {
 			&i.Nombre,
 			&i.DescripcionCorta,
 			&i.Costo,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listTurno = `-- name: ListTurno :many
+SELECT fecha, hora, tratamiento_id, cliente_id
+FROM turno
+ORDER BY fecha, hora
+`
+
+func (q *Queries) ListTurno(ctx context.Context) ([]Turno, error) {
+	rows, err := q.db.QueryContext(ctx, listTurno)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Turno
+	for rows.Next() {
+		var i Turno
+		if err := rows.Scan(
+			&i.Fecha,
+			&i.Hora,
+			&i.TratamientoID,
+			&i.ClienteID,
 		); err != nil {
 			return nil, err
 		}
@@ -353,37 +353,6 @@ func (q *Queries) ListUsers(ctx context.Context) ([]Cliente, error) {
 	return items, nil
 }
 
-const updateTurno = `-- name: UpdateTurno :one
-UPDATE turno
-SET tratamiento_id = $3, cliente_id = $4
-WHERE fecha = $1 AND hora = $2
-RETURNING fecha, hora, tratamiento_id, cliente_id
-`
-
-type UpdateTurnoParams struct {
-	Fecha         time.Time `json:"fecha"`
-	Hora          time.Time `json:"hora"`
-	TratamientoID int64     `json:"tratamiento_id"`
-	ClienteID     int64     `json:"cliente_id"`
-}
-
-func (q *Queries) UpdateTurno(ctx context.Context, arg UpdateTurnoParams) (Turno, error) {
-	row := q.db.QueryRowContext(ctx, updateTurno,
-		arg.Fecha,
-		arg.Hora,
-		arg.TratamientoID,
-		arg.ClienteID,
-	)
-	var i Turno
-	err := row.Scan(
-		&i.Fecha,
-		&i.Hora,
-		&i.TratamientoID,
-		&i.ClienteID,
-	)
-	return i, err
-}
-
 const updateTreatment = `-- name: UpdateTreatment :one
 UPDATE tratamiento
 SET nombre = $2, descripcion_corta = $3, costo = $4
@@ -411,6 +380,37 @@ func (q *Queries) UpdateTreatment(ctx context.Context, arg UpdateTreatmentParams
 		&i.Nombre,
 		&i.DescripcionCorta,
 		&i.Costo,
+	)
+	return i, err
+}
+
+const updateTurno = `-- name: UpdateTurno :one
+UPDATE turno
+SET tratamiento_id = $3, cliente_id = $4
+WHERE fecha = $1 AND hora = $2
+RETURNING fecha, hora, tratamiento_id, cliente_id
+`
+
+type UpdateTurnoParams struct {
+	Fecha         time.Time `json:"fecha"`
+	Hora          time.Time `json:"hora"`
+	TratamientoID int64     `json:"tratamiento_id"`
+	ClienteID     int64     `json:"cliente_id"`
+}
+
+func (q *Queries) UpdateTurno(ctx context.Context, arg UpdateTurnoParams) (Turno, error) {
+	row := q.db.QueryRowContext(ctx, updateTurno,
+		arg.Fecha,
+		arg.Hora,
+		arg.TratamientoID,
+		arg.ClienteID,
+	)
+	var i Turno
+	err := row.Scan(
+		&i.Fecha,
+		&i.Hora,
+		&i.TratamientoID,
+		&i.ClienteID,
 	)
 	return i, err
 }
