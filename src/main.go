@@ -6,10 +6,8 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
-	"os"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
-	"github.com/joho/godotenv"
 )
 
 type repository struct {
@@ -17,14 +15,8 @@ type repository struct {
 }
 
 func abrirDB() (*sql.DB, error) {
-	_ = godotenv.Load()
-	puerto := os.Getenv("puerto")
-	usuario := os.Getenv("usuario")
-	dbname := os.Getenv("dbname")
-	password := os.Getenv("password")
-	host := os.Getenv("host")
 
-	dbString := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, puerto, usuario, password, dbname)
+	dbString := fmt.Sprintf("host=postgres-db port=5432 user=postgres password=postgres dbname=apirest sslmode=disable")
 	db, err := sql.Open("pgx", dbString)
 	fmt.Printf(dbString)
 	if err != nil {
