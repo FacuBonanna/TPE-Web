@@ -47,7 +47,7 @@ func main() {
 	http.HandleFunc("/voucher", vouchersHandler)
 	http.HandleFunc("/tratamiento/", tratamientoHandler)
 	http.HandleFunc("/tratamiento", tratamientosHandler)
-	http.HandleFunc("/turno/", turnoHandler)
+	http.HandleFunc("/turno", turnoHandler)
 
 	port := ":8080"
 	fmt.Printf("Servidor escuchando en http://localhost%s\n", port)

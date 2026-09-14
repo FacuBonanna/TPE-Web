@@ -50,12 +50,13 @@ func updateturno(w http.ResponseWriter, r *http.Request) {
 	}
 
 	updateParams := sqlc.UpdateTurnoParams{Fecha: turnoToUpdate.Fecha, Hora: turnoToUpdate.Hora, TratamientoID: turnoToUpdate.TratamientoID, ClienteID: turnoToUpdate.ClienteID}
+	UpdatedTurno, err := queries.UpdateTurno(ctx,updateParams)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
-	json.NewEncoder(w).Encode(updateParams)
+	json.NewEncoder(w).Encode(UpdatedTurno)
 }
 
 func createturno(w http.ResponseWriter, r *http.Request) {
