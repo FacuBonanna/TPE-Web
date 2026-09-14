@@ -55,7 +55,7 @@ func updateturno(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
-	json.NewEncoder(w).Encode(updateParams) //capaz es updatedTurno
+	json.NewEncoder(w).Encode(updateParams)
 }
 
 func createturno(w http.ResponseWriter, r *http.Request) {

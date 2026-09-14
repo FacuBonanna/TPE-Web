@@ -11,4 +11,10 @@ sql:
     overrides:
     - db_type: "pg_catalog.numeric"
       go_type: "float64"
+    - db_type: "date"
+      go_type:
+        import: "github.com/jackc/pgx/v5/pgtype"
+        package: "pgtype"
+        type: "Date"
+
   

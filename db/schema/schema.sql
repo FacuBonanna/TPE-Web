@@ -5,7 +5,7 @@
 -- Table: turno
 CREATE TABLE turno (
     fecha date  NOT NULL,
-    hora timestamp  NOT NULL,
+    hora int  NOT NULL,
     tratamiento_id bigserial  NOT NULL,
     cliente_id bigserial  NOT NULL,
     CONSTRAINT PK_turno PRIMARY KEY (fecha,hora)

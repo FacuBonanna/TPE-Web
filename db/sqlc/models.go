@@ -5,7 +5,7 @@
 package db
 
 import (
-	"time"
+	pgtype "github.com/jackc/pgx/v5/pgtype"
 )
 
 type Cliente struct {
@@ -24,10 +24,10 @@ type Tratamiento struct {
 }
 
 type Turno struct {
-	Fecha         time.Time `json:"fecha"`
-	Hora          time.Time `json:"hora"`
-	TratamientoID int64     `json:"tratamiento_id"`
-	ClienteID     int64     `json:"cliente_id"`
+	Fecha         pgtype.Date `json:"fecha"`
+	Hora          int32       `json:"hora"`
+	TratamientoID int64       `json:"tratamiento_id"`
+	ClienteID     int64       `json:"cliente_id"`
 }
 
 type Voucher struct {

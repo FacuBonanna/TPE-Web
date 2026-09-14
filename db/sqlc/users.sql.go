@@ -7,7 +7,8 @@ package db
 
 import (
 	"context"
-	"time"
+
+	pgtype "github.com/jackc/pgx/v5/pgtype"
 )
 
 const createTreatment = `-- name: CreateTreatment :one
@@ -41,10 +42,17 @@ RETURNING fecha, hora, tratamiento_id, cliente_id
 `
 
 type CreateTurnoParams struct {
+<<<<<<< HEAD
 	Fecha         time.Time `json:"fecha"`
 	Hora          time.Time `json:"hora"`
 	TratamientoID int64     `json:"tratamiento_id"`
 	ClienteID     int64     `json:"cliente_id"`
+=======
+	Fecha         pgtype.Date `json:"fecha"`
+	Hora          int32       `json:"hora"`
+	TratamientoID int64       `json:"tratamiento_id"`
+	ClienteID     int64       `json:"cliente_id"`
+>>>>>>> fdef746 (Cambio de tipos para fecha y hora en Turno)
 }
 
 func (q *Queries) CreateTurno(ctx context.Context, arg CreateTurnoParams) (Turno, error) {
@@ -135,8 +143,13 @@ WHERE fecha = $1 AND hora = $2
 `
 
 type DeleteTurnoParams struct {
+<<<<<<< HEAD
 	Fecha time.Time `json:"fecha"`
 	Hora  time.Time `json:"hora"`
+=======
+	Fecha pgtype.Date `json:"fecha"`
+	Hora  int32       `json:"hora"`
+>>>>>>> fdef746 (Cambio de tipos para fecha y hora en Turno)
 }
 
 func (q *Queries) DeleteTurno(ctx context.Context, arg DeleteTurnoParams) error {
@@ -192,11 +205,19 @@ WHERE fecha = $1 AND hora = $2
 `
 
 type GetTurnoParams struct {
+<<<<<<< HEAD
 	Fecha time.Time `json:"fecha"`
 	Hora  time.Time `json:"hora"`
 }
 
 // TABLA TURNO
+=======
+	Fecha pgtype.Date `json:"fecha"`
+	Hora  int32       `json:"hora"`
+}
+
+// TABLA turno
+>>>>>>> fdef746 (Cambio de tipos para fecha y hora en Turno)
 func (q *Queries) GetTurno(ctx context.Context, arg GetTurnoParams) (Turno, error) {
 	row := q.db.QueryRowContext(ctx, getTurno, arg.Fecha, arg.Hora)
 	var i Turno
@@ -392,10 +413,17 @@ RETURNING fecha, hora, tratamiento_id, cliente_id
 `
 
 type UpdateTurnoParams struct {
+<<<<<<< HEAD
 	Fecha         time.Time `json:"fecha"`
 	Hora          time.Time `json:"hora"`
 	TratamientoID int64     `json:"tratamiento_id"`
 	ClienteID     int64     `json:"cliente_id"`
+=======
+	Fecha         pgtype.Date `json:"fecha"`
+	Hora          int32       `json:"hora"`
+	TratamientoID int64       `json:"tratamiento_id"`
+	ClienteID     int64       `json:"cliente_id"`
+>>>>>>> fdef746 (Cambio de tipos para fecha y hora en Turno)
 }
 
 func (q *Queries) UpdateTurno(ctx context.Context, arg UpdateTurnoParams) (Turno, error) {

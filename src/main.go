@@ -30,7 +30,6 @@ var queries *sqlc.Queries
 var ctx context.Context
 
 func main() {
-
 	db, err := abrirDB()
 	if err != nil {
 		fmt.Printf("No se pudo conectar a la DB\n")
