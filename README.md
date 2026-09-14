@@ -1,5 +1,3 @@
 ## Como ejecutar
-
-En una terminal sobre la carpeta raíz del proyecto, ejecutar:
-
-                                        go run .
+**En una computadora con Docker Engine previamente instalado, pararse sobre la raiz de la carpeta y ejecutar el comando: 
+                    make test
