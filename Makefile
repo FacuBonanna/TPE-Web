@@ -25,7 +25,7 @@ pre-test: build
 
 run-test:
 	@echo "[RUN-TEST] ejecutando pruebas"
-	hurl --test ./requests.hurl
+	docker exec -i go-api hurl --test < ./requests.hurl
 
 post-test:
 	@echo "[POST-TEST] pruebas terminadas, limpiando"

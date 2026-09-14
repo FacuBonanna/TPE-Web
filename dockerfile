@@ -10,6 +10,7 @@ RUN CGO_ENABLED=0 go build -o /app/api .
 # Etapa 2: imagen final (solo el binario)
 FROM alpine:3.24
 RUN adduser -D -u 1000 app
+RUN apk add --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing hurl
 USER app
 COPY --from=builder /app/api /usr/local/bin/api
 EXPOSE 8080
