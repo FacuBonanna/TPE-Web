@@ -4,12 +4,12 @@
 POST http://localhost:8080/cliente 
 {
     "nombre" :"valentina",
-    apellido": "bisogni"
+    "apellido": "bisogni"
 }
-HTTP 201
+HTTP 200
 [Asserts]
 jsonpath "$.id" exists
-[captures]
+[Captures]
 cliente_id : jsonpath "$.id"
 
 GET http://localhost:8080/cliente/{{cliente_id}}
