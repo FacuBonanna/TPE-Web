@@ -6,21 +6,15 @@ CONTAINER_NAME := postgres-db
 all: 
 	build
 
-build: 
-	@mkdir -p tmp
-	@go build -o tmp/$(APP_NAME) ./src
-
-clean:
-	@rm -rf tmp
-
 test: pre-test run-test post-test 
 
-pre-test: build
+pre-test:
 	docker compose down -v 2>/dev/null || true
+	docker compose build api
 	docker compose up -d database
 	@sleep 5
 	docker compose up -d --force-recreate api 
-	@echo "[PRE-TEST] Inyectando esquema SQL..."
+	@echo "[PRE-TEST] Inyectando esquema SQL"
 	docker exec -i $(CONTAINER_NAME) psql -U postgres -d apirest < ./db/schema/schema.sql
 
 run-test:
