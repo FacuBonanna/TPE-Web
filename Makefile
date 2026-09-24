@@ -19,7 +19,7 @@ pre-test:
 
 run-test:
 	@echo "[RUN-TEST] ejecutando pruebas"
-	go test -v
+	go test -v ./src
 
 hurl-test:
 	docker exec -i go-api hurl --test < ./requests.hurl

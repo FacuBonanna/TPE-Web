@@ -55,7 +55,7 @@ func createTratamiento(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&nuevoTratamiento)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		fmt.Printf(err.Error())
+		fmt.Print(err.Error())
 		return
 	}
 	paramsCreacion := sqlc.CreateTreatmentParams{Nombre: nuevoTratamiento.Nombre, DescripcionCorta: nuevoTratamiento.DescripcionCorta, Costo: nuevoTratamiento.Costo}

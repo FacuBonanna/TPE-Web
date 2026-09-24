@@ -15,10 +15,9 @@ type repository struct {
 }
 
 func abrirDB() (*sql.DB, error) {
-
 	dbString := fmt.Sprintf("host=postgres-db port=5432 user=postgres password=postgres dbname=apirest sslmode=disable")
 	db, err := sql.Open("pgx", dbString)
-	fmt.Printf(dbString)
+	fmt.Print(dbString)
 	if err != nil {
 		return nil, err
 	}
@@ -35,8 +34,8 @@ var ctx context.Context
 func main() {
 	db, err := abrirDB()
 	if err != nil {
-		fmt.Printf("No se pudo conectar a la DB\n")
-		fmt.Printf(err.Error())
+		fmt.Print("No se pudo conectar a la DB\n")
+		fmt.Print(err.Error())
 		return
 	}
 	queries = sqlc.New(db)
