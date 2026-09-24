@@ -29,7 +29,10 @@ nota: si hay algún problema con los comandos tipo 'make', se puede pedir ayuda 
 ```
  make --help
 ```
-## Estructura del trabajo 
+## Herramientas del proyecto 
+
+ - Server Docker
+ - Make 
 
 
 
