@@ -10,9 +10,8 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
-// cliente
 func TestQueriesCliente_CRUD(t *testing.T) {
-	// Debido a que go corre en la propia maquina
+
 	dbString := "host=localhost port=5432 user=postgres password=postgres dbname=apirest sslmode=disable"
 	db, err := sql.Open("pgx", dbString)
 	if err != nil {
@@ -167,7 +166,6 @@ func TestQueriesCliente_CRUD(t *testing.T) {
 	})
 
 	t.Run("comprobar eliminacion", func(t *testing.T) {
-		//get del eliminado para comprobar que se elimino
 		_, err := queries.GetUser(ctx, clienteID)
 
 		if err != nil {
