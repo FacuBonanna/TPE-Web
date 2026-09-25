@@ -1,21 +1,18 @@
 package main
 
 import (
-sqlc "TPE/db/sqlc"
+	sqlc "TPE/db/sqlc"
 	"context"
 	"database/sql"
 	"fmt"
 	"testing"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
-
-
 )
 
-
-//cliente 
+// cliente
 func TestQueriesCliente_CRUD(t *testing.T) {
-	// Debido a que go corre en la propia maquina 
+	// Debido a que go corre en la propia maquina
 	dbString := "host=localhost port=5432 user=postgres password=postgres dbname=apirest sslmode=disable"
 	db, err := sql.Open("pgx", dbString)
 	if err != nil {
@@ -26,22 +23,23 @@ func TestQueriesCliente_CRUD(t *testing.T) {
 	}
 	defer db.Close()
 
-	
 	queries = sqlc.New(db)
 	ctx = context.Background()
 
 	var clienteID int64
+	var voucher sqlc.Voucher
 
-	t.Run ("Crear cliente", func(t *testing.T) {  
-	paramsCreacion := sqlc.CreateUserParams{Nombre: "valentina", Apellido: "bisogni", Deuda: 10000, NroTelefono: 123456}
-	
-	cliente, err := queries.CreateUser(ctx, paramsCreacion)
-	if err != nil { 
-		t.Errorf("Error crítico al crear el cliente en la DB: %v", err)
-	} else { 
-		fmt.Println("se creo exitosamente el cliente")
-		clienteID = cliente.ID
-	}})
+	t.Run("Crear cliente", func(t *testing.T) {
+		paramsCreacion := sqlc.CreateUserParams{Nombre: "valentina", Apellido: "bisogni", Deuda: 10000, NroTelefono: 123456}
+
+		cliente, err := queries.CreateUser(ctx, paramsCreacion)
+		if err != nil {
+			t.Errorf("Error crítico al crear el cliente en la DB: %v", err)
+		} else {
+			fmt.Println("se creo exitosamente el cliente")
+			clienteID = cliente.ID
+		}
+	})
 
 	t.Run("get cliente", func(t *testing.T) {
 		cliente, err := queries.GetUser(ctx, clienteID)
@@ -50,33 +48,34 @@ func TestQueriesCliente_CRUD(t *testing.T) {
 		} else {
 			if cliente.Nombre != "valentina" || cliente.Apellido != "bisogni" || cliente.Deuda != 10000 || cliente.NroTelefono != 123456 {
 				t.Errorf("no se pudo obtener el cliente: %v", err)
-			} else { 
-				fmt.Print("Se obtuvo con exito el cliente")}
+			} else {
+				fmt.Print("Se obtuvo con exito el cliente")
+			}
 		}
 	})
 
-	t.Run ("Update cliente", func(t *testing.T){
-		//cambio la dueda
+	t.Run("Update cliente", func(t *testing.T) {
+		//cambio la deuda
 		paramsClienteToUpdate := sqlc.UpdateUserParams{ID: clienteID, Nombre: "valentina", Apellido: "bisogni", Deuda: 5000, NroTelefono: 123456}
 		_, err := queries.UpdateUser(ctx, paramsClienteToUpdate)
 		if err != nil {
 			t.Errorf("No se puedo actualizar el cliente: %v", err)
 		} else {
-				fmt.Print("Se actualizo exitosamente al cliente")
-			}
+			fmt.Print("Se actualizo exitosamente al cliente")
+		}
 	})
 
-	t.Run ("Comprobar update", func(t *testing.T){
+	t.Run("Comprobar update", func(t *testing.T) {
 		cliente, err := queries.GetUser(ctx, clienteID)
-			//esta bien mezclar logica del error con esto??
-			if err != nil || cliente.Nombre != "valentina" || cliente.Apellido != "bisogni" || cliente.Deuda != 5000 || cliente.NroTelefono != 123456 {
-				t.Errorf("no se pudo obtener el cliente actualizado: %v", err)
-			} else {
-				fmt.Print("Se comprobo la actualizacion de cliente")
-			}
+		//esta bien mezclar logica del error con esto??
+		if err != nil || cliente.Nombre != "valentina" || cliente.Apellido != "bisogni" || cliente.Deuda != 5000 || cliente.NroTelefono != 123456 {
+			t.Errorf("no se pudo obtener el cliente actualizado: %v", err)
+		} else {
+			fmt.Print("Se comprobo la actualizacion de cliente")
+		}
 	})
 
-	t.Run ("Eliminar cliente", func( t *testing.T){
+	t.Run("Eliminar cliente", func(t *testing.T) {
 		err := queries.DeleteUser(ctx, clienteID)
 
 		if err != nil {
@@ -86,16 +85,40 @@ func TestQueriesCliente_CRUD(t *testing.T) {
 		}
 	})
 
-	t.Run ("comprobar eliminacion", func(t *testing.T){
+	t.Run("comprobar eliminacion", func(t *testing.T) {
 		//get del eliminado para comprobar que se elimino
 		_, err := queries.GetUser(ctx, clienteID)
 
-		if err != nil{
+		if err != nil {
 			fmt.Print("Se comprobo la eliminacion del cliente")
 		} else {
 			t.Errorf("fallo la comprobacion de eliminacion del cliente :%v", err)
 		}
 
 	})
-}
 
+	t.Run("Crear voucher", func(t *testing.T) {
+		paramsCreacionUsuario := sqlc.CreateUserParams{Nombre: "Facundo", Apellido: "Bonanna", Deuda: 5000, NroTelefono: 123456}
+		user, err := queries.CreateUser(ctx, paramsCreacionUsuario)
+		paramsCreacion := sqlc.CreateVoucherParams{RegaladorID: clienteID, ClienteID: user.ID, TratamientoID: 1}
+
+		voucher, err = queries.CreateVoucher(ctx, paramsCreacion)
+		if err != nil {
+			t.Errorf("Error crítico al crear el voucher en la DB: %v", err)
+		} else {
+			fmt.Println("se creo exitosamente el tratamiento")
+
+		}
+	})
+
+	t.Run("Get voucher", func(t *testing.T) {
+
+		queries.GetVoucher(ctx, voucher.IDVoucher)
+		if err != nil {
+			t.Errorf("Error crítico al intentar obtener el voucher en la DB: %v", err)
+		} else {
+			fmt.Println("Se obtuvo exitosamente el voucher.")
+
+		}
+	})
+}
