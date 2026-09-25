@@ -99,3 +99,30 @@ func TestQueriesCliente_CRUD(t *testing.T) {
 	})
 }
 
+func x(t *testing.T){}
+
+//Tratamiento 
+
+func TestQueriesTratamiento_CRUD(t *testing.T) {
+
+	dbString := "host=localhost port=5432 user=postgres password=postgres dbname=apirest sslmode=disable"
+	db, err := sql.Open("pgx", dbString)
+	if err != nil {
+		t.Fatalf("No se pudo abrir la DB local para el test: %v", err)
+	}
+	if err := db.Ping(); err != nil {
+		t.Fatalf("La DB de Docker no responde en localhost:5432. ¿Está el puerto expuesto? Error: %v", err)
+	}
+	defer db.Close()
+
+	queries = sqlc.New(db)
+	ctx = context.Background()
+
+	t.Run("test", x)
+	t.Run ("Crear tratamiento", func(t *testing.T) {  
+	paramsCreacion := sqlc.CreateTreatmentParams{Nombre: "masaje deportivo", DescripcionCorta: "masajes", Costo: 10000}
+     _, err := queries.CreateTreatment(ctx, paramsCreacion)	
+	 if err != nil {
+		t.Errorf("No se creó el tratamiento:")
+	} else { fmt.Print("El tratamiento se creó con éxito")}})	
+}
