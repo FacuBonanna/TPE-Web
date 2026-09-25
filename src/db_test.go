@@ -100,6 +100,30 @@ func TestQueriesCliente_CRUD(t *testing.T) {
 		}
 	})
 
+	t.Run("Actualizar Tratamiento", func(t *testing.T) {
+		updateParams := sqlc.UpdateTreatmentParams{ID: tratamientoID, Nombre: "masajes deportivos", DescripcionCorta: "masajes", Costo: 12000}
+		_, err := queries.UpdateTreatment(ctx, updateParams)
+		if err != nil {
+			t.Errorf("Error crítico al intentar actualizar el tratamiento en la DB: %v", err)
+		} else {
+			fmt.Println("Se actualizó exitosamente el tratamiento.")
+		}
+	})
+
+	t.Run("Comprobar modificación tratamiento", func(t *testing.T) {
+		tratamiento, err := queries.GetTreatment(ctx, tratamientoID)
+
+		if err != nil {
+			t.Errorf("Error crítico al intentar actualizar el voucher en la DB: %v", err)
+		} else {
+			if int64(tratamiento.Costo) == 12000 {
+				fmt.Println("Se comprobó la actualización del tratamiento.")
+			} else {
+				t.Error("La comprobación del tratamiento falló.")
+			}
+		}
+	})
+
 	t.Run("Crear voucher", func(t *testing.T) {
 		paramsCreacionUsuario := sqlc.CreateUserParams{Nombre: "Facundo", Apellido: "Bonanna", Deuda: 5000, NroTelefono: 123456}
 		user, err := queries.CreateUser(ctx, paramsCreacionUsuario)
@@ -142,7 +166,9 @@ func TestQueriesCliente_CRUD(t *testing.T) {
 			t.Errorf("Error crítico al intentar actualizar el voucher en la DB: %v", err)
 		} else {
 			if voucher.ClienteID != otroClienteID {
-				fmt.Println("Se actualizó exitosamente el voucher.")
+				fmt.Println("Se comprobó la actualización del voucher.")
+			} else {
+				t.Error("La comprobación del voucher falló.")
 			}
 		}
 	})
@@ -188,4 +214,26 @@ func TestQueriesCliente_CRUD(t *testing.T) {
 		}
 
 	})
+
+	t.Run("Eliminar tratamiento", func(t *testing.T) {
+		err := queries.DeleteTreatment(ctx, tratamientoID)
+
+		if err != nil {
+			t.Errorf("No se pudo eliminar el tratamiento: %v", err)
+		} else {
+			fmt.Print("Se eliminó el tratamiento")
+		}
+	})
+
+	t.Run("Comprobar eliminación tratamiento", func(t *testing.T) {
+		_, err := queries.GetTreatment(ctx, tratamientoID)
+
+		if err != nil {
+			fmt.Print("Se comprobo la eliminación del tratamiento")
+		} else {
+			t.Errorf("Falló la comprobacion de eliminacion del tratamiento :%v", err)
+		}
+
+	})
+
 }
