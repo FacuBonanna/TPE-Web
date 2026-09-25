@@ -22,6 +22,7 @@ run-test:
 	go test -v ./src
 
 hurl-test:
+	@echo "[HURL-TEST] ejecutando pruebas hurl"
 	docker exec -i go-api hurl --test < ./requests.hurl
 
 post-test:

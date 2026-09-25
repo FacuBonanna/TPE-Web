@@ -15,8 +15,7 @@ sqlc "TPE/db/sqlc"
 
 //cliente 
 func TestQueriesCliente_CRUD(t *testing.T) {
-		// 1. FORZAMOS la conexión local solo para el entorno de pruebas.
-	// Esto no afecta a tu main.go en producción porque esta función solo corre en 'go test'.
+	// Debido a que go corre en la propia maquina 
 	dbString := "host=localhost port=5432 user=postgres password=postgres dbname=apirest sslmode=disable"
 	db, err := sql.Open("pgx", dbString)
 	if err != nil {
@@ -27,18 +26,76 @@ func TestQueriesCliente_CRUD(t *testing.T) {
 	}
 	defer db.Close()
 
-	// 2. Inicializamos las variables globales que declaraste en tu main.go
+	
 	queries = sqlc.New(db)
 	ctx = context.Background()
 
-	t.Run("test", x)
+	var clienteID int64
+
 	t.Run ("Crear cliente", func(t *testing.T) {  
 	paramsCreacion := sqlc.CreateUserParams{Nombre: "valentina", Apellido: "bisogni", Deuda: 10000, NroTelefono: 123456}
 	
-	_, err := queries.CreateUser(ctx, paramsCreacion)
-	if err != nil {
-		t.Errorf("No se creo el cliente")
-	} else { fmt.Print("se creo exitosamente el cliente")}})
+	cliente, err := queries.CreateUser(ctx, paramsCreacion)
+	if err != nil { 
+		t.Errorf("Error crítico al crear el cliente en la DB: %v", err)
+	} else { 
+		fmt.Println("se creo exitosamente el cliente")
+		clienteID = cliente.ID
+	}})
+
+	t.Run("get cliente", func(t *testing.T) {
+		cliente, err := queries.GetUser(ctx, clienteID)
+		if err != nil {
+			t.Errorf("No se puedo obtener el cliente: %v", err)
+		} else {
+			if cliente.Nombre != "valentina" || cliente.Apellido != "bisogni" || cliente.Deuda != 10000 || cliente.NroTelefono != 123456 {
+				t.Errorf("no se pudo obtener el cliente: %v", err)
+			} else { 
+				fmt.Print("Se obtuvo con exito el cliente")}
+		}
+	})
+
+	t.Run ("Update cliente", func(t *testing.T){
+		//cambio la dueda
+		paramsClienteToUpdate := sqlc.UpdateUserParams{ID: clienteID, Nombre: "valentina", Apellido: "bisogni", Deuda: 5000, NroTelefono: 123456}
+		_, err := queries.UpdateUser(ctx, paramsClienteToUpdate)
+		if err != nil {
+			t.Errorf("No se puedo actualizar el cliente: %v", err)
+		} else {
+				fmt.Print("Se actualizo exitosamente al cliente")
+			}
+	})
+
+	t.Run ("Comprobar update", func(t *testing.T){
+		cliente, err := queries.GetUser(ctx, clienteID)
+			//esta bien mezclar logica del error con esto??
+			if err != nil || cliente.Nombre != "valentina" || cliente.Apellido != "bisogni" || cliente.Deuda != 5000 || cliente.NroTelefono != 123456 {
+				t.Errorf("no se pudo obtener el cliente actualizado: %v", err)
+			} else {
+				fmt.Print("Se comprobo la actualizacion de cliente")
+			}
+	})
+
+	t.Run ("Eliminar cliente", func( t *testing.T){
+		err := queries.DeleteUser(ctx, clienteID)
+
+		if err != nil {
+			t.Errorf("No se pudo eliminar el cliente: %v", err)
+		} else {
+			fmt.Print("Se elimino el cliente")
+		}
+	})
+
+	t.Run ("comprobar eliminacion", func(t *testing.T){
+		//get del eliminado para comprobar que se elimino
+		_, err := queries.GetUser(ctx, clienteID)
+
+		if err != nil{
+			fmt.Print("Se comprobo la eliminacion del cliente")
+		} else {
+			t.Errorf("fallo la comprobacion de eliminacion del cliente :%v", err)
+		}
+
+	})
 }
 
-func x(t *testing.T){}
