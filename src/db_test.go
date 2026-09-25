@@ -127,7 +127,8 @@ func TestQueriesCliente_CRUD(t *testing.T) {
 	t.Run("Crear voucher", func(t *testing.T) {
 		paramsCreacionUsuario := sqlc.CreateUserParams{Nombre: "Facundo", Apellido: "Bonanna", Deuda: 5000, NroTelefono: 123456}
 		user, err := queries.CreateUser(ctx, paramsCreacionUsuario)
-		paramsCreacion := sqlc.CreateVoucherParams{RegaladorID: clienteID, ClienteID: user.ID, TratamientoID: 1}
+		otroClienteID = user.ID
+		paramsCreacion := sqlc.CreateVoucherParams{RegaladorID: clienteID, ClienteID: otroClienteID, TratamientoID: 1}
 
 		voucher, err := queries.CreateVoucher(ctx, paramsCreacion)
 		if err != nil {
