@@ -13,9 +13,9 @@ sqlc "TPE/db/sqlc"
 )
 
 
-//cliente 
+
 func TestQueriesCliente_CRUD(t *testing.T) {
-	// Debido a que go corre en la propia maquina 
+	
 	dbString := "host=localhost port=5432 user=postgres password=postgres dbname=apirest sslmode=disable"
 	db, err := sql.Open("pgx", dbString)
 	if err != nil {
@@ -87,7 +87,6 @@ func TestQueriesCliente_CRUD(t *testing.T) {
 	})
 
 	t.Run ("comprobar eliminacion", func(t *testing.T){
-		//get del eliminado para comprobar que se elimino
 		_, err := queries.GetUser(ctx, clienteID)
 
 		if err != nil{
@@ -117,12 +116,28 @@ func TestQueriesTratamiento_CRUD(t *testing.T) {
 
 	queries = sqlc.New(db)
 	ctx = context.Background()
+	var tratamientoID int64
 
 	t.Run("test", x)
 	t.Run ("Crear tratamiento", func(t *testing.T) {  
-	paramsCreacion := sqlc.CreateTreatmentParams{Nombre: "masaje deportivo", DescripcionCorta: "masajes", Costo: 10000}
-     _, err := queries.CreateTreatment(ctx, paramsCreacion)	
-	 if err != nil {
+		paramsCreacion := sqlc.CreateTreatmentParams{Nombre: "masaje deportivo", DescripcionCorta: "masajes", Costo: 10000}
+     	tratamiento, err := queries.CreateTreatment(ctx, paramsCreacion)	
+		if err != nil {
 		t.Errorf("No se creó el tratamiento:")
-	} else { fmt.Print("El tratamiento se creó con éxito")}})	
+		}else { fmt.Print("El tratamiento se creó con éxito")
+			tratamientoID = tratamiento.ID}})	
+
+	t.Run("get Tratamiento", func(t *testing.T) {
+		tratamiento, err := queries.GetTreatment(ctx, tratamientoID)
+		if err != nil {
+			t.Errorf("No se puedo obtener el Tratameinto: %v", err)
+		} else {
+			if tratamiento.Nombre != "masaje deportivo" || tratamiento.DescripcionCorta != "masajes" || tratamiento.Costo != 10000 {
+				t.Errorf("no se pudo obtener el tratamiento: %v", err)
+			} else { 
+				fmt.Print("El tratamiento fue recuperado con éxito")}
+		}
+	})
+
+
 }
