@@ -6,6 +6,8 @@ sqlc "TPE/db/sqlc"
 	"database/sql"
 	"fmt"
 	"testing"
+	"time"
+	pgtype "github.com/jackc/pgx/v5/pgtype"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 
@@ -13,9 +15,9 @@ sqlc "TPE/db/sqlc"
 )
 
 
-
+//cliente 
 func TestQueriesCliente_CRUD(t *testing.T) {
-	
+	// Debido a que go corre en la propia maquina 
 	dbString := "host=localhost port=5432 user=postgres password=postgres dbname=apirest sslmode=disable"
 	db, err := sql.Open("pgx", dbString)
 	if err != nil {
@@ -76,7 +78,88 @@ func TestQueriesCliente_CRUD(t *testing.T) {
 			}
 	})
 
-	t.Run ("Eliminar cliente", func( t *testing.T){
+
+	//Tratamiento 
+	var tratamientoID int64
+
+	t.Run ("Crear tratamiento", func(t *testing.T) {  
+		paramsCreacion := sqlc.CreateTreatmentParams{Nombre: "masaje deportivo", DescripcionCorta: "masajes", Costo: 10000}
+		tratamiento, err := queries.CreateTreatment(ctx, paramsCreacion)	
+		if err != nil {
+			t.Errorf("No se creó el tratamiento:")
+		} else { fmt.Print("El tratamiento se creó con éxito")
+			tratamientoID = tratamiento.ID
+			_ = tratamientoID
+	}})
+
+
+
+	//TURNO
+	var fecha pgtype.Date
+	var hora int32 
+
+	fecha = pgtype.Date{
+		Time : time.Date(2026,9,25,0,0,0,0, time.UTC),
+		Valid : true,
+	}
+	hora = 1
+
+	t.Run ("Crear turno", func(t *testing.T){
+		paramsCreacion := sqlc.CreateTurnoParams{Fecha: fecha, Hora: hora, TratamientoID: tratamientoID, ClienteID: clienteID}
+		_, err := queries.CreateTurno(ctx, paramsCreacion)
+		if err != nil {
+			t.Errorf("No se pudo crear un turno :%V", err)
+		} else {
+			fmt.Print("El turno se creo con exito")
+		}
+	})
+
+		t.Run ("Get turno", func(t *testing.T){
+		paramsGet := sqlc.GetTurnoParams{Fecha: fecha, Hora: hora}
+		turno, err := queries.GetTurno(ctx, paramsGet)
+
+		if err != nil {
+			t.Errorf("Turno no se pudo obtener :%v", err)
+		} else {
+			if turno.Fecha != fecha || turno.Hora != hora || turno.TratamientoID != tratamientoID || turno.ClienteID != clienteID{
+				fmt.Print("aca")
+				t.Errorf("Turno no se pudo obtener :%v", err)
+			} else {
+				fmt.Print("Turno se obtuvo exitosamente")
+			}
+		}
+
+	})
+
+	t.Run ("Update Turno", func(t *testing.T){
+		//cambio hora a 2
+		turnoToUpdate := sqlc.UpdateTurnoParams{Fecha: fecha, Hora: hora, TratamientoID: tratamientoID, ClienteID: clienteID}
+		_, err := queries.UpdateTurno(ctx,turnoToUpdate)
+
+		if err != nil {
+			t.Errorf("No se pudo actualizar el turno: %v", err)
+		} else {
+			fmt.Print("el turno se actualizo exitosamente")
+		}
+
+	})
+
+	t.Run ("Eliminar turno", func(t *testing.T){
+		turnoABorrar := sqlc.DeleteTurnoParams{Fecha: fecha, Hora: hora}
+		err := queries.DeleteTurno(ctx, turnoABorrar)
+		if err != nil {
+			t.Errorf("No se pudo eliminar el turno: %v", err)
+		} else {
+			fmt.Print("Se elimino exitosamente el turno")
+		}
+
+
+
+	})
+
+
+
+		t.Run ("Eliminar cliente", func( t *testing.T){
 		err := queries.DeleteUser(ctx, clienteID)
 
 		if err != nil {
@@ -96,48 +179,5 @@ func TestQueriesCliente_CRUD(t *testing.T) {
 		}
 
 	})
-}
-
-func x(t *testing.T){}
-
-//Tratamiento 
-
-func TestQueriesTratamiento_CRUD(t *testing.T) {
-
-	dbString := "host=localhost port=5432 user=postgres password=postgres dbname=apirest sslmode=disable"
-	db, err := sql.Open("pgx", dbString)
-	if err != nil {
-		t.Fatalf("No se pudo abrir la DB local para el test: %v", err)
-	}
-	if err := db.Ping(); err != nil {
-		t.Fatalf("La DB de Docker no responde en localhost:5432. ¿Está el puerto expuesto? Error: %v", err)
-	}
-	defer db.Close()
-
-	queries = sqlc.New(db)
-	ctx = context.Background()
-	var tratamientoID int64
-
-	t.Run("test", x)
-	t.Run ("Crear tratamiento", func(t *testing.T) {  
-		paramsCreacion := sqlc.CreateTreatmentParams{Nombre: "masaje deportivo", DescripcionCorta: "masajes", Costo: 10000}
-     	tratamiento, err := queries.CreateTreatment(ctx, paramsCreacion)	
-		if err != nil {
-		t.Errorf("No se creó el tratamiento:")
-		}else { fmt.Print("El tratamiento se creó con éxito")
-			tratamientoID = tratamiento.ID}})	
-
-	t.Run("get Tratamiento", func(t *testing.T) {
-		tratamiento, err := queries.GetTreatment(ctx, tratamientoID)
-		if err != nil {
-			t.Errorf("No se puedo obtener el Tratameinto: %v", err)
-		} else {
-			if tratamiento.Nombre != "masaje deportivo" || tratamiento.DescripcionCorta != "masajes" || tratamiento.Costo != 10000 {
-				t.Errorf("no se pudo obtener el tratamiento: %v", err)
-			} else { 
-				fmt.Print("El tratamiento fue recuperado con éxito")}
-		}
-	})
-
-
+	
 }
