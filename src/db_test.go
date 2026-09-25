@@ -87,6 +87,19 @@ func TestQueriesCliente_CRUD(t *testing.T) {
 		}
 	})
 
+	t.Run("get Tratamiento", func(t *testing.T) {
+		tratamiento, err := queries.GetTreatment(ctx, tratamientoID)
+		if err != nil {
+			t.Errorf("No se puedo obtener el Tratameinto: %v", err)
+		} else {
+			if tratamiento.Nombre != "masaje deportivo" || tratamiento.DescripcionCorta != "masajes" || tratamiento.Costo != 10000 {
+				t.Errorf("no se pudo obtener el tratamiento: %v", err)
+			} else {
+				fmt.Print("El tratamiento fue recuperado con éxito")
+			}
+		}
+	})
+
 	t.Run("Crear voucher", func(t *testing.T) {
 		paramsCreacionUsuario := sqlc.CreateUserParams{Nombre: "Facundo", Apellido: "Bonanna", Deuda: 5000, NroTelefono: 123456}
 		user, err := queries.CreateUser(ctx, paramsCreacionUsuario)
