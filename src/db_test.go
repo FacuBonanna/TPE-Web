@@ -6,10 +6,14 @@ import (
 	"database/sql"
 	"fmt"
 	"testing"
+	"time"
+	pgtype "github.com/jackc/pgx/v5/pgtype"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
+
+//cliente 
 func TestQueriesCliente_CRUD(t *testing.T) {
 
 	dbString := "host=localhost port=5432 user=postgres password=postgres dbname=apirest sslmode=disable"
@@ -76,6 +80,9 @@ func TestQueriesCliente_CRUD(t *testing.T) {
 		}
 	})
 
+
+	//Tratamiento 
+
 	t.Run("Crear tratamiento", func(t *testing.T) {
 		paramsCreacion := sqlc.CreateTreatmentParams{Nombre: "masaje deportivo", DescripcionCorta: "masajes", Costo: 10000}
 		tratamiento, err := queries.CreateTreatment(ctx, paramsCreacion)
@@ -123,6 +130,9 @@ func TestQueriesCliente_CRUD(t *testing.T) {
 			}
 		}
 	})
+
+	
+	//VOUCHER
 
 	t.Run("Crear voucher", func(t *testing.T) {
 		paramsCreacionUsuario := sqlc.CreateUserParams{Nombre: "Facundo", Apellido: "Bonanna", Deuda: 5000, NroTelefono: 123456}
@@ -193,6 +203,94 @@ func TestQueriesCliente_CRUD(t *testing.T) {
 			t.Errorf("Falló la comprobación de eliminación del voucher :%v", err)
 		}
 
+	})
+
+
+	//TURNO
+	var fecha pgtype.Date
+	var hora int32 
+
+	fecha = pgtype.Date{
+		Time : time.Date(2026,9,25,0,0,0,0, time.UTC),
+		Valid : true,
+	}
+	hora = 1
+
+	t.Run ("Crear turno", func(t *testing.T){
+		paramsCreacion := sqlc.CreateTurnoParams{Fecha: fecha, Hora: hora, TratamientoID: tratamientoID, ClienteID: clienteID}
+		_, err := queries.CreateTurno(ctx, paramsCreacion)
+		if err != nil {
+			t.Errorf("No se pudo crear un turno :%V", err)
+		} else {
+			fmt.Print("El turno se creo con exito")
+		}
+	})
+
+		t.Run ("Get turno", func(t *testing.T){
+		paramsGet := sqlc.GetTurnoParams{Fecha: fecha, Hora: hora}
+		turno, err := queries.GetTurno(ctx, paramsGet)
+
+		if err != nil {
+			t.Errorf("Turno no se pudo obtener :%v", err)
+		} else {
+			if turno.Fecha != fecha || turno.Hora != hora || turno.TratamientoID != tratamientoID || turno.ClienteID != clienteID{
+				fmt.Print("aca")
+				t.Errorf("Turno no se pudo obtener :%v", err)
+			} else {
+				fmt.Print("Turno se obtuvo exitosamente")
+			}
+		}
+
+	})
+
+	t.Run ("Update Turno", func(t *testing.T){
+		//cambio hora a 2
+		turnoToUpdate := sqlc.UpdateTurnoParams{Fecha: fecha, Hora: hora, TratamientoID: tratamientoID, ClienteID: otroClienteID}
+		_, err := queries.UpdateTurno(ctx,turnoToUpdate)
+
+		if err != nil {
+			t.Errorf("No se pudo actualizar el turno: %v", err)
+		} else {
+			fmt.Print("el turno se actualizo exitosamente")
+		}
+	})
+
+	t.Run("comprobar actualizacion", func(t *testing.T){
+		paramsGet := sqlc.GetTurnoParams{Fecha: fecha, Hora: hora}
+		turno, err := queries.GetTurno(ctx, paramsGet)
+
+		if err != nil {
+			t.Errorf("Turno no se pudo obtener luego de actualizacion :%v", err)
+		} else {
+			if turno.Fecha != fecha || turno.Hora != hora || turno.TratamientoID != tratamientoID || turno.ClienteID != otroClienteID{
+				fmt.Print("aca")
+				t.Errorf("Turno no se pudo obtener luego de actualizar por parametros :%v", err)
+			} else {
+				fmt.Print("se comprobo la actualizacion de los turnos")
+			}
+		}
+
+	})
+
+	t.Run ("Eliminar turno", func(t *testing.T){
+		turnoABorrar := sqlc.DeleteTurnoParams{Fecha: fecha, Hora: hora}
+		err := queries.DeleteTurno(ctx, turnoABorrar)
+		if err != nil {
+			t.Errorf("No se pudo eliminar el turno: %v", err)
+		} else {
+			fmt.Print("Se elimino exitosamente el turno")
+		}
+	})
+
+	t.Run("Comprobar eliminacion del turno", func(t *testing.T){
+		paramsGet := sqlc.GetTurnoParams{Fecha: fecha, Hora: hora}
+		_, err := queries.GetTurno(ctx, paramsGet)
+
+		if err != nil {
+			fmt.Print("Se comprobo la eliminacion del tueno")
+		} else {
+			t.Errorf("no se comprobo la eliminacion del turno: %v", err)
+		}
 	})
 
 	t.Run("Eliminar cliente", func(t *testing.T) {
