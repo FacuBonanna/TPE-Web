@@ -53,9 +53,9 @@ func TestQueries_CRUD(t *testing.T) {
 			t.Errorf("No se puedo obtener el cliente: %v", err)
 		} else {
 			if cliente.Nombre != "valentina" || cliente.Apellido != "bisogni" || cliente.Deuda != 10000 || cliente.NroTelefono != 123456 {
-				t.Errorf("no se pudo obtener el cliente: %v", err)
+				t.Errorf("No se pudo obtener el cliente: %v", err)
 			} else {
-				fmt.Println("Se obtuvo con éxito el cliente.")
+				fmt.Println("El cliente se obtuvo con éxito.")
 			}
 		}
 	})
@@ -67,7 +67,7 @@ func TestQueries_CRUD(t *testing.T) {
 		if err != nil {
 			t.Errorf("No se puedo actualizar el cliente: %v", err)
 		} else {
-			fmt.Println("Se actualizó exitosamente al cliente.")
+			fmt.Println("El cliente se actualizó exitosamente.")
 		}
 	})
 
@@ -81,7 +81,7 @@ func TestQueries_CRUD(t *testing.T) {
 		}
 	})
 
-	//Tratamiento
+	//TRATAMIENTO
 
 	t.Run("Crear tratamiento", func(t *testing.T) {
 		paramsCreacion := sqlc.CreateTreatmentParams{Nombre: "masaje deportivo", DescripcionCorta: "masajes", Costo: 10000}
@@ -113,7 +113,7 @@ func TestQueries_CRUD(t *testing.T) {
 		if err != nil {
 			t.Errorf("Error crítico al intentar actualizar el tratamiento en la DB: %v", err)
 		} else {
-			fmt.Println("Se actualizó exitosamente el tratamiento.")
+			fmt.Println("El tratamiento se actualizó exitosamente.")
 		}
 	})
 
@@ -126,7 +126,7 @@ func TestQueries_CRUD(t *testing.T) {
 			if int64(tratamiento.Costo) == 12000 {
 				fmt.Println("Se comprobó la actualización del tratamiento.")
 			} else {
-				t.Error("La comprobación del tratamiento falló.")
+				t.Error("No se pudo comporbar la actualización del tratamiento.")
 			}
 		}
 	})
@@ -143,7 +143,7 @@ func TestQueries_CRUD(t *testing.T) {
 		if err != nil {
 			t.Errorf("Error crítico al crear el voucher en la DB: %v", err)
 		} else {
-			fmt.Println("Se creó exitosamente el tratamiento.")
+			fmt.Println("El voucher se creó exitosamente.")
 			voucherID = voucher.IDVoucher
 		}
 	})
@@ -165,7 +165,7 @@ func TestQueries_CRUD(t *testing.T) {
 		if err != nil {
 			t.Errorf("Error crítico al intentar actualizar el voucher en la DB: %v", err)
 		} else {
-			fmt.Println("Se actualizó exitosamente el voucher.")
+			fmt.Println("El voucher se actualizó exitosamente.")
 		}
 	})
 
@@ -178,7 +178,7 @@ func TestQueries_CRUD(t *testing.T) {
 			if voucher.ClienteID != otroClienteID {
 				fmt.Println("Se comprobó la actualización del voucher.")
 			} else {
-				t.Error("La comprobación del voucher falló.")
+				t.Error("No se pudo comprobar la actualización del voucher.")
 			}
 		}
 	})
@@ -230,7 +230,7 @@ func TestQueries_CRUD(t *testing.T) {
 		turno, err := queries.GetTurno(ctx, paramsGet)
 
 		if err != nil {
-			t.Errorf("Turno no se pudo obtener :%v", err)
+			t.Errorf("No se pudo obtener el turno :%v", err)
 		} else {
 			if turno.Fecha != fecha || turno.Hora != hora || turno.TratamientoID != tratamientoID || turno.ClienteID != clienteID {
 				fmt.Print("aca")
@@ -275,7 +275,7 @@ func TestQueries_CRUD(t *testing.T) {
 		if err != nil {
 			t.Errorf("No se pudo eliminar el turno: %v", err)
 		} else {
-			fmt.Print("Se eliminó exitosamente el turno.")
+			fmt.Print("EL turno se eliminó exitosamente.")
 		}
 	})
 
@@ -284,7 +284,7 @@ func TestQueries_CRUD(t *testing.T) {
 		_, err := queries.GetTurno(ctx, paramsGet)
 
 		if err != nil {
-			fmt.Println("Se comprobó la eliminacion del tueno")
+			fmt.Println("Se comprobó la eliminacion del turno")
 		} else {
 			t.Errorf("No se comprobó la eliminacion del turno: %v", err)
 		}
@@ -308,7 +308,7 @@ func TestQueries_CRUD(t *testing.T) {
 		if err != nil {
 			fmt.Println("Se comprobó la eliminación del cliente.")
 		} else {
-			t.Errorf("Falló la comprobacion de eliminacion del cliente :%v", err)
+			t.Errorf("No se pudo comprobar la eliminacion del cliente :%v", err)
 		}
 
 	})
@@ -328,7 +328,7 @@ func TestQueries_CRUD(t *testing.T) {
 		if err != nil {
 			fmt.Println("Se comprobó la eliminación del tratamiento.")
 		} else {
-			t.Errorf("Falló la comprobación de eliminacion del tratamiento :%v", err)
+			t.Errorf("No se pudo comprobar la eliminación del tratamiento :%v", err)
 		}
 
 	})
