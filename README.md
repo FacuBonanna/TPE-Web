@@ -32,7 +32,24 @@ nota: si hay algún problema con los comandos tipo 'make', se puede pedir ayuda 
 ## Herramientas del proyecto 
 
  - Server Docker
- - Make 
+ - Make
+ - PostgreSQL
+ - Sqlc
+
+## Documetos de interés en el repositorio
+
+- users.sql: capa de acceso a datos del proyecto. Tiene el conjunto de operaciones permitidas sobre el modelo de datos. 
+- schema.sql: describe la estructura de la base de datos.
+- dockerfile:define cómo construir la imagen del proyecto.
+- dockercompose: permite integrar de manera conjunta todos los servicios que necesita el proyecto para correr.
+- Carpeta sqlc: codigo GO generado automáticamente por la herramienta sqlc para acceder a la base de datos.
+- Carpeta src: contiene el código del proyecto. 
+
+## Aclaraciones
+
+-No quitamos la lógica de hurl del código. Si bien no la usamos, sabemos que tiene que ser integrada en algún momento, así que nos pareció conveniente dejar estbaldecida esa lógica para
+futura referencia. 
+-Los tests ya están integrados en la lógica del proyecto, se recomienda no remover el archivo de_test.go del directorio que contiene el archivo. ya que de otra forma el make test no funcionará- 
 
 
 
