@@ -49,7 +49,7 @@ nota: si hay algún problema con los comandos tipo 'make', se puede pedir ayuda 
 
 -No quitamos la lógica de hurl del código. Si bien no la usamos, sabemos que tiene que ser integrada en algún momento, así que nos pareció conveniente dejar estbaldecida esa lógica para futura referencia. 
 
--Los tests ya están integrados en la lógica del proyecto, se recomienda no remover el archivo de_test.go del directorio que contiene el archivo. ya que de otra forma el make test no funcionará
+-Los tests ya están integrados en la lógica del proyecto, se recomienda no remover el archivo db_test.go del directorio que contiene el archivo. ya que de otra forma el make test no funcionará
 
 
 
