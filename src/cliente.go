@@ -63,10 +63,20 @@ func createCliente(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	} else {
-		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(nuevoClienteRow)
 	}
+}
+
+func getClientes(w http.ResponseWriter, r *http.Request) {
+
+	clientes, err := queries.ListUsers(ctx)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+	json.NewEncoder(w).Encode(clientes)
 
 }
 
@@ -74,6 +84,8 @@ func clientesHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPost:
 		createCliente(w, r)
+	case http.MethodGet:
+		getClientes(w, r)
 	default:
 		http.Error(w, "Method not allowed",
 			http.StatusMethodNotAllowed)
