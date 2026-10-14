@@ -1,6 +1,7 @@
-# PROYECTO ESPECIAL PROGRAMACIÓN WEB 
+# PROYECTO ESPECIAL PROGRAMACIÓN WEB. Etapa 3: Exponiendo la lógica como API. 
 
-Como parte de la propuesta de la cátedra de Programación Web, presentamos el siguiente nivel de datos de nuestro gestor de negocio para un emprendimiento de servicios estéticos. 
+EL objetivo de esta entrega es construir una API REST para gestionar las entidades de nuestra aplicación para poder conectar la lógica de negocio con la
+capa de datos.
 
 ## Modelo de la base de datos: 
 
@@ -8,7 +9,7 @@ Como parte de la propuesta de la cátedra de Programación Web, presentamos el s
 
 ## ¿Cómo probar el trabajo? 
 
-1- Clonar el respositorio desde la rama tp2 con el siguiente comando 
+1- Clonar el respositorio desde la rama con el siguiente comando 
 ```
  git clone https://github.com/FacuBonanna/TPE-Web.git
 ```
@@ -16,13 +17,17 @@ Como parte de la propuesta de la cátedra de Programación Web, presentamos el s
 ```
  cd TPE-Web
 ```
-2- Cambiar la rama actual a la rama "tp2" 
+2- Cambiar la rama actual a la rama "tp3" 
 ```
-  git switch tp2
+  git switch tp3
 ```
-3- Para probar la conexión a la base de datos y ejecutar los tests, ejecutar el comando:
+3- Para la API REST, ejecutar el comando:
 ```
-  make test
+  make test_api
+```
+3.5- Si se quiere probar la base de datos por separado, ejecutar el comando: 
+```
+  make test_base
 ```
 
 nota: si hay algún problema con los comandos tipo 'make', se puede pedir ayuda por consola ingresando el comando 
@@ -36,20 +41,18 @@ nota: si hay algún problema con los comandos tipo 'make', se puede pedir ayuda 
  - PostgreSQL
  - Sqlc
 
-## Documetos de interés en el repositorio
+## Documetos de interés para esta entrega:
 
-- users.sql: capa de acceso a datos del proyecto. Tiene el conjunto de operaciones permitidas sobre el modelo de datos. 
-- schema.sql: describe la estructura de la base de datos.
-- dockerfile:define cómo construir la imagen del proyecto.
-- dockercompose: permite integrar de manera conjunta todos los servicios que necesita el proyecto para correr.
-- Carpeta sqlc: codigo GO generado automáticamente por la herramienta sqlc para acceder a la base de datos.
-- Carpeta src: contiene el código del proyecto. 
+A pesar de que todos las partes del código son importantes para que este proyecto pueda funcionar, estos son los elementos que tuvimos que modificar para poder concretar la entrega: 
+
+- resquests.hurl: ///
+- Makefile:
+- Carpeta src: 
+
 
 ## Aclaraciones
 
--No quitamos la lógica de hurl del código. Si bien no la usamos, sabemos que tiene que ser integrada en algún momento, así que nos pareció conveniente dejar estbaldecida esa lógica para futura referencia. 
-
--Los tests ya están integrados en la lógica del proyecto, se recomienda no remover el archivo db_test.go del directorio que contiene el archivo. ya que de otra forma el make test no funcionará
+-Los tests ya están integrados en la lógica del proyecto, se recomienda no remover el archivo requests.hurl del directorio que contiene el archivo. ya que de otra forma el make test no funcionará
 
 
 
