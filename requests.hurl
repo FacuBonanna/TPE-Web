@@ -14,11 +14,26 @@ jsonpath "$.id" exists
 [Captures]
 cliente_id : jsonpath "$.id"
 
+
+POST http://localhost:8080/cliente 
+{
+    "nombre" :"rocio",
+    "apellido": "lopez",
+    
+}
+
+
+
 GET http://localhost:8080/cliente/{{cliente_id}}
 HTTP 200
 [Asserts]
 jsonpath "$.nombre" == "valentina"
 jsonpath "$.apellido" == "bisogni"
+
+GET http://localhost:8080/cliente
+HTTP 200
+[Asserts]
+jsonpath "$" count == 2
 
 #UPDATE 
 PUT http://localhost:8080/cliente/{{cliente_id}}
@@ -80,18 +95,7 @@ HTTP 204
 GET http://localhost:8080/tratamiento/{{tratamiento_id}}
 HTTP 404
 
-#VOUCHER-- hay que hacer un cliente y un tratamiento para que funcione bien 
-# CLIENTE
-POST http://localhost:8080/cliente 
-{
-    "nombre" :"valentina",
-    "apellido": "bisogni"
-}
-HTTP 201
-[Asserts]
-jsonpath "$.id" exists
-[Captures]
-cliente_id : jsonpath "$.id"
+#VOUCHER
 
 #TURNO 
 POST http://localhost:8080/tratamiento
@@ -136,12 +140,7 @@ jsonpath "$.hora" == 1
 jsonpath "$.tratamiento_id" == {{tratamiento_id}}
 jsonpath "$.cliente_id" == {{cliente_id}}
 
-#INICIO OTRO CLIENTE PARA ACTUALIZAR, LO DEJO PARA LAS PRUEBAS DE VOUCHER
-POST http://localhost:8080/cliente 
-{
-    "nombre" :"rocio",
-    "apellido": "lopez"
-}
+
 HTTP 201
 [Asserts]
 jsonpath "$.id" exists
