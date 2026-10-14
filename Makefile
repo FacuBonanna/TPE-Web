@@ -8,7 +8,7 @@ all:
 
 test_base: pre-test run-test post-test 
 
-test_api: pre-test hurl-test post-testma
+test_api: pre-test hurl-test post-test
 
 pre-test:
 	docker compose down -v 2>/dev/null || true

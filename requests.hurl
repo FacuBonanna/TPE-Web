@@ -8,7 +8,7 @@ POST http://localhost:8080/cliente
     "deuda": 1000,
     "nro_telefono" : 12345678
 }
-HTTP 200
+HTTP 201
 [Asserts]
 jsonpath "$.id" exists
 [Captures]
@@ -87,7 +87,7 @@ POST http://localhost:8080/cliente
     "nombre" :"valentina",
     "apellido": "bisogni"
 }
-HTTP 200
+HTTP 201
 [Asserts]
 jsonpath "$.id" exists
 [Captures]
@@ -142,7 +142,7 @@ POST http://localhost:8080/cliente
     "nombre" :"rocio",
     "apellido": "lopez"
 }
-HTTP 200
+HTTP 201
 [Asserts]
 jsonpath "$.id" exists
 [Captures]
