@@ -18,9 +18,13 @@ cliente_id : jsonpath "$.id"
 POST http://localhost:8080/cliente 
 {
     "nombre" :"rocio",
-    "apellido": "lopez",
-    
+    "apellido": "lopez"   
 }
+HTTP 201
+[Asserts]
+jsonpath "$.id" exists
+[Captures]
+cliente2_id : jsonpath "$.id"
 
 
 
@@ -49,11 +53,6 @@ HTTP 200
 [Asserts]
 jsonpath "$.deuda" == 1000
 
-DELETE http://localhost:8080/cliente/{{cliente_id}}
-HTTP 204
-
-GET http://localhost:8080/cliente/{{cliente_id}}
-HTTP 404
 
 #TRATAMIENTOS 
 POST http://localhost:8080/tratamiento
@@ -67,6 +66,12 @@ HTTP 201
 jsonpath "$.id" exists
 [Captures]
 tratamiento_id : jsonpath "$.id"
+
+GET http://localhost:8080/tratamiento
+HTTP 200
+[Asserts]
+jsonpath "$" count == 1
+jsonpath "$[0].id" == {{tratamiento_id}}
 
 GET http://localhost:8080/tratamiento/{{tratamiento_id}}
 HTTP 200
@@ -89,11 +94,6 @@ HTTP 200
 [Asserts]
 jsonpath "$.costo" == 15000
 
-DELETE http://localhost:8080/tratamiento/{{tratamiento_id}}
-HTTP 204
-
-GET http://localhost:8080/tratamiento/{{tratamiento_id}}
-HTTP 404
 
 #VOUCHER
 
@@ -140,12 +140,6 @@ jsonpath "$.hora" == 1
 jsonpath "$.tratamiento_id" == {{tratamiento_id}}
 jsonpath "$.cliente_id" == {{cliente_id}}
 
-
-HTTP 201
-[Asserts]
-jsonpath "$.id" exists
-[Captures]
-cliente2_id : jsonpath "$.id"
 
 PUT http://localhost:8080/turno
 {
@@ -213,4 +207,18 @@ DELETE http://localhost:8080/voucher/{{voucher_id}}
 HTTP 204
 
 GET http://localhost:8080/voucher/{{voucher_id}}
+HTTP 404
+
+# elimino el tartamiento
+DELETE http://localhost:8080/tratamiento/{{tratamiento_id}}
+HTTP 204
+
+GET http://localhost:8080/tratamiento/{{tratamiento_id}}
+HTTP 404
+
+#elimino cliente 1
+DELETE http://localhost:8080/cliente/{{cliente_id}}
+HTTP 204
+
+GET http://localhost:8080/cliente/{{cliente_id}}
 HTTP 404

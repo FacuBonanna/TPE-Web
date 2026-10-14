@@ -70,6 +70,15 @@ func createTratamiento(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func getTratamientos(w http.ResponseWriter, r *http.Request) {
+	tratamientos, err := queries.ListTreatments(ctx)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+	json.NewEncoder(w).Encode(tratamientos)
+}
+
 func tratamientoHandler(w http.ResponseWriter, r *http.Request) {
 	parts := strings.Split(r.URL.Path, "/")
 	if len(parts) != 3 {
@@ -99,6 +108,8 @@ func tratamientosHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPost:
 		createTratamiento(w, r)
+	case http.MethodGet:
+		getTratamientos(w, r)
 	default:
 		http.Error(w, "Method not allowed",
 			http.StatusMethodNotAllowed)
