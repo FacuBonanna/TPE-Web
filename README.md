@@ -1,4 +1,5 @@
-# PROYECTO ESPECIAL PROGRAMACIÓN WEB. Etapa 3: Exponiendo la lógica como API. 
+# PROYECTO ESPECIAL PROGRAMACIÓN WEB. 
+# Etapa 3: Exponiendo la lógica como API. 
 
 EL objetivo de esta entrega es construir una API REST para gestionar las entidades de nuestra aplicación para poder conectar la lógica de negocio con la
 capa de datos.
@@ -40,19 +41,21 @@ nota: si hay algún problema con los comandos tipo 'make', se puede pedir ayuda 
  - Make
  - PostgreSQL
  - Sqlc
+ - Hurl 
 
 ## Documetos de interés para esta entrega:
 
 A pesar de que todos las partes del código son importantes para que este proyecto pueda funcionar, estos son los elementos que tuvimos que modificar para poder concretar la entrega: 
 
-- resquests.hurl: ///
-- Makefile:
-- Carpeta src: 
+- resquests.hurl: Suite de tests de integración para probar la API REST, escrita en Hurl. 
+- Makefile: Dentro del archivo dividimos los tests en dos tipos: test_base (que testea la base de datos) y test_api (que corresponde a esta etrega y solamente prueba la API REST y los endpoints).
+- Carpeta src: Cada una de las entidades tiene dentro sus funcones handlers, que son los que gestionan el ciclo de vida de la entidad y los que separan la lógica de negocio
+  de las operaciones de la base de datos.
 
 
 ## Aclaraciones
 
--Los tests ya están integrados en la lógica del proyecto, se recomienda no remover el archivo requests.hurl del directorio que contiene el archivo. ya que de otra forma el make test no funcionará
+-Los tests ya están integrados en la lógica del proyecto, se recomienda no remover el archivo requests.hurl del directorio que contiene el archivo. ya que de otra forma el make test no funcionará.
 
 
 
