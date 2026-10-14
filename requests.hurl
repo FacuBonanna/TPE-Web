@@ -47,7 +47,7 @@ POST http://localhost:8080/tratamiento
     "descripcion_corta" : "masaje relajante",
     "costo" : 12000
 }
-HTTP 200
+HTTP 201
 [Asserts]
 jsonpath "$.id" exists
 [Captures]
@@ -100,7 +100,7 @@ POST http://localhost:8080/tratamiento
     "descripcion_corta" : "masaje relajante",
     "costo" : 12000
 }
-HTTP 200
+HTTP 201
 [Asserts]
 jsonpath "$.id" exists
 [Captures]
@@ -114,7 +114,7 @@ POST http://localhost:8080/turno
     "cliente_id" : {{cliente_id}}
 
 }
-HTTP 200
+HTTP 201
 [Asserts]
 jsonpath "$.fecha" == "2026-10-11"
 jsonpath "$.hora" == 1
@@ -183,7 +183,7 @@ POST http://localhost:8080/voucher
     "tratamiento_id": {{tratamiento_id}},
     "cliente_id" : {{cliente2_id}}
 }
-HTTP 200
+HTTP 201
 [Asserts]
 jsonpath "$.id_voucher" exists
 [Captures]
