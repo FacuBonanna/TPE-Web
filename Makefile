@@ -6,7 +6,9 @@ CONTAINER_NAME := postgres-db
 all: 
 	build
 
-test: pre-test run-test hurl-test post-test 
+test_base: pre-test run-test post-test 
+
+test_api: pre-test hurl-test post-testma
 
 pre-test:
 	docker compose down -v 2>/dev/null || true
