@@ -17,7 +17,7 @@ pre-test:
 	@sleep 5
 	docker compose up -d --force-recreate api 
 	@echo "[PRE-TEST] Inyectando esquema SQL"
-	docker exec -i $(CONTAINER_NAME) psql -U postgres -d apirest < ./db/schema/schema.sql && echo "hola"
+	docker exec -i $(CONTAINER_NAME) psql -U postgres -d apirest < ./db/schema/schema.sql 
 
 run-test:
 	@echo "[RUN-TEST] ejecutando pruebas"

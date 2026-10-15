@@ -96,17 +96,6 @@ jsonpath "$.costo" == 15000
 
 
 #TURNO 
-POST http://localhost:8080/tratamiento
-{
-    "nombre" : "Masaje",
-    "descripcion_corta" : "masaje relajante",
-    "costo" : 12000
-}
-HTTP 201
-[Asserts]
-jsonpath "$.id" exists
-[Captures]
-tratamiento_id : jsonpath "$.id"
 
 POST http://localhost:8080/turno
 {
@@ -125,6 +114,14 @@ jsonpath "$.cliente_id" == {{cliente_id}}
 [Captures]
 turno_fecha : jsonpath "$.fecha"
 turno_hora : jsonpath "$.hora"
+
+GET http://localhost:8080/turno
+HTTP 200
+[Asserts]
+jsonpath "$" count == 1
+jsonpath "$[0].fecha" == {{turno_fecha}}
+jsonpath "$[0].hora" == {{turno_hora}}
+
 
 GET http://localhost:8080/turno/2026-10-11&1
 HTTP 200
@@ -211,4 +208,12 @@ DELETE http://localhost:8080/cliente/{{cliente_id}}
 HTTP 204
 
 GET http://localhost:8080/cliente/{{cliente_id}}
+HTTP 404
+
+#elimino cliente 2 
+#elimino cliente 1
+DELETE http://localhost:8080/cliente/{{cliente2_id}}
+HTTP 204
+
+GET http://localhost:8080/cliente/{{cliente2_id}}
 HTTP 404
