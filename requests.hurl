@@ -126,11 +126,7 @@ jsonpath "$.cliente_id" == {{cliente_id}}
 turno_fecha : jsonpath "$.fecha"
 turno_hora : jsonpath "$.hora"
 
-GET http://localhost:8080/turno
-{
-    "fecha" : "2026-10-11",
-    "hora" : 1
-}
+GET http://localhost:8080/turno/2026-10-11&1
 HTTP 200
 [Asserts]
 jsonpath "$.fecha" == "2026-10-11"
@@ -139,10 +135,8 @@ jsonpath "$.tratamiento_id" == {{tratamiento_id}}
 jsonpath "$.cliente_id" == {{cliente_id}}
 
 
-PUT http://localhost:8080/turno
+PUT http://localhost:8080/turno/2026-10-11&1
 {
-    "fecha" : "2026-10-11",
-    "hora" : 1,
     "tratamiento_id" : {{tratamiento_id}},
     "cliente_id" : {{cliente2_id}}
 }
@@ -153,18 +147,10 @@ jsonpath "$.hora" == 1
 jsonpath "$.tratamiento_id" == {{tratamiento_id}} 
 jsonpath "$.cliente_id" == {{cliente2_id}}
 
-DELETE http://localhost:8080/turno
-{
-    "fecha" : "2026-10-11",
-    "hora" : 1
-}
+DELETE http://localhost:8080/turno/2026-10-11&1
 HTTP 204
 
-GET http://localhost:8080/turno
-{
-    "fecha" : "2026-10-11",
-    "hora" : 1
-}
+GET http://localhost:8080/turno/2026-10-11&1
 HTTP 404
 
 # VOUCHER

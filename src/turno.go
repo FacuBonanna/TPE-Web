@@ -57,7 +57,7 @@ func createturno(w http.ResponseWriter, r *http.Request) {
 	var nuevoturno sqlc.Turno
 	err := json.NewDecoder(r.Body).Decode(&nuevoturno)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadGateway)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	paramsCreacion := sqlc.CreateTurnoParams{Fecha: nuevoturno.Fecha, Hora: nuevoturno.Hora, TratamientoID: nuevoturno.TratamientoID, ClienteID: nuevoturno.ClienteID}
