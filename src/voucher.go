@@ -65,6 +65,16 @@ func updateVoucher(w http.ResponseWriter, r *http.Request, id int) {
 	json.NewEncoder(w).Encode(updatedVoucher)
 }
 
+func getVouchers(w http.ResponseWriter, r *http.Request) {
+	vouchers, err := queries.ListVouchers(ctx)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+	json.NewEncoder(w).Encode(vouchers)
+}
+
 func voucherHandler(w http.ResponseWriter, r *http.Request) {
 	parts := strings.Split(r.URL.Path, "/")
 	if len(parts) != 3 {
@@ -92,6 +102,8 @@ func voucherHandler(w http.ResponseWriter, r *http.Request) {
 
 func vouchersHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
+	case http.MethodGet:
+		getVouchers(w, r)
 	case http.MethodPost:
 		createVoucher(w, r)
 	default:

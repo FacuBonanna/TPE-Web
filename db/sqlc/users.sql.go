@@ -354,6 +354,40 @@ func (q *Queries) ListUsers(ctx context.Context) ([]Cliente, error) {
 	return items, nil
 }
 
+const listVouchers = `-- name: ListVouchers :many
+SELECT id_voucher, regalador_id, tratamiento_id, cliente_id
+FROM voucher
+ORDER BY id_voucher
+`
+
+func (q *Queries) ListVouchers(ctx context.Context) ([]Voucher, error) {
+	rows, err := q.db.QueryContext(ctx, listVouchers)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Voucher
+	for rows.Next() {
+		var i Voucher
+		if err := rows.Scan(
+			&i.IDVoucher,
+			&i.RegaladorID,
+			&i.TratamientoID,
+			&i.ClienteID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateTreatment = `-- name: UpdateTreatment :one
 UPDATE tratamiento
 SET nombre = $2, descripcion_corta = $3, costo = $4

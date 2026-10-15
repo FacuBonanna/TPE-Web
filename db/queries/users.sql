@@ -74,6 +74,11 @@ RETURNING id_voucher, regalador_id, tratamiento_id, cliente_id;
 DELETE FROM voucher
 WHERE id_voucher = $1;
 
+-- name: ListVouchers :many
+SELECT id_voucher, regalador_id, tratamiento_id, cliente_id
+FROM voucher
+ORDER BY id_voucher;
+
 --TABLA TURNO
 
 -- name: GetTurno :one

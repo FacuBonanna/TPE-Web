@@ -95,8 +95,6 @@ HTTP 200
 jsonpath "$.costo" == 15000
 
 
-#VOUCHER
-
 #TURNO 
 POST http://localhost:8080/tratamiento
 {
@@ -181,6 +179,12 @@ HTTP 201
 jsonpath "$.id_voucher" exists
 [Captures]
 voucher_id : jsonpath "$.id_voucher"
+
+GET http://localhost:8080/voucher
+HTTP 200
+[Asserts]
+jsonpath "$" count == 1
+jsonpath "$[0].id_voucher" == {{voucher_id}}
 
 GET http://localhost:8080/voucher/{{voucher_id}}
 HTTP 200
