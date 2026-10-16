@@ -45,7 +45,8 @@ PUT http://localhost:8080/cliente/{{cliente_id}}
 {
     "nombre": "valentina",
     "apellido": "bisogni",
-    "deuda" : 1000
+    "deuda" : 1000,
+    "nro_telefono" : 12345678
 }
 HTTP 200
 

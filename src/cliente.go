@@ -40,6 +40,11 @@ func updateCliente(w http.ResponseWriter, r *http.Request, id int) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	err = validarCliente(clienteToUpdate)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	paramsClienteToUpdate := sqlc.UpdateUserParams{ID: int64(id), Nombre: clienteToUpdate.Nombre, Apellido: clienteToUpdate.Apellido, Deuda: clienteToUpdate.Deuda, NroTelefono: clienteToUpdate.NroTelefono}
 	updatedCliente, err := queries.UpdateUser(ctx, paramsClienteToUpdate)
 
