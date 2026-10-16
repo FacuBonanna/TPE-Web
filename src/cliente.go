@@ -50,9 +50,36 @@ func updateCliente(w http.ResponseWriter, r *http.Request, id int) {
 	json.NewEncoder(w).Encode(updatedCliente)
 }
 
+func validarCliente(cliente sqlc.Cliente) error {
+	apValido := cliente.Apellido != ""
+	nomValido := cliente.Nombre != ""
+	nroValido := cliente.NroTelefono > 0
+	if !apValido || !nomValido || !nroValido {
+		textoError := ""
+		if !apValido {
+			textoError += "El apellido ingresado no puede ser vacío.\n"
+		}
+		if !nomValido {
+			textoError += "El nombre ingresado no puede ser vacío.\n"
+		}
+		if !nroValido {
+			textoError += "El número de teléfono es inválido.\n"
+		}
+
+		return fmt.Errorf(textoError)
+	}
+	return nil
+}
+
 func createCliente(w http.ResponseWriter, r *http.Request) {
 	var nuevoCliente sqlc.Cliente
 	err := json.NewDecoder(r.Body).Decode(&nuevoCliente)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		fmt.Print(err.Error())
+		return
+	}
+	validarCliente(nuevoCliente)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		fmt.Print(err.Error())

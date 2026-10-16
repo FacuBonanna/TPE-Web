@@ -18,7 +18,8 @@ cliente_id : jsonpath "$.id"
 POST http://localhost:8080/cliente 
 {
     "nombre" :"rocio",
-    "apellido": "lopez"   
+    "apellido": "lopez",
+    "nro_telefono": 2494
 }
 HTTP 201
 [Asserts]
