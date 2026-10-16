@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"fmt"
 
 	"github.com/jackc/pgx/v5/pgtype"
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -35,6 +36,23 @@ func deleteturno(w http.ResponseWriter, r *http.Request, fecha pgtype.Date, hora
 	w.WriteHeader(http.StatusNoContent)
 }
 
+func validarTurno(turno sqlc.Turno) error {
+	trValido := turno.TratamientoID > 0
+	clValido := turno.ClienteID > 0
+	if !trValido || !clValido {
+		textoError := ""
+		if !trValido {
+			textoError += "El tratamiento ingresado no es válido.\n"
+		}
+		if !clValido {
+			textoError += "El cliente ingresado no es válido.\n"
+		}
+
+		return fmt.Errorf(textoError)
+	}
+	return nil
+}
+
 func updateturno(w http.ResponseWriter, r *http.Request, fecha pgtype.Date, hora int) {
 	var turnoToUpdate sqlc.Turno
 	err := json.NewDecoder(r.Body).Decode(&turnoToUpdate)
@@ -42,7 +60,11 @@ func updateturno(w http.ResponseWriter, r *http.Request, fecha pgtype.Date, hora
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
+	validarTurno(turnoToUpdate)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	updateParams := sqlc.UpdateTurnoParams{Fecha: fecha, Hora: int32(hora), TratamientoID: turnoToUpdate.TratamientoID, ClienteID: turnoToUpdate.ClienteID}
 	UpdatedTurno, err := queries.UpdateTurno(ctx, updateParams)
 
@@ -56,6 +78,11 @@ func updateturno(w http.ResponseWriter, r *http.Request, fecha pgtype.Date, hora
 func createturno(w http.ResponseWriter, r *http.Request) {
 	var nuevoturno sqlc.Turno
 	err := json.NewDecoder(r.Body).Decode(&nuevoturno)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	validarTurno(nuevoturno)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

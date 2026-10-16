@@ -14,6 +14,10 @@ jsonpath "$.id" exists
 [Captures]
 cliente_id : jsonpath "$.id"
 
+#caso de create sin informacion necesaria
+POST http://localhost:8080/cliente 
+HTTP 400
+
 
 POST http://localhost:8080/cliente 
 {
@@ -116,6 +120,10 @@ jsonpath "$.cliente_id" == {{cliente_id}}
 [Captures]
 turno_fecha : jsonpath "$.fecha"
 turno_hora : jsonpath "$.hora"
+
+#caso de querer hacer un create de turno sin la info necesaria
+POST http://localhost:8080/turno
+HTTP 400
 
 GET http://localhost:8080/turno
 HTTP 200

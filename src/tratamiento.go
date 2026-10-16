@@ -72,6 +72,7 @@ func createTratamiento(w http.ResponseWriter, r *http.Request) {
 
 func getTratamientos(w http.ResponseWriter, r *http.Request) {
 	tratamientos, err := queries.ListTreatments(ctx)
+
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
