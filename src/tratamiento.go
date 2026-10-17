@@ -32,10 +32,32 @@ func deleteTratamiento(w http.ResponseWriter, r *http.Request, id int) {
 	}
 	w.WriteHeader(http.StatusNoContent)
 }
+func validarTratamiento(tratamiento sqlc.Tratamiento) error {
+	nomValido := tratamiento.Nombre != ""
+	costValido := tratamiento.Costo > 0
+	if !nomValido || !costValido {
+		textoError := ""
+		if !nomValido {
+			textoError += "El tratamiento debe tener nombre.\n"
+		}
+		if !costValido {
+			textoError += "El tratamiento debe costar algo.\n"
+		}
+
+		return fmt.Errorf(textoError)
+	}
+	return nil
+}
+
 
 func updateTratamiento(w http.ResponseWriter, r *http.Request, id int) {
 	var tratamientoToUpdate sqlc.Tratamiento
 	err := json.NewDecoder(r.Body).Decode(&tratamientoToUpdate)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	err = validarTratamiento(tratamientoToUpdate)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -53,6 +75,12 @@ func updateTratamiento(w http.ResponseWriter, r *http.Request, id int) {
 func createTratamiento(w http.ResponseWriter, r *http.Request) {
 	var nuevoTratamiento sqlc.Tratamiento
 	err := json.NewDecoder(r.Body).Decode(&nuevoTratamiento)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		fmt.Print(err.Error())
+		return
+	}
+	err = validarTratamiento(nuevoTratamiento)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		fmt.Print(err.Error())

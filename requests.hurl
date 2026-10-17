@@ -100,6 +100,29 @@ HTTP 200
 [Asserts]
 jsonpath "$.costo" == 15000
 
+#caso de create sin nombre ni costo
+POST http://localhost:8080/tratamiento
+{
+    "descripcion_corta" : "sin nombre ni costo"
+}
+HTTP 400
+
+#caso de create sin nombre
+POST http://localhost:8080/tratamiento
+{
+    "descripcion_corta" : "sin nombre",
+    "costo" : 5000
+}
+HTTP 400
+
+#caso de create sin costo
+POST http://localhost:8080/tratamiento
+{
+    "nombre" : "Sin costo",
+    "descripcion_corta" : "sin costo"
+}
+HTTP 400
+
 
 #TURNO 
 
