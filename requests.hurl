@@ -100,26 +100,26 @@ HTTP 200
 [Asserts]
 jsonpath "$.costo" == 15000
 
-#caso de create sin nombre ni costo
+#create sin nombre ni costo
 POST http://localhost:8080/tratamiento
 {
-    "descripcion_corta" : "sin nombre ni costo"
+    "descripcion_corta" : "masaje atleta"
 }
 HTTP 400
 
-#caso de create sin nombre
+#create sin nombre
 POST http://localhost:8080/tratamiento
 {
-    "descripcion_corta" : "sin nombre",
+    "descripcion_corta" : "masaje atleta",
     "costo" : 5000
 }
 HTTP 400
 
-#caso de create sin costo
+#create sin costo
 POST http://localhost:8080/tratamiento
 {
-    "nombre" : "Sin costo",
-    "descripcion_corta" : "sin costo"
+    "nombre" : "masaje",
+    "descripcion_corta" : "masaje atleta"
 }
 HTTP 400
 
