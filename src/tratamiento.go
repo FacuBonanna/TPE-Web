@@ -49,7 +49,6 @@ func validarTratamiento(tratamiento sqlc.Tratamiento) error {
 	return nil
 }
 
-
 func updateTratamiento(w http.ResponseWriter, r *http.Request, id int) {
 	var tratamientoToUpdate sqlc.Tratamiento
 	err := json.NewDecoder(r.Body).Decode(&tratamientoToUpdate)

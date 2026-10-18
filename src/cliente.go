@@ -84,7 +84,7 @@ func createCliente(w http.ResponseWriter, r *http.Request) {
 		fmt.Print(err.Error())
 		return
 	}
-	validarCliente(nuevoCliente)
+	err = validarCliente(nuevoCliente)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		fmt.Print(err.Error())

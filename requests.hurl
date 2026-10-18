@@ -14,10 +14,6 @@ jsonpath "$.id" exists
 [Captures]
 cliente_id : jsonpath "$.id"
 
-#caso de create sin informacion necesaria
-POST http://localhost:8080/cliente 
-HTTP 400
-
 
 POST http://localhost:8080/cliente 
 {
@@ -58,6 +54,34 @@ GET http://localhost:8080/cliente/{{cliente_id}}
 HTTP 200
 [Asserts]
 jsonpath "$.deuda" == 1000
+
+#Casos de Create sin información necesaria
+
+#   Sin número de telefono
+POST http://localhost:8080/cliente 
+{
+    "nombre" :"rocio",
+    "apellido": "lopez"
+}
+HTTP 400
+
+#   Sin apellido
+POST http://localhost:8080/cliente 
+{
+    "nombre" :"rocio",
+    "nro_telefono": 12345
+
+}
+HTTP 400
+
+#   Sin nombre
+POST http://localhost:8080/cliente 
+{
+    "apellido" :"Lopez",
+    "nro_telefono": 12345
+
+}
+HTTP 400
 
 
 #TRATAMIENTOS 
@@ -129,7 +153,7 @@ HTTP 400
 POST http://localhost:8080/turno
 {
     "fecha" : "2026-10-11",
-    "hora" : 1,
+    "hora" : 17,
     "tratamiento_id" : {{tratamiento_id}},
     "cliente_id" : {{cliente_id}}
 
@@ -137,16 +161,14 @@ POST http://localhost:8080/turno
 HTTP 201
 [Asserts]
 jsonpath "$.fecha" == "2026-10-11"
-jsonpath "$.hora" == 1
+jsonpath "$.hora" == 17
 jsonpath "$.tratamiento_id" == {{tratamiento_id}}
 jsonpath "$.cliente_id" == {{cliente_id}}
 [Captures]
 turno_fecha : jsonpath "$.fecha"
 turno_hora : jsonpath "$.hora"
 
-#caso de querer hacer un create de turno sin la info necesaria
-POST http://localhost:8080/turno
-HTTP 400
+
 
 GET http://localhost:8080/turno
 HTTP 200
@@ -156,16 +178,16 @@ jsonpath "$[0].fecha" == {{turno_fecha}}
 jsonpath "$[0].hora" == {{turno_hora}}
 
 
-GET http://localhost:8080/turno/2026-10-11&1
+GET http://localhost:8080/turno/2026-10-11&17
 HTTP 200
 [Asserts]
 jsonpath "$.fecha" == "2026-10-11"
-jsonpath "$.hora" == 1
+jsonpath "$.hora" == 17
 jsonpath "$.tratamiento_id" == {{tratamiento_id}}
 jsonpath "$.cliente_id" == {{cliente_id}}
 
 
-PUT http://localhost:8080/turno/2026-10-11&1
+PUT http://localhost:8080/turno/2026-10-11&17
 {
     "tratamiento_id" : {{tratamiento_id}},
     "cliente_id" : {{cliente2_id}}
@@ -173,15 +195,41 @@ PUT http://localhost:8080/turno/2026-10-11&1
 HTTP 200
 [Asserts]
 jsonpath "$.fecha" == "2026-10-11" 
-jsonpath "$.hora" == 1 
+jsonpath "$.hora" == 17
 jsonpath "$.tratamiento_id" == {{tratamiento_id}} 
 jsonpath "$.cliente_id" == {{cliente2_id}}
 
-DELETE http://localhost:8080/turno/2026-10-11&1
+DELETE http://localhost:8080/turno/2026-10-11&17
 HTTP 204
 
-GET http://localhost:8080/turno/2026-10-11&1
+GET http://localhost:8080/turno/2026-10-11&17
 HTTP 404
+
+# Turnos creados con información inválida
+
+#   Sin información
+POST http://localhost:8080/turno
+HTTP 400
+
+#   Con hora negativa
+POST http://localhost:8080/turno
+{
+    "fecha" : "2026-10-11",
+    "hora" : -1,
+    "tratamiento_id" : {{tratamiento_id}},
+    "cliente_id" : {{cliente_id}}
+}
+HTTP 400
+
+#   Con hora pasando los horarios permitidos
+POST http://localhost:8080/turno
+{
+    "fecha" : "2026-10-11",
+    "hora" : 21,
+    "tratamiento_id" : {{tratamiento_id}},
+    "cliente_id" : {{cliente_id}}
+}
+HTTP 400
 
 # VOUCHER
 POST http://localhost:8080/voucher

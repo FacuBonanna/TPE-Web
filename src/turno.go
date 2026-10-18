@@ -3,10 +3,10 @@ package main
 import (
 	sqlc "TPE/db/sqlc"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
-	"fmt"
 
 	"github.com/jackc/pgx/v5/pgtype"
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -36,16 +36,26 @@ func deleteturno(w http.ResponseWriter, r *http.Request, fecha pgtype.Date, hora
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func validarTurno(turno sqlc.Turno) error {
+func validarTurno(turno sqlc.Turno, esCreacion bool) error {
 	trValido := turno.TratamientoID > 0
 	clValido := turno.ClienteID > 0
-	if !trValido || !clValido {
+	var horaValida bool
+	if esCreacion {
+		horaValida = turno.Hora < 20 && turno.Hora > 7
+	} else {
+		horaValida = true
+	}
+
+	if !trValido || !clValido || !horaValida {
 		textoError := ""
 		if !trValido {
 			textoError += "El tratamiento ingresado no es válido.\n"
 		}
 		if !clValido {
 			textoError += "El cliente ingresado no es válido.\n"
+		}
+		if !horaValida {
+			textoError += "Solo se admiten turnos entre las 8hs y las 19hs.\n"
 		}
 
 		return fmt.Errorf(textoError)
@@ -60,7 +70,7 @@ func updateturno(w http.ResponseWriter, r *http.Request, fecha pgtype.Date, hora
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	validarTurno(turnoToUpdate)
+	err = validarTurno(turnoToUpdate, false)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -82,7 +92,7 @@ func createturno(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	validarTurno(nuevoturno)
+	err = validarTurno(nuevoturno, true)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
