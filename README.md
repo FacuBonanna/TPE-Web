@@ -22,7 +22,7 @@ capa de datos.
 ```
   git switch tp3
 ```
-3- Para la API REST, ejecutar el comando:
+3- Para probar la API REST, ejecutar el comando:
 ```
   make test_api
 ```
