@@ -47,7 +47,7 @@ nota: si hay algún problema con los comandos tipo 'make', se puede pedir ayuda 
 
 A pesar de que todos las partes del código son importantes para que este proyecto pueda funcionar, estos son los elementos que tuvimos que modificar para poder concretar la entrega: 
 
-- resquests.hurl: Suite de tests de integración para probar la API REST, escrita en Hurl. 
+- resquests.hurl: Suite de tests de integración para probar la API REST (en especial las reglas de negocio relacionadas a la inserción y actualización de las entidades), escrita en Hurl.
 - Makefile: Dentro del archivo dividimos los tests en dos tipos: test_base (que testea la base de datos) y test_api (que corresponde a esta etrega y solamente prueba la API REST y los endpoints).
 - Carpeta src: Cada una de las entidades tiene dentro sus funcones handlers, que son los que gestionan el ciclo de vida de la entidad y los que separan la lógica de negocio
   de las operaciones de la base de datos.
