@@ -8,42 +8,64 @@
     padding: 10px;
 }
 
+.montserrat-<uniquifier> {
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: <weight>;
+  font-style: normal;
+}
+
 body{
-    font-family: Arial, sans-serif;
+    font-family: Montserrat, sans-serif;
     margin: 5%;
     padding: 5%;
-    background-color: #b2e9f7;
+    background-color: #14aaa3;
     border-radius: 80px;
 }
 
 .menu {
-    background-color:#f2f2f2;
-    padding: 10px;
+    background-color: #2ed7ddad;
+    padding: 30px;
     text-align: center;
     margin-bottom: 20px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    color: #ccc;
 }
 
-.clientes{
+.item-flex {
     background-color: rgba(255, 255, 255, 0.4);
-    border-radius: 50px;
+     padding: 20px;
+    border-radius: 15px;
     margin-bottom: 20px;
+    text-align: center;
 
 }
 
-.tratamientos{
-    background-color: rgba(255, 255, 255, 0.4);
-    border-radius: 50px;
+.header {
+    background-image: url('fondo_glam.webp');
+    background-size: cover;
+    padding: 30px;
+    text-align: center;
+    border-radius: 10px;
     margin-bottom: 20px;
+    color: #f5e8e8;
 }
 
-.vouchers{
-    background-color: rgba(255, 255, 255, 0.4);
-    border-radius: 50px;
-    margin-bottom: 20px;
+.header_letras {
+    margin: 0;
+    color: #023d47;
+    background-color: #2ed7ddad;
+    border-radius: 10px;
+    padding: 1px;
 }
 
-.turnos{
+.contenedor-flex {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
     background-color: rgba(255, 255, 255, 0.4);
-    border-radius: 50px;
-    margin-bottom: 20px;
+    front-size: 30px;
 }

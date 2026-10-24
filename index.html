@@ -5,169 +5,177 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>GLAM estetica integral</title>
         <link rel="stylesheet" href="styles.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
     </head>
     <body>
-        <h1>GLAM Estetica Integral</h1>
-        <p>Bienvenido a GLAM Estetica Integral</p>
+        <div class="header">
+            <div class="header_letras">
+            <h1 >GLAM Estetica Integral</h1>
+            </div>
+        </div>
 
          <nav class="menu">
-        <a href="#clientes">Clientes</a>
-        <a href="#tratamientos">Tratamientos</a>
-        <a href="#vouchers">Vouchers</a>
-        <a href="#turnos">Turnos</a>
+        <a href="#clientes" style="color: #02484b;">Clientes</a>
+        <a href="#tratamientos" style="color: #02484b;">Tratamientos</a>
+        <a href="#vouchers" style="color: #02484b;">Vouchers</a>
+        <a href="#turnos" style="color: #02484b;">Turnos</a>
     </nav>
 
-        <div id="clientes" class="contenedor clientes" Clientes>
+    <div class="contenedor-flex">
+        <div id="clientes" class="item-flex" Clientes>
         <h2>Clientes <form action="/cliente"
             method="GET">
              <button type="submit">Mostrar clientes</button></form> </h2>
         
+        
         <h3>Crear cliente</h3>
-
 
         <form action="/logged"
             method="POST">
-             <label>Nombre:</label><input type="text" name="name" style=" margin-bottom: 3px;"><br> 
-             <label>Apellido:</label><input type="text" name="surname" style=" margin-bottom: 3px;"><br> 
-             <label>Deuda:</label><input type="number" name="debt" style="border-radius: 8px; margin-bottom: 3px;"><br> 
-             <label>Nro Telefono:</label> <input type="number" name="phone" style="border-radius: 8px; margin-bottom: 3px;"><br> 
-             <button type="submit" style="border-radius: 8px; margin-top: 10px;">Crear Cliente</button></form>
+             <input type="text" name="name" style=" margin-bottom: 5px;" border-radius: 5px; placeholder="Nombre"><br> 
+             <input type="text" name="surname" style=" margin-bottom: 5px;" placeholder="Apellido"><br> 
+             <input type="number" name="debt" style=" margin-bottom: 5px;" placeholder="Deuda"><br> 
+             <input type="number" name="phone" style=" margin-bottom: 5px;" placeholder="Número de teléfono"><br> 
+             <button type="submit" style="border-radius: 5px; margin-top: 10px;">Crear Cliente</button></form>
 
         <h3>Buscar cliente</h3>
         <form action="/search"
             method="GET">
-             <label>ID:</label><input type="number" name="id_cliente" style="border-radius: 8px; margin-bottom: 3px;"><br> 
-             <button type="submit" style="border-radius: 8px; margin-top: 10px;">Buscar Cliente</button></form>
+             <input type="number" name="id_cliente" style=" margin-bottom: 5px;" placeholder="ID del cliente"><br> 
+             <button type="submit" style="border-radius: 5px; margin-top: 10px;">Buscar Cliente</button></form>
 
         <h3>Actualizar cliente</h3>
         <form action="/update"
             method="PUT">
-             <label>ID:</label><input type="number" name="id_cliente" style="border-radius: 8px; margin-bottom: 3px;"><br> 
-             <label>Nombre:</label><input type="text" name="name" style="border-radius: 8px; margin-bottom: 3px;"><br> 
-             <label>Apellido:</label><input type="text" name="surname" style="border-radius: 8px; margin-bottom: 3px;"><br> 
-             <label>Deuda:</label><input type="number" name="debt" style="border-radius: 8px; margin-bottom: 3px;"><br> 
-             <label>Nro Telefono:</label> <input type="number" name="phone" style="border-radius: 8px; margin-bottom: 3px;"><br> 
-             <button type="submit" style="border-radius: 8px; margin-top: 10px;">Actualizar Cliente</button></form>
+             <input type="number" name="id_cliente" style=" margin-bottom: 5px;" placeholder="ID del cliente"><br> 
+             <input type="text" name="name" style=" margin-bottom: 5px;" placeholder="Nombre"><br> 
+             <input type="text" name="surname" style=" margin-bottom: 5px;" placeholder="Apellido"><br> 
+             <input type="number" name="debt" style=" margin-bottom: 5px;" placeholder="Deuda"><br> 
+             <input type="number" name="phone" style=" margin-bottom: 5px;" placeholder="Número de teléfono"><br> 
+             <button type="submit" style="border-radius: 5px; margin-top: 10px;">Actualizar Cliente</button></form>
 
         <h3>Eliminar cliente</h3>
         <form action="/delete"
             method="DELETE">
-             <label>ID:</label><input type="number" name="id_cliente" style="border-radius: 5px; margin-bottom: 3px;"><br> 
+             <input type="number" name="id_cliente" style=" margin-bottom: 5px;" placeholder="ID del cliente"><br> 
              <button type="submit" style="border-radius: 5px; margin-top: 10px;">Eliminar Cliente</button></form> 
 
         </div>
 
-        <div id="tratamientos" class="contenedor tratamientos" Tratamientos>
+        <div id="tratamientos" class="item-flex" Tratamientos>
         <h2>Tratamientos <form action="/tratamiento"
             method="GET">
-             <button type="submit" style="border-radius: 8px; margin-top: 10px;">Mostrar tratamientos</button></form></h2>
+             <button type="submit" style="border-radius: 5px; margin-top: 10px;">Mostrar tratamientos</button></form></h2>
         <h3>Crear Tratamiento</h3>
         <form action="/treatment"
             method="POST">
-             <label>Nombre:</label><input type="text" name="name_treatment" style="border-radius: 8px; margin-bottom: 3px;"><br> 
-             <label>Descripción:</label><input type="text" name="description" style="border-radius: 8px; margin-bottom: 3px;"><br> 
-             <label>Costo:</label><input type="number" name="price" style="border-radius: 8px; margin-bottom: 3px;"><br> 
-             <button type="submit" style="border-radius: 8px; margin-top: 10px;">Crear Tratamiento</button></form>
+             <input type="text" name="name_treatment" style=" margin-bottom: 5px;" placeholder= "Nombre"><br> 
+             <input type="text" name="description" style=" margin-bottom: 5px;" placeholder="Descripción"><br> 
+             <input type="number" name="price" style=" margin-bottom: 5px;" placeholder="Costo"><br> 
+             <button type="submit" style="border-radius: 5px; margin-top: 10px;">Crear Tratamiento</button></form>
 
         <h3>Buscar Tratamiento</h3>
         <form action="/search-treatment"
             method="GET">
-             <label>ID:</label><input type="number" name="id_treatment" style="border-radius: 8px; margin-bottom: 3px;"><br> 
-             <button type="submit" style="border-radius: 8px; margin-top: 10px;">Buscar Tratamiento</button></form>
+             <input type="number" name="id_treatment" style="margin-bottom: 5px;" placeholder="ID del tratamiento"><br> 
+             <button type="submit" style="border-radius: 5px; margin-top: 10px;">Buscar Tratamiento</button></form>
         
         <h3>Actualizar Tratamiento</h3>
         <form action="/update-treatment"
             method="PUT">
-             <label>ID:</label><input type="number" name="id_treatment" style="border-radius: 8px; margin-bottom: 3px;"><br> 
-             <label>Nombre:</label><input type="text" name="name_treatment" style="border-radius: 8px; margin-bottom: 3px;"><br> 
-             <label>Descripción:</label><input type="text" name="description" style="border-radius: 8px; margin-bottom: 3px;"><br> 
-             <label>Costo:</label><input type="number" name="price" style="border-radius: 8px; margin-bottom: 3px;"><br> 
-             <button type="submit" style="border-radius: 8px; margin-top: 10px;">Actualizar Tratamiento</button></form>
+             <input type="number" name="id_treatment" style="margin-bottom: 5px;" placeholder="ID del tratamiento"><br> 
+             <input type="text" name="name_treatment" style="margin-bottom: 5px;" placeholder="Nombre"><br> 
+             <input type="text" name="description" style="margin-bottom: 5px;" placeholder="Descripción"><br> 
+             <input type="number" name="price" style="margin-bottom: 5px;" placeholder="Costo"><br> 
+             <button type="submit" style="border-radius: 5px; margin-top: 10px;">Actualizar Tratamiento</button></form>
         
         <h3>Eliminar Tratamiento</h3>
         <form action="/delete-treatment"
             method="DELETE">
-             <label>ID:</label><input type="number" name="id_treatment" style="border-radius: 8px; margin-bottom: 3px;"><br> 
-             <button type="submit" style="border-radius: 8px; margin-top: 10px;">Eliminar Tratamiento</button></form>
+             <input type="number" name="id_treatment" style="margin-bottom: 5px;" placeholder="ID del tratamiento"><br> 
+             <button type="submit" style="border-radius: 5px; margin-top: 10px;">Eliminar Tratamiento</button></form>
 
        </div>
 
-       <div id="vouchers" class="contenedor vouchers" Vouchers>
+       <div id="vouchers" class="item-flex" Vouchers>
         <h2>Vouchers <form action="/voucher"
             method="GET">
              <button type="submit">Mostrar vouchers</button></form></h2>
         <h3>Crear Voucher </h3>
         <form action="/voucher"
             method="POST">
-             <label>ID regalador:</label><input type="number" name="id_cliente_regalador" style="margin-bottom: 5px;"><br> 
-             <label>ID Tratamiento:</label><input type="number" name="id_treatment" style="margin-bottom: 5px;"><br> 
-             <label>ID regalado:</label><input type="number" name="id_cliente_regalado" style="margin-bottom: 5px;"><br> 
+             <input type="number" name="id_cliente_regalador" style="margin-bottom: 5px;" placeholder="ID del cliente que regala"><br> 
+             <input type="number" name="id_treatment" style="margin-bottom: 5px;" placeholder="ID del tratamiento"><br> 
+             <input type="number" name="id_cliente_regalado" style="margin-bottom: 5px;" placeholder="ID del cliente que recibe el regalo"><br> 
              <button type="submit" style=" margin-top: 10px;">Crear Voucher</button></form>
 
         <h3>Buscar Voucher</h3>
         <form action="/search-voucher"
             method="GET">
-             <label>ID:</label><input type="number" name="id_voucher"><br> 
-             <button type="submit">Buscar Voucher</button></form>
+             <input type="number" name="id_voucher" style="margin-bottom: 5px;" placeholder="ID del voucher"><br> 
+             <button type="submit" style="border-radius: 5px; margin-top: 10px;">Buscar Voucher</button></form>
 
         <h3>Actualizar Voucher</h3>
         <form action="/update-voucher"
             method="PUT">
-             <label>ID:</label><input type="number" name="id_voucher"><br> 
-             <label>ID regalador:</label><input type="number" name="id_cliente_regalador"><br> 
-             <label>ID Tratamiento:</label><input type="number" name="id_treatment"><br> 
-             <label>ID regalado:</label><input type="number" name="id_cliente_regalado"><br> 
-             <button type="submit">Actualizar Voucher</button></form>
+             <input type="number" name="id_voucher" style="margin-bottom: 5px;" placeholder="ID del voucher"><br> 
+             <input type="number" name="id_cliente_regalador" style="margin-bottom: 5px;" placeholder="ID del cliente que regala"><br> 
+             <input type="number" name="id_treatment" style="margin-bottom: 5px;" placeholder="ID del tratamiento"><br> 
+             <input type="number" name="id_cliente_regalado" style="margin-bottom: 5px;" placeholder="ID del cliente que recibe el regalo"><br> 
+             <button type="submit" style="border-radius: 5px; margin-top: 10px;">Actualizar Voucher</button></form>
 
         <h3>Eliminar Voucher</h3>
         <form action="/delete-voucher"
             method="DELETE">
-             <label>ID:</label><input type="number" name="id_voucher"><br> 
-             <button type="submit">Eliminar Voucher</button></form>
+             <input type="number" name="id_voucher" style="margin-bottom: 5px;" placeholder="ID del voucher"><br> 
+             <button type="submit" style="border-radius: 5px; margin-top: 10px;">Eliminar Voucher</button></form>
         
         </div>
 
-        <div id="turnos" class="contenedor turnos" Turnos>
+        <div id="turnos" class="item-flex" Turnos>
         <h2>Turno
             <form action="/turno"
             method="GET">
-             <button type="submit">Mostrar turnos</button></form>
+             <button type="submit" style="border-radius: 5px; margin-top: 10px;">Mostrar turnos</button></form>
         </h2>
         <h3>Crear Turno</h3>
         <form action="/turn"
             method="POST">
-             <label>Fecha:</label><input type="text" name="date"><br> 
-             <label>Hora:</label><input type="text" name="time"><br> 
-             <label>ID Cliente:</label><input type="number" name="id_cliente"><br> 
-             <label>ID Tratamiento:</label><input type="number" name="id_treatment"><br> 
-             <button type="submit">Crear Turno</button></form>
+             <input type="text" name="date" style="margin-bottom: 5px;" placeholder="Fecha del turno"><br> 
+             <input type="text" name="time" style="margin-bottom: 5px;" placeholder="Hora del turno"><br> 
+             <input type="number" name="id_cliente" style="margin-bottom: 5px;" placeholder="ID del cliente"><br> 
+             <input type="number" name="id_treatment" style="margin-bottom: 5px;" placeholder="ID del tratamiento"><br> 
+             <button type="submit" style="border-radius: 5px; margin-top: 10px;">Crear Turno</button></form>
 
         <h3>Buscar Turno</h3>
         <form action="/search-turn"
             method="GET">
-             <label>fecha:</label><input type="text" name="date"><br> 
-             <label>Hora:</label><input type="text" name="time"><br> 
-             <button type="submit">Buscar Turno</button></form>
+             <input type="text" name="date" style="margin-bottom: 5px;" placeholder="Fecha del turno"><br> 
+             <input type="text" name="time" style="margin-bottom: 5px;" placeholder="Hora del turno"><br> 
+             <button type="submit" style="border-radius: 5px; margin-top: 10px;">Buscar Turno</button></form>
 
         <h3>Actualizar Turno</h3>
         <form action="/update-turn"
             method="PUT">
-             <label>Fecha:</label><input type="text" name="date"><br> 
-             <label>Hora:</label><input type="text" name="time"><br> 
-             <label>ID Cliente:</label><input type="number" name="id_cliente"><br> 
-             <label>ID Tratamiento:</label><input type="number" name="id_treatment"><br> 
-             <button type="submit">Actualizar Turno</button></form>
+             <input type="text" name="date" style="margin-bottom: 5px;" placeholder="Fecha del turno"><br> 
+             <input type="text" name="time" style="margin-bottom: 5px;" placeholder="Hora del turno"><br> 
+             <input type="number" name="id_cliente" style="margin-bottom: 5px;" placeholder="ID del cliente"><br> 
+             <input type="number" name="id_treatment" style="margin-bottom: 5px;" placeholder="ID del tratamiento"><br> 
+             <button type="submit" style="border-radius: 5px; margin-top: 10px;">Actualizar Turno</button></form>
 
         <h3>Eliminar Turno</h3>
         <form action="/delete-turn"
             method="DELETE">
-             <label>Fecha:</label><input type="text" name="date"><br>
-             <label>Hora:</label><input type="text" name="time"><br>
-             <button type="submit">Eliminar Turno</button></form>
+             <input type="text" name="date" style="margin-bottom: 5px;" placeholder="Fecha del turno"><br>
+             <input type="text" name="time" style="margin-bottom: 5px;" placeholder="Hora del turno"><br>
+             <button type="submit" style="border-radius: 5px; margin-top: 10px;">Eliminar Turno</button></form>
 
         </div>
 
+        </div>
         <h2>contacto soporte</h2>
         <div>
             <p>Si tiene alguna pregunta o necesita ayuda, no dude en ponerse en contacto con nuestro equipo de soporte. Puede enviarnos un correo electrónico a <a href="mailto: bisognivalentinaedu@gmail.com">bisognivalentinaedu@gmail.com</a>
