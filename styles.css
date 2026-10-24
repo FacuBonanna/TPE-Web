@@ -1,0 +1,49 @@
+.contenedor{
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    float: left;
+    text-align: center;
+    margin-left: 10px;
+    padding: 10px;
+}
+
+body{
+    font-family: Arial, sans-serif;
+    margin: 5%;
+    padding: 5%;
+    background-color: #b2e9f7;
+    border-radius: 80px;
+}
+
+.menu {
+    background-color:#f2f2f2;
+    padding: 10px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.clientes{
+    background-color: rgba(255, 255, 255, 0.4);
+    border-radius: 50px;
+    margin-bottom: 20px;
+
+}
+
+.tratamientos{
+    background-color: rgba(255, 255, 255, 0.4);
+    border-radius: 50px;
+    margin-bottom: 20px;
+}
+
+.vouchers{
+    background-color: rgba(255, 255, 255, 0.4);
+    border-radius: 50px;
+    margin-bottom: 20px;
+}
+
+.turnos{
+    background-color: rgba(255, 255, 255, 0.4);
+    border-radius: 50px;
+    margin-bottom: 20px;
+}
