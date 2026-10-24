@@ -13,7 +13,7 @@ test_api: pre-test hurl-test post-test
 pre-test:
 	docker compose down -v 2>/dev/null || true
 	docker compose build api
-	docker compose up -d database
+	docker compose up -d database	
 	@sleep 5
 	docker compose up -d --force-recreate api 
 	@echo "[PRE-TEST] Inyectando esquema SQL"
@@ -30,3 +30,8 @@ hurl-test:
 post-test:
 	@echo "[POST-TEST] pruebas terminadas, limpiando"
 	docker compose down -v
+
+rebuild:
+	docker compose down
+	docker compose build api
+	docker compose up api

@@ -31,6 +31,10 @@ func abrirDB() (*sql.DB, error) {
 var queries *sqlc.Queries
 var ctx context.Context
 
+func servidor(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "static/index.html")
+}
+
 func main() {
 	db, err := abrirDB()
 	if err != nil {
@@ -41,8 +45,10 @@ func main() {
 	queries = sqlc.New(db)
 	ctx = context.Background()
 
-	fileServer := http.FileServer(http.Dir("./"))
-	http.Handle("/", fileServer)
+	//fileServer := http.FileServer(http.Dir("./"))
+	//http.Handle("/", fileServer)
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("/app/static"))))
+	http.HandleFunc("/{$}", servidor)
 	http.HandleFunc("/cliente/", clienteHandler)
 	http.HandleFunc("/cliente", clientesHandler)
 	http.HandleFunc("/voucher/", voucherHandler)

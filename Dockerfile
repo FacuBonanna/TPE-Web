@@ -11,7 +11,9 @@ RUN CGO_ENABLED=0 go build -o /app/api .
 FROM alpine:3.24
 RUN adduser -D -u 1000 app
 RUN apk add --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing hurl
-USER app
+WORKDIR /app
 COPY --from=builder /app/api /usr/local/bin/api
+COPY --from=builder /app/static ./static
+USER app
 EXPOSE 8080
 CMD ["api"]
