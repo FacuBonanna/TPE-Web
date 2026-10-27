@@ -4,13 +4,33 @@ async function listar_clientes() {
             if (!res.ok) throw new Error("HTTP " + res.status);
             const lista_clientes = await res.json()
 
-            
+            const tbody = document.getElementById("cuerpoTablaCliente")
+            tbody.innerHTML = ""
+
             const clientes_html = document.getElementById("clientes")
             lista_clientes.forEach(c => {
+                const fila =
+                    document.createElement("tr")
+                    fila.dataset.id = c.id
+                    
+                    fila.innerHTML = `<td> ${c.id}</td>
+                    <td>${c.nombre}</td>
+                    <td>${c.apellido}</td>
+                    <td>$${c.deuda}</td>
+                    <td>${c.nro_telefono}</td>
+                    <td><button class = "delete-cliente-tabla"> Eliminar </button></td>
+                `; 
+                tbody.appendChild(fila);
+            });
+            console.table(lista_clientes);
+            
+            /*lista_clientes.forEach(c => {
                 const cli = document.createElement("li");
                 cli.textContent = `${c.id} ${c.nombre} ${c.apellido} - Deuda: ${c.deuda} - Nro. teléfono: ${c.nro_telefono}`;
                 clientes_html.appendChild(cli)
-            });          
+            });  */
+
+
         } catch (err) {
             console.error("Error en fetch:", err);
         }
@@ -59,11 +79,33 @@ async function listar_turnos() {
 }
 
 async function listar_vouchers(){
-    
+    try {
+            const res = await fetch("/voucher")
+            if (!res.ok) throw new Error("HTTP " + res.status);
+            const lista_voucher = await res.json()
+            const vouchers_html = document.getElementById("vouchers")
+            lista_voucher.forEach(async v => {
+                const voucher = document.createElement("li");
+                const regalador = await fetch(/cliente/${v.cliente_id})
+                const reg = await regalador.json()
+                const receptor = await fetch(/cliente/${v.cliente_id})
+                const rec = await receptor.json()
+                const tratamiento = await fetch(/tratamiento/${v.tratamiento_id})
+                const tra = await tratamiento.json()
+                voucher.textContent = ${v.id} - De: ${reg.nombre} - Para: ${rec.nombre} - Tratamiento: ${tra.nombre};
+                vouchers_html.appendChild(voucher)
+            });
+        } catch (err) {
+            console.error("Error en fetch:", err);
+        }
+
+
 }
+
 listar_clientes()
 listar_tratamientos()
 listar_turnos()
+listar_vouchers()
 
 const crearClienteForm = document.getElementById("crear-cliente-form");
 crearClienteForm.addEventListener("submit", async (event) => {
@@ -91,13 +133,27 @@ crearClienteForm.addEventListener("submit", async (event) => {
         }
         
         alert("Cliente creado exitosamente");
-       const clientes_html = document.getElementById("clientes")
+       //const clientes_html = document.getElementById("clientes")
             
-        const cli = document.createElement("li");
+        /*const cli = document.createElement("li");
         const datos = await response.json()
         cli.textContent = `${datos.id} ${datos.nombre} ${datos.apellido} - Deuda: ${datos.deuda} - Nro. teléfono: ${datos.nro_telefono}`;
-        clientes_html.appendChild(cli)      
-    }
+        clientes_html.appendChild(cli)     */ 
+
+        const tbody = document.getElementById("cuerpoTablaCliente")
+        const datos = await response.json()
+                const fila =
+                    document.createElement("tr")
+                    fila.dataset.id = datos.id
+                    
+                    fila.innerHTML = `<td> ${datos.id}</td>
+                    <td>${datos.nombre}</td>
+                    <td>${datos.apellido}</td>
+                    <td>$${datos.deuda}</td>
+                    <td>${datos.nro_telefono}</td>
+                    <td><button class = "delete-cliente-tabla"> Eliminar </button></td>
+                `; 
+                tbody.appendChild(fila); }
     catch (error) {
         console.error("Error al crear el cliente:", error);
         alert("Hubo un error al crear el cliente. Por favor, inténtalo de nuevo.");
