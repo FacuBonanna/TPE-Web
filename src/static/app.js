@@ -8,7 +8,7 @@ async function listar_clientes() {
             const clientes_html = document.getElementById("clientes")
             lista_clientes.forEach(c => {
                 const cli = document.createElement("li");
-                cli.textContent = `${c.nombre} ${c.apellido} - Deuda: ${c.deuda} - Nro. teléfono: ${c.nro_telefono}`;
+                cli.textContent = `${c.id} ${c.nombre} ${c.apellido} - Deuda: ${c.deuda} - Nro. teléfono: ${c.nro_telefono}`;
                 clientes_html.appendChild(cli)
             });          
         } catch (err) {
@@ -67,7 +67,7 @@ listar_turnos()
 
 const crearClienteForm = document.getElementById("crear-cliente-form");
 crearClienteForm.addEventListener("submit", async (event) => {
-    event.preventDefault(); // Evita que el formulario se envíe de la manera tradicional, evitando que la página se recargue
+    event.preventDefault(); // Evita que la pagina se recargue al enviar el formulario
     
     const formData = new FormData(crearClienteForm);
     const clienteData = {
@@ -90,9 +90,13 @@ crearClienteForm.addEventListener("submit", async (event) => {
             throw new Error("Error al crear el cliente");
         }
         
-        // Si la creación fue exitosa, puedes actualizar la lista de clientes o mostrar un mensaje de éxito
         alert("Cliente creado exitosamente");
-        listar_clientes(); // Actualiza la lista de clientes
+       const clientes_html = document.getElementById("clientes")
+            
+        const cli = document.createElement("li");
+        const datos = await response.json()
+        cli.textContent = `${datos.id} ${datos.nombre} ${datos.apellido} - Deuda: ${datos.deuda} - Nro. teléfono: ${datos.nro_telefono}`;
+        clientes_html.appendChild(cli)      
     }
     catch (error) {
         console.error("Error al crear el cliente:", error);
@@ -102,7 +106,7 @@ crearClienteForm.addEventListener("submit", async (event) => {
 
 const buscarClienteForm = document.getElementById("buscar-cliente-form");
 buscarClienteForm.addEventListener("submit", async (event) => {
-    event.preventDefault(); // Evita que el formulario se envíe de la manera tradicional, evitando que la página se recargue
+    event.preventDefault(); //  evita que la página se recargue
 
     const formData = new FormData(buscarClienteForm);
     const id = Number(formData.get("id_cliente"));
@@ -121,3 +125,5 @@ buscarClienteForm.addEventListener("submit", async (event) => {
     }
 
 });
+
+const actualizarClienteForm = document.getElementById("")
