@@ -64,3 +64,60 @@ async function listar_vouchers(){
 listar_clientes()
 listar_tratamientos()
 listar_turnos()
+
+const crearClienteForm = document.getElementById("crear-cliente-form");
+crearClienteForm.addEventListener("submit", async (event) => {
+    event.preventDefault(); // Evita que el formulario se envíe de la manera tradicional, evitando que la página se recargue
+    
+    const formData = new FormData(crearClienteForm);
+    const clienteData = {
+        nombre: formData.get("name"),
+        apellido: formData.get("surname"),
+        deuda: parseFloat(formData.get("debt")),
+        nro_telefono: Number(formData.get("phone"))
+    };
+    
+    try {
+        const response = await fetch("/cliente", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(clienteData)
+        });
+        
+        if (!response.ok) {
+            throw new Error("Error al crear el cliente");
+        }
+        
+        // Si la creación fue exitosa, puedes actualizar la lista de clientes o mostrar un mensaje de éxito
+        alert("Cliente creado exitosamente");
+        listar_clientes(); // Actualiza la lista de clientes
+    }
+    catch (error) {
+        console.error("Error al crear el cliente:", error);
+        alert("Hubo un error al crear el cliente. Por favor, inténtalo de nuevo.");
+    }
+});
+
+const buscarClienteForm = document.getElementById("buscar-cliente-form");
+buscarClienteForm.addEventListener("submit", async (event) => {
+    event.preventDefault(); // Evita que el formulario se envíe de la manera tradicional, evitando que la página se recargue
+
+    const formData = new FormData(buscarClienteForm);
+    const id = Number(formData.get("id_cliente"));
+
+
+    try{
+        const response = await fetch("/cliente/" + id);
+            if (!response.ok) {
+            throw new Error("error al buscar cliente")
+            }
+        const c = await response.json();
+        alert(`${c.nombre} ${c.apellido} - Deuda: ${c.deuda} - Nro. teléfono: ${c.nro_telefono}`);
+    } catch (error) {
+        console.error("error al buscar cliente", error);
+        alert("Hubo un error al buscar el cliente: " + error.message);
+    }
+
+});

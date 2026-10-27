@@ -8,18 +8,12 @@
     padding: 10px;
 }
 
-.montserrat-<uniquifier> {
-  font-family: "Montserrat", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: <weight>;
-  font-style: normal;
-}
 
 body{
     font-family: Montserrat, sans-serif;
     margin: 5%;
     padding: 5%;
-    background-color: #14aaa3;
+    background-color: #2ab6af;
     border-radius: 80px;
 }
 
@@ -45,7 +39,7 @@ body{
 }
 
 .header {
-    background-image: url('fondo_glam.webp');
+    background-image: url('./fondo_glam.webp');
     background-size: cover;
     padding: 30px;
     text-align: center;
@@ -66,6 +60,5 @@ body{
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
-    background-color: rgba(255, 255, 255, 0.4);
     front-size: 30px;
 }
