@@ -86,13 +86,13 @@ async function listar_vouchers(){
             const vouchers_html = document.getElementById("vouchers")
             lista_voucher.forEach(async v => {
                 const voucher = document.createElement("li");
-                const regalador = await fetch(/cliente/${v.cliente_id})
+                const regalador = await fetch(`/cliente/${v.cliente_id}`)
                 const reg = await regalador.json()
-                const receptor = await fetch(/cliente/${v.cliente_id})
+                const receptor = await fetch(`/cliente/${v.cliente_id}`)
                 const rec = await receptor.json()
-                const tratamiento = await fetch(/tratamiento/${v.tratamiento_id})
+                const tratamiento = await fetch(`/tratamiento/${v.tratamiento_id}`)
                 const tra = await tratamiento.json()
-                voucher.textContent = ${v.id} - De: ${reg.nombre} - Para: ${rec.nombre} - Tratamiento: ${tra.nombre};
+                voucher.textContent = `${v.id_voucher} - De: ${reg.nombre} - Para: ${rec.nombre} - Tratamiento: ${tra.nombre}`;
                 vouchers_html.appendChild(voucher)
             });
         } catch (err) {
@@ -133,12 +133,7 @@ crearClienteForm.addEventListener("submit", async (event) => {
         }
         
         alert("Cliente creado exitosamente");
-       //const clientes_html = document.getElementById("clientes")
-            
-        /*const cli = document.createElement("li");
-        const datos = await response.json()
-        cli.textContent = `${datos.id} ${datos.nombre} ${datos.apellido} - Deuda: ${datos.deuda} - Nro. teléfono: ${datos.nro_telefono}`;
-        clientes_html.appendChild(cli)     */ 
+    
 
         const tbody = document.getElementById("cuerpoTablaCliente")
         const datos = await response.json()
@@ -182,4 +177,84 @@ buscarClienteForm.addEventListener("submit", async (event) => {
 
 });
 
+
 const actualizarClienteForm = document.getElementById("")
+
+const clientes = document.getElementById("cuerpoTablaCliente")
+clientes.addEventListener("click",async (e) =>{
+    e.preventDefault();
+    const boton = e.target.closest(".delete-cliente-tabla");
+    if(!boton) return;
+
+    const fila = boton.closest("tr");
+    const idDelete= fila.dataset.id;
+    console.log("ID: ",idDelete)
+    try {
+        const res = await fetch(`/cliente/${idDelete}`,{
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        if (!res.ok) {
+            throw new Error(res.text())
+        }
+        clientes.removeChild(fila)
+    } catch (error){
+        console.error("Error al borrar cliente", error)
+    }
+})
+
+const deleteTratamiento = document.getElementById("deleteTratamiento-button")
+deleteTratamiento.addEventListener("click",async (event) =>{
+    event.preventDefault();
+    const idDelete = 0 ;
+    try {
+        const res = await fetch(`/tratamiento/${idDelete}`)
+        if (!res.ok) {
+                throw new Error(res.text)
+            }
+        
+    } catch (error){
+        console.error("Error al borrar tratamiento", error)
+    }
+})
+
+const deleteVoucher = document.getElementById("deleteVoucher-button")
+deleteVoucher.addEventListener("click",async (event) =>{
+    event.preventDefault();
+    const boton = e.target.closest(".delete-cliente-tabla");
+    if(!boton) return;
+
+    const fila = boton.closest("tr");
+    const idDelete= fila.dataset.id;
+
+    try {
+        const res = await fetch(`/voucher/${idDelete}`,{
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        if (!res.ok) {
+                throw new Error(res.text)
+            }
+    } catch (error){
+        console.error("Error al borrar voucher", error)
+    }
+})
+
+const deleteTurno = document.getElementById("deleteTurno-button")
+deleteTurno.addEventListener("click",async (event) =>{
+    event.preventDefault();
+    const fecha = 0 ;
+    const hora = 0
+    try {
+        const res = await fetch(`/turno/${fecha}&${hora}`)
+        if (!res.ok) {
+                throw new Error(res.text)
+            }
+    } catch (error){
+        console.error("Error al borrar turno", error)
+    }
+})
