@@ -13,7 +13,7 @@ import (
 
 func getCliente(w http.ResponseWriter, r *http.Request, id int) {
 
-	cliente, err := queries.GetUser(ctx, int64(id))
+	cliente, err := queries.GetUser(r.Context(), int64(id))
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
@@ -24,7 +24,7 @@ func getCliente(w http.ResponseWriter, r *http.Request, id int) {
 
 func deleteCliente(w http.ResponseWriter, r *http.Request, id int) {
 
-	err := queries.DeleteUser(ctx, int64(id))
+	err := queries.DeleteUser(r.Context(), int64(id))
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
@@ -46,7 +46,7 @@ func updateCliente(w http.ResponseWriter, r *http.Request, id int) {
 		return
 	}
 	paramsClienteToUpdate := sqlc.UpdateUserParams{ID: int64(id), Nombre: clienteToUpdate.Nombre, Apellido: clienteToUpdate.Apellido, Deuda: clienteToUpdate.Deuda, NroTelefono: clienteToUpdate.NroTelefono}
-	updatedCliente, err := queries.UpdateUser(ctx, paramsClienteToUpdate)
+	updatedCliente, err := queries.UpdateUser(r.Context(), paramsClienteToUpdate)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
@@ -91,7 +91,7 @@ func createCliente(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	paramsCreacion := sqlc.CreateUserParams{Nombre: nuevoCliente.Nombre, Apellido: nuevoCliente.Apellido, Deuda: nuevoCliente.Deuda, NroTelefono: nuevoCliente.NroTelefono}
-	nuevoClienteRow, err := queries.CreateUser(ctx, paramsCreacion)
+	nuevoClienteRow, err := queries.CreateUser(r.Context(), paramsCreacion)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	} else {
@@ -102,7 +102,7 @@ func createCliente(w http.ResponseWriter, r *http.Request) {
 
 func getClientes(w http.ResponseWriter, r *http.Request) {
 
-	clientes, err := queries.ListUsers(ctx)
+	clientes, err := queries.ListUsers(r.Context())
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)

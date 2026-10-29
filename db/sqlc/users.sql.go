@@ -210,6 +210,48 @@ func (q *Queries) GetTurno(ctx context.Context, arg GetTurnoParams) (Turno, erro
 	return i, err
 }
 
+const getTurnosCompleto = `-- name: GetTurnosCompleto :many
+SELECT fecha, hora, 
+(SELECT CONCAT(nombre,' ',apellido) FROM cliente WHERE t.cliente_id = id) as nombre_cliente, 
+(SELECT nombre FROM tratamiento WHERE t.tratamiento_id = id) as nombre_tratamiento
+FROM turno t
+`
+
+type GetTurnosCompletoRow struct {
+	Fecha             pgtype.Date `json:"fecha"`
+	Hora              int32       `json:"hora"`
+	NombreCliente     interface{} `json:"nombre_cliente"`
+	NombreTratamiento string      `json:"nombre_tratamiento"`
+}
+
+func (q *Queries) GetTurnosCompleto(ctx context.Context) ([]GetTurnosCompletoRow, error) {
+	rows, err := q.db.QueryContext(ctx, getTurnosCompleto)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetTurnosCompletoRow
+	for rows.Next() {
+		var i GetTurnosCompletoRow
+		if err := rows.Scan(
+			&i.Fecha,
+			&i.Hora,
+			&i.NombreCliente,
+			&i.NombreTratamiento,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getUser = `-- name: GetUser :one
 
 SELECT id, nombre, apellido, deuda, nro_telefono
@@ -249,6 +291,50 @@ func (q *Queries) GetVoucher(ctx context.Context, idVoucher int64) (Voucher, err
 		&i.ClienteID,
 	)
 	return i, err
+}
+
+const getVouchers = `-- name: GetVouchers :many
+SELECT id_voucher, 
+(SELECT CONCAT(nombre,' ',apellido) FROM cliente WHERE v.regalador_id=id) AS regalador, 
+(SELECT nombre FROM tratamiento WHERE v.tratamiento_id=id) AS tratamiento,
+(SELECT CONCAT(nombre,' ',apellido) FROM cliente WHERE v.cliente_id=id) AS cliente
+FROM voucher v
+ORDER BY id_voucher
+`
+
+type GetVouchersRow struct {
+	IDVoucher   int64       `json:"id_voucher"`
+	Regalador   interface{} `json:"regalador"`
+	Tratamiento string      `json:"tratamiento"`
+	Cliente     interface{} `json:"cliente"`
+}
+
+func (q *Queries) GetVouchers(ctx context.Context) ([]GetVouchersRow, error) {
+	rows, err := q.db.QueryContext(ctx, getVouchers)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetVouchersRow
+	for rows.Next() {
+		var i GetVouchersRow
+		if err := rows.Scan(
+			&i.IDVoucher,
+			&i.Regalador,
+			&i.Tratamiento,
+			&i.Cliente,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const listTreatments = `-- name: ListTreatments :many

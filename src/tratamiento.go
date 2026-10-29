@@ -13,7 +13,7 @@ import (
 
 func getTratamiento(w http.ResponseWriter, r *http.Request, id int) {
 
-	tratamiento, err := queries.GetTreatment(ctx, int64(id))
+	tratamiento, err := queries.GetTreatment(r.Context(), int64(id))
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
@@ -24,7 +24,7 @@ func getTratamiento(w http.ResponseWriter, r *http.Request, id int) {
 
 func deleteTratamiento(w http.ResponseWriter, r *http.Request, id int) {
 
-	err := queries.DeleteTreatment(ctx, int64(id))
+	err := queries.DeleteTreatment(r.Context(), int64(id))
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
@@ -62,7 +62,7 @@ func updateTratamiento(w http.ResponseWriter, r *http.Request, id int) {
 		return
 	}
 	paramsTratamientoToUpdate := sqlc.UpdateTreatmentParams{ID: int64(id), Nombre: tratamientoToUpdate.Nombre, DescripcionCorta: tratamientoToUpdate.DescripcionCorta, Costo: tratamientoToUpdate.Costo}
-	updatedTreatment, err := queries.UpdateTreatment(ctx, paramsTratamientoToUpdate)
+	updatedTreatment, err := queries.UpdateTreatment(r.Context(), paramsTratamientoToUpdate)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
@@ -86,7 +86,7 @@ func createTratamiento(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	paramsCreacion := sqlc.CreateTreatmentParams{Nombre: nuevoTratamiento.Nombre, DescripcionCorta: nuevoTratamiento.DescripcionCorta, Costo: nuevoTratamiento.Costo}
-	nuevoTratamientoRow, err := queries.CreateTreatment(ctx, paramsCreacion)
+	nuevoTratamientoRow, err := queries.CreateTreatment(r.Context(), paramsCreacion)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	} else {
@@ -98,7 +98,7 @@ func createTratamiento(w http.ResponseWriter, r *http.Request) {
 }
 
 func getTratamientos(w http.ResponseWriter, r *http.Request) {
-	tratamientos, err := queries.ListTreatments(ctx)
+	tratamientos, err := queries.ListTreatments(r.Context())
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)

@@ -15,7 +15,7 @@ import (
 func getturno(w http.ResponseWriter, r *http.Request, fecha pgtype.Date, hora int) {
 	paramsGet := sqlc.GetTurnoParams{Fecha: fecha, Hora: int32(hora)}
 
-	turno, err := queries.GetTurno(ctx, paramsGet)
+	turno, err := queries.GetTurno(r.Context(), paramsGet)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
@@ -27,7 +27,7 @@ func getturno(w http.ResponseWriter, r *http.Request, fecha pgtype.Date, hora in
 func deleteturno(w http.ResponseWriter, r *http.Request, fecha pgtype.Date, hora int) {
 	turnoABorrar := sqlc.DeleteTurnoParams{Fecha: fecha, Hora: int32(hora)}
 
-	err := queries.DeleteTurno(ctx, turnoABorrar)
+	err := queries.DeleteTurno(r.Context(), turnoABorrar)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
@@ -76,7 +76,7 @@ func updateturno(w http.ResponseWriter, r *http.Request, fecha pgtype.Date, hora
 		return
 	}
 	updateParams := sqlc.UpdateTurnoParams{Fecha: fecha, Hora: int32(hora), TratamientoID: turnoToUpdate.TratamientoID, ClienteID: turnoToUpdate.ClienteID}
-	UpdatedTurno, err := queries.UpdateTurno(ctx, updateParams)
+	UpdatedTurno, err := queries.UpdateTurno(r.Context(), updateParams)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
@@ -98,7 +98,7 @@ func createturno(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	paramsCreacion := sqlc.CreateTurnoParams{Fecha: nuevoturno.Fecha, Hora: nuevoturno.Hora, TratamientoID: nuevoturno.TratamientoID, ClienteID: nuevoturno.ClienteID}
-	nuevoturnoRow, err := queries.CreateTurno(ctx, paramsCreacion)
+	nuevoturnoRow, err := queries.CreateTurno(r.Context(), paramsCreacion)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	} else {
@@ -109,7 +109,7 @@ func createturno(w http.ResponseWriter, r *http.Request) {
 }
 
 func getTurnos(w http.ResponseWriter, r *http.Request) {
-	turnos, err := queries.ListTurno(ctx)
+	turnos, err := queries.GetTurnosCompleto(r.Context())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return

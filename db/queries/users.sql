@@ -79,12 +79,26 @@ SELECT id_voucher, regalador_id, tratamiento_id, cliente_id
 FROM voucher
 ORDER BY id_voucher;
 
+-- name: GetVouchers :many
+SELECT id_voucher, 
+(SELECT CONCAT(nombre,' ',apellido) FROM cliente WHERE v.regalador_id=id) AS regalador, 
+(SELECT nombre FROM tratamiento WHERE v.tratamiento_id=id) AS tratamiento,
+(SELECT CONCAT(nombre,' ',apellido) FROM cliente WHERE v.cliente_id=id) AS cliente
+FROM voucher v
+ORDER BY id_voucher;
+
 --TABLA TURNO
 
 -- name: GetTurno :one
 SELECT fecha, hora, tratamiento_id, cliente_id
 FROM turno 
 WHERE fecha = $1 AND hora = $2;
+
+-- name: GetTurnosCompleto :many
+SELECT fecha, hora, 
+(SELECT CONCAT(nombre,' ',apellido) FROM cliente WHERE t.cliente_id = id) as nombre_cliente, 
+(SELECT nombre FROM tratamiento WHERE t.tratamiento_id = id) as nombre_tratamiento
+FROM turno t;
 
 -- name: CreateTurno :one
 INSERT INTO turno (fecha, hora, tratamiento_id, cliente_id)

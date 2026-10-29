@@ -73,7 +73,7 @@
     
             </tbody>
             </table>
-
+             
         </div>
 
 
@@ -113,7 +113,21 @@
             method="DELETE">
              <input type="number" name="id_treatment" style="margin-bottom: 5px;" placeholder="ID del tratamiento"><br> 
              <button type="submit" style="border-radius: 5px; margin-top: 10px;">Eliminar Tratamiento</button></form>
-
+            
+             <table id="tablaTratamientos">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Deuda</th>
+                <th>Nro telefono</th>
+            </tr>
+            </thead>
+            <tbody id="cuerpoTablaTratamiento">
+    
+            </tbody>
+            </table>
        </div>
 
        <div id="vouchers" class="item-flex" Vouchers>
@@ -148,7 +162,20 @@
             method="DELETE">
              <input type="number" name="id_voucher" style="margin-bottom: 5px;" placeholder="ID del voucher"><br> 
              <button type="submit" style="border-radius: 5px; margin-top: 10px;">Eliminar Voucher</button></form>
-        
+            
+             <table id="tablaVouchers">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>De</th>
+                <th>Para</th>
+                <th>Tratamiento</th>
+            </tr>
+            </thead>
+            <tbody id="cuerpoTablaVoucher">
+    
+            </tbody>
+            </table>
         </div>
 
         <div id="turnos" class="item-flex" Turnos>
@@ -189,8 +216,22 @@
              <input type="text" name="time" style="margin-bottom: 5px;" placeholder="Hora del turno"><br>
              <button type="submit" style="border-radius: 5px; margin-top: 10px;">Eliminar Turno</button></form>
 
+              <table id="tablaTurnos">
+            <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Tratamiento</th>
+                <th>Cliente</th>
+            </tr>
+            </thead>
+            <tbody id="cuerpoTablaTurnos">
+    
+            </tbody>
+            </table>
         </div>
 
+       
         </div>
         <h2>contacto soporte</h2>
         <div>

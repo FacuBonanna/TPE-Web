@@ -66,7 +66,7 @@ func updateVoucher(w http.ResponseWriter, r *http.Request, id int) {
 }
 
 func getVouchers(w http.ResponseWriter, r *http.Request) {
-	vouchers, err := queries.ListVouchers(r.Context())
+	vouchers, err := queries.GetVouchers(r.Context())
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
