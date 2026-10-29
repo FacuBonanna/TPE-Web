@@ -10,7 +10,7 @@ import (
 
 func getVoucher(w http.ResponseWriter, r *http.Request, id int) {
 
-	voucher, err := queries.GetVoucher(ctx, int64(id))
+	voucher, err := queries.GetVoucher(r.Context(), int64(id))
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
@@ -21,7 +21,7 @@ func getVoucher(w http.ResponseWriter, r *http.Request, id int) {
 
 func deleteVoucher(w http.ResponseWriter, r *http.Request, id int) {
 
-	err := queries.DeleteVoucher(ctx, int64(id))
+	err := queries.DeleteVoucher(r.Context(), int64(id))
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
@@ -38,7 +38,7 @@ func createVoucher(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	paramsCreacion := sqlc.CreateVoucherParams{RegaladorID: nuevoVoucher.RegaladorID, TratamientoID: nuevoVoucher.TratamientoID, ClienteID: nuevoVoucher.ClienteID}
-	nuevoVoucherRow, _ := queries.CreateVoucher(ctx, paramsCreacion)
+	nuevoVoucherRow, _ := queries.CreateVoucher(r.Context(), paramsCreacion)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	} else {
@@ -56,7 +56,7 @@ func updateVoucher(w http.ResponseWriter, r *http.Request, id int) {
 		return
 	}
 	voucherToUpdateParams := sqlc.UpdateVoucherParams{IDVoucher: int64(id), RegaladorID: voucherToUpdate.RegaladorID, TratamientoID: voucherToUpdate.TratamientoID, ClienteID: voucherToUpdate.ClienteID}
-	updatedVoucher, err := queries.UpdateVoucher(ctx, voucherToUpdateParams)
+	updatedVoucher, err := queries.UpdateVoucher(r.Context(), voucherToUpdateParams)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
@@ -66,7 +66,7 @@ func updateVoucher(w http.ResponseWriter, r *http.Request, id int) {
 }
 
 func getVouchers(w http.ResponseWriter, r *http.Request) {
-	vouchers, err := queries.ListVouchers(ctx)
+	vouchers, err := queries.ListVouchers(r.Context())
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)

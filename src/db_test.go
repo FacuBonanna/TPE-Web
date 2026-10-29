@@ -24,7 +24,7 @@ func TestQueries_CRUD(t *testing.T) {
 		t.Fatalf("La DB de Docker no responde en localhost:5432. ¿Está el puerto expuesto? Error: %v", err)
 	}
 	defer db.Close()
-
+	var ctx context.Context
 	queries = sqlc.New(db)
 	ctx = context.Background()
 

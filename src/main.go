@@ -2,7 +2,6 @@ package main
 
 import (
 	sqlc "TPE/db/sqlc"
-	"context"
 	"database/sql"
 	"fmt"
 	"net/http"
@@ -29,7 +28,6 @@ func abrirDB() (*sql.DB, error) {
 }
 
 var queries *sqlc.Queries
-var ctx context.Context
 
 func servidor(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "static/index.html")
@@ -43,7 +41,6 @@ func main() {
 		return
 	}
 	queries = sqlc.New(db)
-	ctx = context.Background()
 
 	//fileServer := http.FileServer(http.Dir("./"))
 	//http.Handle("/", fileServer)
