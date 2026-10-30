@@ -103,7 +103,7 @@ FROM turno t;
 -- name: CreateTurno :one
 INSERT INTO turno (fecha, hora, tratamiento_id, cliente_id)
 VALUES ($1, $2, $3, $4)
-RETURNING fecha, hora, tratamiento_id, cliente_id;
+RETURNING fecha, hora, (SELECT nombre FROM tratamiento WHERE id=turno.tratamiento_id) as nombre_tratamiento,  (SELECT CONCAT(nombre,' ',apellido) FROM cliente WHERE id=turno.cliente_id) as nombre_cliente;
 
 -- name: UpdateTurno :one
 UPDATE turno

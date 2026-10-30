@@ -38,7 +38,7 @@ func (q *Queries) CreateTreatment(ctx context.Context, arg CreateTreatmentParams
 const createTurno = `-- name: CreateTurno :one
 INSERT INTO turno (fecha, hora, tratamiento_id, cliente_id)
 VALUES ($1, $2, $3, $4)
-RETURNING fecha, hora, tratamiento_id, cliente_id
+RETURNING fecha, hora, (SELECT nombre FROM tratamiento WHERE id=turno.tratamiento_id) as nombre_tratamiento,  (SELECT CONCAT(nombre,' ',apellido) FROM cliente WHERE id=turno.cliente_id) as nombre_cliente
 `
 
 type CreateTurnoParams struct {
@@ -48,19 +48,26 @@ type CreateTurnoParams struct {
 	ClienteID     int64       `json:"cliente_id"`
 }
 
-func (q *Queries) CreateTurno(ctx context.Context, arg CreateTurnoParams) (Turno, error) {
+type CreateTurnoRow struct {
+	Fecha             pgtype.Date `json:"fecha"`
+	Hora              int32       `json:"hora"`
+	NombreTratamiento string      `json:"nombre_tratamiento"`
+	NombreCliente     interface{} `json:"nombre_cliente"`
+}
+
+func (q *Queries) CreateTurno(ctx context.Context, arg CreateTurnoParams) (CreateTurnoRow, error) {
 	row := q.db.QueryRowContext(ctx, createTurno,
 		arg.Fecha,
 		arg.Hora,
 		arg.TratamientoID,
 		arg.ClienteID,
 	)
-	var i Turno
+	var i CreateTurnoRow
 	err := row.Scan(
 		&i.Fecha,
 		&i.Hora,
-		&i.TratamientoID,
-		&i.ClienteID,
+		&i.NombreTratamiento,
+		&i.NombreCliente,
 	)
 	return i, err
 }

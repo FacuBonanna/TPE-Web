@@ -12,12 +12,13 @@ async function listar_clientes() {
                     document.createElement("tr")
                     fila.dataset.id = c.id
                     
-                    fila.innerHTML = `<td> ${c.id}</td>
-                    <td>${c.nombre}</td>
-                    <td>${c.apellido}</td>
-                    <td>${c.deuda}$</td>
-                    <td>${c.nro_telefono}</td>
-                    <td><button class = "delete-cliente-tabla"> Eliminar </button></td>
+                    fila.innerHTML = `<td > ${c.id}</td>
+                    <td data-campo="nombre">${c.nombre}</td>
+                    <td data-campo="apellido">${c.apellido}</td>
+                    <td data-campo="deuda">${c.deuda}$</td>
+                    <td data-campo="nro_telefono">${c.nro_telefono}</td>
+                    <td><button class = "delete-cliente-tabla"> Eliminar </button>
+                        <button class = "update-cliente-tabla"> Modificar </button></td>
                 `; 
                 tbody.appendChild(fila);
             });            
@@ -42,10 +43,11 @@ async function listar_tratamientos() {
                     fila.dataset.id = t.id
                     
                     fila.innerHTML = `<td> ${t.id}</td>
-                    <td>${t.nombre}</td>
-                    <td>${t.descripcion_corta}</td>
-                    <td>${t.costo}$</td>
-                    <td><button class = "delete-tratamiento-tabla"> Eliminar </button></td>
+                    <td data-campo="nombre">${t.nombre}</td>
+                    <td data-campo="descripcion_corta">${t.descripcion_corta}</td>
+                    <td data-campo="costo">${t.costo}$</td>
+                    <td><button class = "delete-tratamiento-tabla"> Eliminar </button>
+                        <button class = "update-tratamiento-tabla"> Modificar </button></td>
                 `; 
                 tbody.appendChild(fila);
             });    
@@ -61,19 +63,20 @@ async function listar_turnos() {
             const lista_turnos = await res.json()
 
             
-            const tbody = document.getElementById("cuerpoTablaTurnos")
+            const tbody = document.getElementById("cuerpoTablaTurno")
             tbody.innerHTML = ""
 
             lista_turnos.forEach(t => {
                 const fila =
                     document.createElement("tr")
-                    fila.dataset.id = t.id// AGREGAR FECHA Y HORA QUE SE PUEDA MANEJAR CORRECTAMENTE
-                    
-                    fila.innerHTML = `<td> ${t.fecha}</td>
-                    <td>${t.hora}</td>
-                    <td>${t.nombre_cliente}</td>
-                    <td>${t.nombre_tratamiento}</td>
-                    <td><button class = "delete-turno-tabla"> Eliminar </button></td>
+                    fila.dataset.fecha = t.fecha
+                    fila.dataset.hora = t.hora
+                    fila.innerHTML = `<td data-campo="fecha"> ${t.fecha}</td>
+                    <td data-campo="hora">${t.hora}</td>
+                    <td data-campo="nombre_tratamiento">${t.nombre_tratamiento}</td>
+                    <td data-campo="nombre_cliente">${t.nombre_cliente}</td>
+                    <td><button class = "delete-turno-tabla"> Eliminar </button>
+                        <button class = "update-turno-tabla"> Modificar </button></td>
                 `; 
                 tbody.appendChild(fila);
             });        
@@ -97,10 +100,11 @@ async function listar_vouchers(){
                     fila.dataset.id = v.id_voucher
                     
                     fila.innerHTML = `<td> ${v.id_voucher}</td>
-                    <td>${v.regalador}</td>
-                    <td>${v.cliente}</td>
-                    <td>${v.tratamiento}</td>
-                    <td><button class = "delete-voucher-tabla"> Eliminar </button></td>
+                    <td data-campo="regalador">${v.regalador}</td>
+                    <td data-campo="cliente">${v.cliente}</td>
+                    <td data-campo="tratamiento">${v.tratamiento}</td>
+                    <td><button class = "delete-voucher-tabla"> Eliminar </button>
+                        <button class = "update-voucher-tabla"> Modificar </button></td>
                 `; 
                 tbody.appendChild(fila);
             });
@@ -151,11 +155,12 @@ crearClienteForm.addEventListener("submit", async (event) => {
                     fila.dataset.id = datos.id
                     
                     fila.innerHTML = `<td> ${datos.id}</td>
-                    <td>${datos.nombre}</td>
-                    <td>${datos.apellido}</td>
-                    <td>$${datos.deuda}</td>
-                    <td>${datos.nro_telefono}</td>
-                    <td><button class = "delete-cliente-tabla"> Eliminar </button></td>
+                    <td data-campo="nombre">${datos.nombre}</td>
+                    <td data-campo="apellido">${datos.apellido}</td>
+                    <td data-campo="deuda"> ${datos.deuda}$</td>
+                    <td data-campo="nro_telefono">${datos.nro_telefono}</td>
+                    <td><button class = "delete-cliente-tabla"> Eliminar </button>
+                        <button class = "update-cliente-tabla"> Modificar </button></td>
                 `; 
                 tbody.appendChild(fila); }
     catch (error) {
@@ -186,9 +191,146 @@ buscarClienteForm.addEventListener("submit", async (event) => {
 
 });
 
+const crearTratamientoForm = document.getElementById("crear-tratamiento-form");
+crearTratamientoForm.addEventListener("submit", async (event) => {
+    event.preventDefault(); // Evita que la pagina se recargue al enviar el formulario
+    
+    const formData = new FormData(crearTratamientoForm);
+    const tratamientoData = {
+        nombre: formData.get("nombre"),
+        descripcion_corta: formData.get("descripcion_corta"),
+        costo: parseFloat(formData.get("costo")),
+    };
+    
+    try {
+        const response = await fetch("/tratamiento", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(tratamientoData)
+        });
+        
+        if (!response.ok) {
+            throw new Error(response.text());
+        }
+        
+        alert("Tratamiento creado exitosamente");
+    
 
-const actualizarClienteForm = document.getElementById("")
+        const tbody = document.getElementById("cuerpoTablaTratamiento")
+        const tr = await response.json()
+                const fila =
+                document.createElement("tr")
+                    fila.dataset.id = tr.id
+                    
+                    fila.innerHTML = `<td> ${tr.id}</td>
+                    <td data-campo="nombre">${tr.nombre}</td>
+                    <td data-campo="descripcion_corta">${tr.descripcion_corta}</td>
+                    <td data-campo="costo">${tr.costo}$</td>
+                    <td><button class = "delete-tratamiento-tabla"> Eliminar </button>
+                        <button class = "update-tratamiento-tabla"> Modificar </button></td>`
+                tbody.appendChild(fila); }
+    catch (error) {
+        console.error("Error al crear el tratamiento:", error);
+        alert("Hubo un error al crear el tratamiento. Por favor, inténtalo de nuevo.");
+    }
+});
 
+const crearVoucherForm = document.getElementById("crear-voucher-form");
+crearVoucherForm.addEventListener("submit", async (event) => {
+    event.preventDefault(); // Evita que la pagina se recargue al enviar el formulario
+    
+    const formData = new FormData(crearVoucherForm);
+    const voucherData = {
+        regalador_id: Number(formData.get("regalador_id")),
+        tratamiento_id: Number(formData.get("tratamiento_id")),
+        cliente_id: Number(formData.get("cliente_id")),
+    };
+    
+    try {
+        const response = await fetch("/voucher", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(voucherData)
+        });
+        if (!response.ok) {
+            throw new Error(response.text());
+        }
+        
+        alert("Voucher creado exitosamente");
+    
+
+        const tbody = document.getElementById("cuerpoTablaVoucher")
+        const v = await response.json()
+                const fila =
+                document.createElement("tr")
+                    fila.dataset.id = v.id
+                    
+                    fila.innerHTML = `<td> ${v.id_voucher}</td>
+                    <td data-campo="regalador">${v.regalador_id}</td>
+                    <td data-campo="tratamiento">${v.tratamiento_id}</td>
+                    <td data-campo="cliente">${v.cliente_id}$</td>
+                    <td><button class = "delete-voucher-tabla"> Eliminar </button>
+                        <button class = "update-voucher-tabla"> Modificar </button></td>`
+                tbody.appendChild(fila); }
+    catch (error) {
+        console.error("Error al crear el voucher:", error);
+        alert("Hubo un error al crear el voucher. Por favor, inténtalo de nuevo.");
+    }
+});
+
+const crearTurnoForm = document.getElementById("crear-turno-form");
+crearTurnoForm.addEventListener("submit", async (event) => {
+    event.preventDefault(); // Evita que la pagina se recargue al enviar el formulario
+    
+    const formData = new FormData(crearTurnoForm);
+    const turnoData = {
+        fecha: formData.get("fecha"),
+        hora: Number(formData.get("hora")),
+        cliente_id: Number(formData.get("cliente_id")),
+        tratamiento_id: Number(formData.get("tratamiento_id")),
+    };
+    
+    try {
+        const response = await fetch("/turno", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(turnoData)
+        });
+        
+        if (!response.ok) {
+            throw new Error(response.text());
+        }
+        
+        alert("Turno creado exitosamente");
+    
+
+        const tbody = document.getElementById("cuerpoTablaTurno")
+        const tu = await response.json()
+                const fila =
+                document.createElement("tr")
+                    fila.dataset.fecha = tu.fecha
+                    fila.dataset.hora = tu.hora
+                    
+                    fila.innerHTML = `<td data-campo="fecha"> ${tu.fecha}</td>
+                    <td data-campo="hora">${tu.hora}</td>
+                    <td data-campo="nombre_tratamiento">${tu.nombre_tratamiento}</td>
+                    <td data-campo="nombre_cliente">${tu.nombre_cliente}</td>
+                    <td><button class = "delete-turno-tabla"> Eliminar </button>
+                        <button class = "update-turno-tabla"> Modificar </button></td>`
+                tbody.appendChild(fila); }
+    catch (error) {
+        console.error("Error al crear el turno:", error);
+        alert("Hubo un error al crear el turno. Por favor, inténtalo de nuevo.");
+    }
+});
+
+// CLIENTES
 const clientes = document.getElementById("cuerpoTablaCliente")
 clientes.addEventListener("click",async (e) =>{
     e.preventDefault();
@@ -213,6 +355,123 @@ clientes.addEventListener("click",async (e) =>{
     }
 })
 
+//  Actualizar cliente
+clientes.addEventListener("click", (e) => {
+  const boton = e.target.closest(".update-cliente-tabla");
+  if (!boton) return;
+
+  const fila = boton.closest("tr");
+
+  // Convertir cada celda editable en un input con su contenido actual
+  fila.querySelectorAll("td[data-campo]").forEach((td) => {
+    let valorActual = td.textContent;
+  td.dataset.original = valorActual; // para Cancelar
+
+  const campo = td.dataset.campo;
+  const input = document.createElement("input");
+  input.name = campo;
+  input.placeholder = campo.charAt(0).toUpperCase() + campo.slice(1);
+  input.style.marginBottom = "5px"; 
+  if (campo == "deuda")
+        valorActual = valorActual.replace("$","")    
+  input.value = valorActual;
+  input.style.width = "100%";
+  input.style.maxWidth = "200px";
+  input.style.boxSizing = "border-box";
+  
+
+  td.textContent = "";
+  td.appendChild(input);
+  });
+
+
+  const btnConfirmar = document.createElement("button");
+  btnConfirmar.textContent = "Confirmar";
+  btnConfirmar.className = "confirmar-cliente-tabla";
+
+  const btnCancelar = document.createElement("button");
+  btnCancelar.textContent = "Cancelar";
+  btnCancelar.className = "cancelar-cliente-tabla";
+
+  boton.replaceWith(btnConfirmar, btnCancelar);
+});
+
+//  Cancelar modificación clientes
+clientes.addEventListener("click", (e) => {
+  const boton = e.target.closest(".cancelar-cliente-tabla");
+  if (!boton) return;
+
+  const fila = boton.closest("tr");
+
+  
+  fila.querySelectorAll("td[data-campo]").forEach((td) => {
+    td.textContent = td.dataset.original;
+    delete td.dataset.original;
+  });
+
+  
+  const btnModificar = document.createElement("button");
+  btnModificar.textContent = "Modificar";
+  btnModificar.className = "update-cliente-tabla";
+
+  const btnConfirmar = fila.querySelector(".confirmar-cliente-tabla");
+  btnConfirmar.replaceWith(btnModificar);
+  boton.remove();
+});
+
+//  Confirmar modificación cliente
+clientes.addEventListener("click", async (e) => {
+  const boton = e.target.closest(".confirmar-cliente-tabla");
+  if (!boton) return;
+
+  const fila = boton.closest("tr");
+
+  const datos = { id: fila.dataset.id };
+
+  fila.querySelectorAll("td[data-campo]").forEach((td) => {
+    const input = td.querySelector("input");
+    datos[td.dataset.campo] = input.value;
+  });
+
+  
+  id = datos.id
+  datos.deuda = parseFloat(datos.deuda)
+  datos.nro_telefono = Number(datos.nro_telefono)
+  clienteData = {nombre: datos.nombre, apellido:datos.apellido, deuda: datos.deuda, nro_telefono:datos.nro_telefono}
+     try {
+        const response = await fetch(`/cliente/${datos.id}` ,{
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(clienteData)
+        });
+        
+        if (!response.ok) {
+            throw new Error(response.text());
+        }
+        
+        fila.querySelectorAll("td[data-campo]").forEach((td) => {
+            if(td.dataset.campo == "deuda"){
+                datos[td.dataset.campo]+="$"
+            }
+            td.textContent = datos[td.dataset.campo];
+            delete td.dataset.original;
+        });
+        const btnModificar = document.createElement("button");
+        btnModificar.textContent = "Modificar";
+        btnModificar.className = "update-cliente-tabla";
+
+        const btnCancelar = fila.querySelector(".cancelar-cliente-tabla");
+        boton.replaceWith(btnModificar);
+        btnCancelar.remove();
+        alert("Cliente actualizado exitosamente");
+     } catch (error){
+        console.error("Error al actualizar el cliente: ", error)
+     }
+});
+
+//  TRATAMIENTOS
 const tratamientos = document.getElementById("cuerpoTablaTratamiento")
 tratamientos.addEventListener("click",async (e) =>{
     e.preventDefault();
@@ -236,6 +495,120 @@ tratamientos.addEventListener("click",async (e) =>{
         console.error("Error al borrar tratamiento: ", error)
     }
 })
+
+//  Actualizar tratamiento
+tratamientos.addEventListener("click", (e) => {
+  const boton = e.target.closest(".update-tratamiento-tabla");
+  if (!boton) return;
+
+  const fila = boton.closest("tr");
+
+  // Convertir cada celda editable en un input con su contenido actual
+  fila.querySelectorAll("td[data-campo]").forEach((td) => {
+    let valorActual = td.textContent;
+  td.dataset.original = valorActual; // para Cancelar
+
+  const campo = td.dataset.campo;
+  const input = document.createElement("input");
+  input.name = campo;
+  input.placeholder = campo.charAt(0).toUpperCase() + campo.slice(1);
+  input.style.marginBottom = "5px";
+  if (campo == "costo")
+        valorActual = valorActual.replace("$","")    
+  input.value = valorActual;
+  input.style.width = "100%";
+  input.style.maxWidth = "200px";
+  input.style.boxSizing = "border-box";
+
+  td.textContent = "";
+  td.appendChild(input);
+  });
+
+
+  const btnConfirmar = document.createElement("button");
+  btnConfirmar.textContent = "Confirmar";
+  btnConfirmar.className = "confirmar-tratamiento-tabla";
+
+  const btnCancelar = document.createElement("button");
+  btnCancelar.textContent = "Cancelar";
+  btnCancelar.className = "cancelar-tratamiento-tabla";
+
+  boton.replaceWith(btnConfirmar, btnCancelar);
+});
+
+//  Cancelar modificación
+tratamientos.addEventListener("click", (e) => {
+  const boton = e.target.closest(".cancelar-tratamiento-tabla");
+  if (!boton) return;
+
+  const fila = boton.closest("tr");
+
+  
+  fila.querySelectorAll("td[data-campo]").forEach((td) => {
+    td.textContent = td.dataset.original;
+    delete td.dataset.original;
+  });
+
+  
+  const btnModificar = document.createElement("button");
+  btnModificar.textContent = "Modificar";
+  btnModificar.className = "update-tratamiento-tabla";
+
+  const btnConfirmar = fila.querySelector(".confirmar-tratamiento-tabla");
+  btnConfirmar.replaceWith(btnModificar);
+  boton.remove();
+});
+
+//  Confirmar modificación
+tratamientos.addEventListener("click", async (e) => {
+  const boton = e.target.closest(".confirmar-tratamiento-tabla");
+  if (!boton) return;
+
+  const fila = boton.closest("tr");
+
+  const datos = { id: fila.dataset.id };
+
+  fila.querySelectorAll("td[data-campo]").forEach((td) => {
+    const input = td.querySelector("input");
+    datos[td.dataset.campo] = input.value;
+  });
+
+  
+  id = datos.id
+  datos.costo = Number(datos.costo)
+  tratamientoData = {nombre: datos.nombre, descripcion_corta: datos.descripcion_corta, costo:datos.costo}
+     try {
+        const response = await fetch(`/tratamiento/${datos.id}` ,{
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(tratamientoData)
+        });
+        
+        if (!response.ok) {
+            throw new Error(response.text());
+        }
+        
+        fila.querySelectorAll("td[data-campo]").forEach((td) => {
+            if(td.dataset.campo == "costo"){
+                datos[td.dataset.campo] += "$"
+            }
+            td.textContent = datos[td.dataset.campo];
+            delete td.dataset.original;
+        });
+        const btnModificar = document.createElement("button");
+        btnModificar.textContent = "Modificar";
+        btnModificar.className = "update-tratamiento-tabla";
+
+        const btnCancelar = fila.querySelector(".cancelar-tratamiento-tabla");
+        boton.replaceWith(btnModificar);
+        btnCancelar.remove();
+        alert("Tratamiento actualizado exitosamente");
+     } catch (error){
+        console.error("Error al actualizar el tratamiento: ", error)
+     }
+});
 
 const vouchers = document.getElementById("cuerpoTablaVoucher")
 vouchers.addEventListener("click",async (e) =>{
@@ -261,3 +634,27 @@ vouchers.addEventListener("click",async (e) =>{
     }
 })
 
+const turnos = document.getElementById("cuerpoTablaTurno")
+turnos.addEventListener("click",async (e) =>{
+    e.preventDefault();
+    const boton = e.target.closest(".delete-turno-tabla");
+    if(!boton) return;
+
+    const fila = boton.closest("tr");
+    const fecha= fila.dataset.fecha;
+    const hora= fila.dataset.hora;
+    try {
+        const res = await fetch(`/turno/${fecha}&${hora}`,{
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        if (!res.ok) {
+            throw new Error(res.text())
+        }
+        turnos.removeChild(fila)
+    } catch (error){
+        console.error("Error al borrar turno: ", error)
+    }
+})

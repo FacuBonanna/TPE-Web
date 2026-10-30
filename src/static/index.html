@@ -42,22 +42,9 @@
         <form id = "buscar-cliente-form">
              <input type="number" name="id_cliente" style=" margin-bottom: 5px;" placeholder="ID del cliente"><br> 
              <button type="submit" style="border-radius: 5px; margin-top: 10px;">Buscar Cliente</button></form>
-        <h3>Actualizar cliente</h3>
+        
 
-        <form action="/update"
-            method="PUT">
-             <input type="number" name="id_cliente" style=" margin-bottom: 5px;" placeholder="ID del cliente"><br> 
-             <input type="text" name="name" style=" margin-bottom: 5px;" placeholder="Nombre"><br> 
-             <input type="text" name="surname" style=" margin-bottom: 5px;" placeholder="Apellido"><br> 
-             <input type="number" name="debt" style=" margin-bottom: 5px;" placeholder="Deuda"><br> 
-             <input type="number" name="phone" style=" margin-bottom: 5px;" placeholder="Número de teléfono"><br> 
-             <button type="submit" style="border-radius: 5px; margin-top: 10px;">Actualizar Cliente</button></form>
-
-        <h3>Eliminar cliente</h3>
-        <form action="/delete"
-            method="DELETE">
-             <input type="number" name="id_cliente" style=" margin-bottom: 5px;" placeholder="ID del cliente"><br> 
-             <button type="submit" style="border-radius: 5px; margin-top: 10px;">Eliminar Cliente</button></form> 
+        
 
         <table id="tablaClientes">
             <thead>
@@ -86,11 +73,10 @@
             method="GET">
              <button type="submit" style="border-radius: 5px; margin-top: 10px;">Mostrar tratamientos</button></form></h2>
         <h3>Crear Tratamiento</h3>
-        <form action="/treatment"
-            method="POST">
-             <input type="text" name="name_treatment" style=" margin-bottom: 5px;" placeholder= "Nombre"><br> 
-             <input type="text" name="description" style=" margin-bottom: 5px;" placeholder="Descripción"><br> 
-             <input type="number" name="price" style=" margin-bottom: 5px;" placeholder="Costo"><br> 
+        <form id="crear-tratamiento-form">
+             <input type="text" name="nombre" style=" margin-bottom: 5px;" placeholder= "Nombre"><br> 
+             <input type="text" name="descripcion_corta" style=" margin-bottom: 5px;" placeholder="Descripción"><br> 
+             <input type="number" name="costo" style=" margin-bottom: 5px;" placeholder="Costo"><br> 
              <button type="submit" style="border-radius: 5px; margin-top: 10px;">Crear Tratamiento</button></form>
 
         <h3>Buscar Tratamiento</h3>
@@ -98,30 +84,14 @@
             method="GET">
              <input type="number" name="id_treatment" style="margin-bottom: 5px;" placeholder="ID del tratamiento"><br> 
              <button type="submit" style="border-radius: 5px; margin-top: 10px;">Buscar Tratamiento</button></form>
-        
-        <h3>Actualizar Tratamiento</h3>
-        <form action="/update-treatment"
-            method="PUT">
-             <input type="number" name="id_treatment" style="margin-bottom: 5px;" placeholder="ID del tratamiento"><br> 
-             <input type="text" name="name_treatment" style="margin-bottom: 5px;" placeholder="Nombre"><br> 
-             <input type="text" name="description" style="margin-bottom: 5px;" placeholder="Descripción"><br> 
-             <input type="number" name="price" style="margin-bottom: 5px;" placeholder="Costo"><br> 
-             <button type="submit" style="border-radius: 5px; margin-top: 10px;">Actualizar Tratamiento</button></form>
-        
-        <h3>Eliminar Tratamiento</h3>
-        <form action="/delete-treatment"
-            method="DELETE">
-             <input type="number" name="id_treatment" style="margin-bottom: 5px;" placeholder="ID del tratamiento"><br> 
-             <button type="submit" style="border-radius: 5px; margin-top: 10px;">Eliminar Tratamiento</button></form>
             
              <table id="tablaTratamientos">
             <thead>
             <tr>
                 <th>Id</th>
                 <th>Nombre</th>
-                <th>Apellido</th>
-                <th>Deuda</th>
-                <th>Nro telefono</th>
+                <th>Descripcion</th>
+                <th>Costo</th>
             </tr>
             </thead>
             <tbody id="cuerpoTablaTratamiento">
@@ -135,33 +105,17 @@
             method="GET">
              <button type="submit">Mostrar vouchers</button></form></h2>
         <h3>Crear Voucher </h3>
-        <form action="/voucher"
-            method="POST">
-             <input type="number" name="id_cliente_regalador" style="margin-bottom: 5px;" placeholder="ID del cliente que regala"><br> 
-             <input type="number" name="id_treatment" style="margin-bottom: 5px;" placeholder="ID del tratamiento"><br> 
-             <input type="number" name="id_cliente_regalado" style="margin-bottom: 5px;" placeholder="ID del cliente que recibe el regalo"><br> 
+        <form id="crear-voucher-form">
+             <input type="number" name="regalador_id" style="margin-bottom: 5px;" placeholder="ID del cliente que regala"><br> 
+             <input type="number" name="tratamiento_id" style="margin-bottom: 5px;" placeholder="ID del tratamiento"><br> 
+             <input type="number" name="cliente_id" style="margin-bottom: 5px;" placeholder="ID del cliente que recibe el regalo"><br> 
              <button type="submit" style=" margin-top: 10px;">Crear Voucher</button></form>
 
         <h3>Buscar Voucher</h3>
         <form action="/search-voucher"
             method="GET">
              <input type="number" name="id_voucher" style="margin-bottom: 5px;" placeholder="ID del voucher"><br> 
-             <button type="submit" style="border-radius: 5px; margin-top: 10px;">Buscar Voucher</button></form>
-
-        <h3>Actualizar Voucher</h3>
-        <form action="/update-voucher"
-            method="PUT">
-             <input type="number" name="id_voucher" style="margin-bottom: 5px;" placeholder="ID del voucher"><br> 
-             <input type="number" name="id_cliente_regalador" style="margin-bottom: 5px;" placeholder="ID del cliente que regala"><br> 
-             <input type="number" name="id_treatment" style="margin-bottom: 5px;" placeholder="ID del tratamiento"><br> 
-             <input type="number" name="id_cliente_regalado" style="margin-bottom: 5px;" placeholder="ID del cliente que recibe el regalo"><br> 
-             <button type="submit" style="border-radius: 5px; margin-top: 10px;">Actualizar Voucher</button></form>
-
-        <h3>Eliminar Voucher</h3>
-        <form action="/delete-voucher"
-            method="DELETE">
-             <input type="number" name="id_voucher" style="margin-bottom: 5px;" placeholder="ID del voucher"><br> 
-             <button type="submit" style="border-radius: 5px; margin-top: 10px;">Eliminar Voucher</button></form>
+             <button type="submit" style="border-radius: 5px; margin-top: 10px;">Buscar Voucher</button></form>   
             
              <table id="tablaVouchers">
             <thead>
@@ -180,17 +134,14 @@
 
         <div id="turnos" class="item-flex" Turnos>
         <h2>Turno
-            <form action="/turno"
-            method="GET">
-             <button type="submit" style="border-radius: 5px; margin-top: 10px;">Mostrar turnos</button></form>
+            <form> <button type="submit" style="border-radius: 5px; margin-top: 10px;">Mostrar turnos</button></form>
         </h2>
         <h3>Crear Turno</h3>
-        <form action="/turn"
-            method="POST">
-             <input type="text" name="date" style="margin-bottom: 5px;" placeholder="Fecha del turno"><br> 
-             <input type="text" name="time" style="margin-bottom: 5px;" placeholder="Hora del turno"><br> 
-             <input type="number" name="id_cliente" style="margin-bottom: 5px;" placeholder="ID del cliente"><br> 
-             <input type="number" name="id_treatment" style="margin-bottom: 5px;" placeholder="ID del tratamiento"><br> 
+        <form id="crear-turno-form">
+             <input type="text" name="fecha" style="margin-bottom: 5px;" placeholder="Fecha del turno"><br> 
+             <input type="text" name="hora" style="margin-bottom: 5px;" placeholder="Hora del turno"><br> 
+             <input type="number" name="cliente_id" style="margin-bottom: 5px;" placeholder="ID del cliente"><br> 
+             <input type="number" name="tratamiento_id" style="margin-bottom: 5px;" placeholder="ID del tratamiento"><br> 
              <button type="submit" style="border-radius: 5px; margin-top: 10px;">Crear Turno</button></form>
 
         <h3>Buscar Turno</h3>
@@ -199,22 +150,6 @@
              <input type="text" name="date" style="margin-bottom: 5px;" placeholder="Fecha del turno"><br> 
              <input type="text" name="time" style="margin-bottom: 5px;" placeholder="Hora del turno"><br> 
              <button type="submit" style="border-radius: 5px; margin-top: 10px;">Buscar Turno</button></form>
-
-        <h3>Actualizar Turno</h3>
-        <form action="/update-turn"
-            method="PUT">
-             <input type="text" name="date" style="margin-bottom: 5px;" placeholder="Fecha del turno"><br> 
-             <input type="text" name="time" style="margin-bottom: 5px;" placeholder="Hora del turno"><br> 
-             <input type="number" name="id_cliente" style="margin-bottom: 5px;" placeholder="ID del cliente"><br> 
-             <input type="number" name="id_treatment" style="margin-bottom: 5px;" placeholder="ID del tratamiento"><br> 
-             <button type="submit" style="border-radius: 5px; margin-top: 10px;">Actualizar Turno</button></form>
-
-        <h3>Eliminar Turno</h3>
-        <form action="/delete-turn"
-            method="DELETE">
-             <input type="text" name="date" style="margin-bottom: 5px;" placeholder="Fecha del turno"><br>
-             <input type="text" name="time" style="margin-bottom: 5px;" placeholder="Hora del turno"><br>
-             <button type="submit" style="border-radius: 5px; margin-top: 10px;">Eliminar Turno</button></form>
 
               <table id="tablaTurnos">
             <thead>
@@ -225,7 +160,7 @@
                 <th>Cliente</th>
             </tr>
             </thead>
-            <tbody id="cuerpoTablaTurnos">
+            <tbody id="cuerpoTablaTurno">
     
             </tbody>
             </table>
