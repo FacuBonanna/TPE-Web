@@ -60,5 +60,79 @@ body{
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
-    front-size: 30px;
+    font-size: 20px;
+}
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: 15px;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  margin: 10px;
+}
+
+/* Encabezado */
+.tabla thead {
+  background: #2ab6af;
+  color: #066b66fd;
+}
+
+.tabla th {
+  padding: 10px;
+  text-align: left;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+/* Celdas */
+.tabla td {
+    margin: 5px;
+  padding: 10px;
+  border-bottom: 1px solid #e5e8eb;
+  color: #333;
+}
+
+/* Filas alternadas */
+.tabla tbody tr:nth-child(even) {
+  background: #f7f9fb;
+}
+
+/* Hover */
+.tabla tbody tr {
+  transition: background 0.2s;
+}
+
+.tabla tbody tr:hover {
+  background: #6aecd7;
+}
+
+/* Última fila sin borde */
+.tabla tbody tr:last-child td {
+  border-bottom: none;
+}
+
+
+/* Botón eliminar */
+.delete-cliente-tabla {
+  background: #f58be7;
+  color: #9c006d;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.delete-cliente-tabla:hover {
+  background: #fa67e6;
+}
+
+.delete-cliente-tabla:active {
+  transform: scale(0.96);
 }
