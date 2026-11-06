@@ -332,28 +332,48 @@ crearTurnoForm.addEventListener("submit", async (event) => {
 
 // CLIENTES
 const clientes = document.getElementById("cuerpoTablaCliente")
-clientes.addEventListener("click",async (e) =>{
-    e.preventDefault();
+clientes.addEventListener("click", async (e) => {
     const boton = e.target.closest(".delete-cliente-tabla");
-    if(!boton) return;
+    if (!boton) return;
+    e.preventDefault();
 
     const fila = boton.closest("tr");
-    const idDelete= fila.dataset.id;
+    const idDelete = fila.dataset.id;
+
+    if (!confirm("¿Estás seguro de que deseas eliminar este cliente?")) return;
+
     try {
-        const res = await fetch(`/cliente/${idDelete}`,{
+        const res = await fetch(`/cliente/${idDelete}`, {
             method: "DELETE",
-            headers: {
-                "Content-Type": "application/json"
-            }
+            headers: { "Content-Type": "application/json" }
         });
+
         if (!res.ok) {
-            throw new Error(res.text())
+            const mensajeError = (await res.text()).toLowerCase();
+
+            const esForeignKey =
+                mensajeError.includes("foreign key") || mensajeError.includes("constraint") || mensajeError.includes("referenced") || res.status === 409;
+
+            if (esForeignKey && mensajeError.includes("turno")) {
+                throw new Error("El cliente no se puede eliminar porque tiene turnos asociados. Primero debes cancelar o borrar sus turnos.");
+            }
+            if (esForeignKey && mensajeError.includes("voucher")) {
+                throw new Error("El cliente no se puede eliminar porque tiene vouchers asociados. Primero debes cancelar o borrar sus vouchers.");
+            }
+            if (esForeignKey) {
+                throw new Error("El cliente no se puede eliminar porque tiene registros asociados (turnos o vouchers).");
+            }
+            throw new Error("Ocurrió un error inesperado en el servidor.");
         }
-        clientes.removeChild(fila)
-    } catch (error){
-        console.error("Error al borrar cliente: ", error)
+
+        fila.remove();
+    } catch (error) {
+        alert(`No se puede eliminar: ${error.message}`);
+        console.error("Error al borrar cliente: ", error);
     }
-})
+});
+
+
 
 //  Actualizar cliente
 clientes.addEventListener("click", (e) => {
@@ -425,7 +445,6 @@ clientes.addEventListener("click", async (e) => {
   if (!boton) return;
 
   const fila = boton.closest("tr");
-
   const datos = { id: fila.dataset.id };
 
   fila.querySelectorAll("td[data-campo]").forEach((td) => {
@@ -480,6 +499,10 @@ tratamientos.addEventListener("click",async (e) =>{
 
     const fila = boton.closest("tr");
     const idDelete= fila.dataset.id;
+
+    const confirmDelete = confirm("¿Estás seguro de que deseas eliminar este tratamiento?");
+    if (!confirmDelete) return;
+    
     try {
         const res = await fetch(`/tratamiento/${idDelete}`,{
             method: "DELETE",
@@ -488,10 +511,25 @@ tratamientos.addEventListener("click",async (e) =>{
             }
         });
         if (!res.ok) {
+            const mensajeError = (await res.text()).toLowerCase();
+
+            const esForeignKey =
+                mensajeError.includes("foreign key") || mensajeError.includes("constraint") || mensajeError.includes("referenced") || res.status === 409;
+
+            if (esForeignKey && mensajeError.includes("turno")) {
+                throw new Error("El tratamiento no se puede eliminar porque tiene turnos asociados. Primero debes cancelar o borrar sus turnos.");
+            }
+            if (esForeignKey && mensajeError.includes("voucher")) {
+                throw new Error("El tratamiento no se puede eliminar porque tiene vouchers asociados. Primero debes cancelar o borrar sus vouchers.");
+            }
+            if (esForeignKey) {
+                throw new Error("El tratamiento no se puede eliminar porque tiene registros asociados (turnos o vouchers).");
+            }
             throw new Error(res.text())
         }
         tratamientos.removeChild(fila)
     } catch (error){
+        alert(`No se puede eliminar: ${error.message}`);
         console.error("Error al borrar tratamiento: ", error)
     }
 })
@@ -618,6 +656,9 @@ vouchers.addEventListener("click",async (e) =>{
 
     const fila = boton.closest("tr");
     const idDelete= fila.dataset.id;
+
+    const confirmDelete = confirm("¿Estás seguro de que deseas eliminar este voucher?");
+    if (!confirmDelete) return;
     try {
         const res = await fetch(`/voucher/${idDelete}`,{
             method: "DELETE",
@@ -630,6 +671,7 @@ vouchers.addEventListener("click",async (e) =>{
         }
         vouchers.removeChild(fila)
     } catch (error){
+        alert(`No se puede eliminar: ${error.message}`);
         console.error("Error al borrar voucher: ", error)
     }
 })
@@ -783,6 +825,9 @@ turnos.addEventListener("click",async (e) =>{
     const fila = boton.closest("tr");
     const fecha= fila.dataset.fecha;
     const hora= fila.dataset.hora;
+
+    const confirmDelete = confirm("¿Estás seguro de que deseas eliminar este turno?");
+    if (!confirmDelete) return;
     try {
         const res = await fetch(`/turno/${fecha}&${hora}`,{
             method: "DELETE",
