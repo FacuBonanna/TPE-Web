@@ -38,7 +38,7 @@ func deleteturno(w http.ResponseWriter, r *http.Request, fecha pgtype.Date, hora
 
 func validarTurno(turno sqlc.Turno, esCreacion bool) error {
 	trValido := turno.TratamientoID > 0
-	clValido := turno.ClienteID > 0
+	clValido := turno.ClienteDocumento > 0
 	var horaValida bool
 	if esCreacion {
 		horaValida = turno.Hora < 20 && turno.Hora > 7
@@ -75,7 +75,7 @@ func updateturno(w http.ResponseWriter, r *http.Request, fecha pgtype.Date, hora
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	updateParams := sqlc.UpdateTurnoParams{Fecha: fecha, Hora: int32(hora), TratamientoID: turnoToUpdate.TratamientoID, ClienteID: turnoToUpdate.ClienteID}
+	updateParams := sqlc.UpdateTurnoParams{Fecha: fecha, Hora: int32(hora), TratamientoID: turnoToUpdate.TratamientoID, ClienteDocumento: turnoToUpdate.ClienteDocumento}
 	UpdatedTurno, err := queries.UpdateTurno(r.Context(), updateParams)
 
 	if err != nil {
@@ -97,7 +97,7 @@ func createturno(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	paramsCreacion := sqlc.CreateTurnoParams{Fecha: nuevoturno.Fecha, Hora: nuevoturno.Hora, TratamientoID: nuevoturno.TratamientoID, ClienteID: nuevoturno.ClienteID}
+	paramsCreacion := sqlc.CreateTurnoParams{Fecha: nuevoturno.Fecha, Hora: nuevoturno.Hora, TratamientoID: nuevoturno.TratamientoID, ClienteDocumento: nuevoturno.ClienteDocumento}
 	nuevoturnoRow, err := queries.CreateTurno(r.Context(), paramsCreacion)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)

@@ -28,7 +28,7 @@ func TestQueries_CRUD(t *testing.T) {
 	queries = sqlc.New(db)
 	ctx = context.Background()
 
-	var clienteID int64
+	var documentoCliente int64
 	var otroClienteID int64
 	var tratamientoID int64
 	var voucherID int64
@@ -43,12 +43,12 @@ func TestQueries_CRUD(t *testing.T) {
 			t.Errorf("Error crítico al crear el cliente en la DB: %v", err)
 		} else {
 			fmt.Println("Se creó exitosamente el cliente.")
-			clienteID = cliente.ID
+			documentoCliente = cliente.Documento
 		}
 	})
 
 	t.Run("Get cliente", func(t *testing.T) {
-		cliente, err := queries.GetUser(ctx, clienteID)
+		cliente, err := queries.GetUser(ctx, documentoCliente)
 		if err != nil {
 			t.Errorf("No se puedo obtener el cliente: %v", err)
 		} else {
@@ -62,7 +62,7 @@ func TestQueries_CRUD(t *testing.T) {
 
 	t.Run("Update cliente", func(t *testing.T) {
 
-		paramsClienteToUpdate := sqlc.UpdateUserParams{ID: clienteID, Nombre: "valentina", Apellido: "bisogni", Deuda: 5000, NroTelefono: 123456}
+		paramsClienteToUpdate := sqlc.UpdateUserParams{Documento: documentoCliente, Nombre: "valentina", Apellido: "bisogni", Deuda: 5000, NroTelefono: 123456}
 		_, err := queries.UpdateUser(ctx, paramsClienteToUpdate)
 		if err != nil {
 			t.Errorf("No se puedo actualizar el cliente: %v", err)
@@ -72,7 +72,7 @@ func TestQueries_CRUD(t *testing.T) {
 	})
 
 	t.Run("Comprobar update cliente", func(t *testing.T) {
-		cliente, err := queries.GetUser(ctx, clienteID)
+		cliente, err := queries.GetUser(ctx, documentoCliente)
 
 		if err != nil || cliente.Nombre != "valentina" || cliente.Apellido != "bisogni" || cliente.Deuda != 5000 || cliente.NroTelefono != 123456 {
 			t.Errorf("no se pudo obtener el cliente actualizado: %v", err)
@@ -136,8 +136,8 @@ func TestQueries_CRUD(t *testing.T) {
 	t.Run("Crear voucher", func(t *testing.T) {
 		paramsCreacionUsuario := sqlc.CreateUserParams{Nombre: "Facundo", Apellido: "Bonanna", Deuda: 5000, NroTelefono: 123456}
 		user, err := queries.CreateUser(ctx, paramsCreacionUsuario)
-		otroClienteID = user.ID
-		paramsCreacion := sqlc.CreateVoucherParams{RegaladorID: clienteID, ClienteID: otroClienteID, TratamientoID: 1}
+		otroClienteID = user.Documento
+		paramsCreacion := sqlc.CreateVoucherParams{RegaladorDocumento: documentoCliente, ClienteDocumento: otroClienteID, TratamientoID: 1}
 
 		voucher, err := queries.CreateVoucher(ctx, paramsCreacion)
 		if err != nil {
@@ -160,7 +160,7 @@ func TestQueries_CRUD(t *testing.T) {
 	})
 
 	t.Run("Modificar voucher", func(t *testing.T) {
-		updateParams := sqlc.UpdateVoucherParams{IDVoucher: voucherID, ClienteID: clienteID, RegaladorID: clienteID, TratamientoID: tratamientoID}
+		updateParams := sqlc.UpdateVoucherParams{IDVoucher: voucherID, ClienteDocumento: documentoCliente, RegaladorDocumento: documentoCliente, TratamientoID: tratamientoID}
 		_, err := queries.UpdateVoucher(ctx, updateParams)
 		if err != nil {
 			t.Errorf("Error crítico al intentar actualizar el voucher en la DB: %v", err)
@@ -175,7 +175,7 @@ func TestQueries_CRUD(t *testing.T) {
 		if err != nil {
 			t.Errorf("Error crítico al intentar actualizar el voucher en la DB: %v", err)
 		} else {
-			if voucher.ClienteID != otroClienteID {
+			if voucher.ClienteDocumento != otroClienteID {
 				fmt.Println("Se comprobó la actualización del voucher.")
 			} else {
 				t.Error("No se pudo comprobar la actualización del voucher.")
@@ -194,7 +194,7 @@ func TestQueries_CRUD(t *testing.T) {
 	})
 
 	t.Run("Comprobar eliminación voucher", func(t *testing.T) {
-		_, err := queries.GetVoucher(ctx, clienteID)
+		_, err := queries.GetVoucher(ctx, documentoCliente)
 
 		if err != nil {
 			fmt.Println("Se comprobó la eliminación del voucher.")
@@ -216,7 +216,7 @@ func TestQueries_CRUD(t *testing.T) {
 	hora = 1
 
 	t.Run("Crear turno", func(t *testing.T) {
-		paramsCreacion := sqlc.CreateTurnoParams{Fecha: fecha, Hora: hora, TratamientoID: tratamientoID, ClienteID: clienteID}
+		paramsCreacion := sqlc.CreateTurnoParams{Fecha: fecha, Hora: hora, TratamientoID: tratamientoID, ClienteDocumento: documentoCliente}
 		_, err := queries.CreateTurno(ctx, paramsCreacion)
 		if err != nil {
 			t.Errorf("No se pudo crear un turno :%V", err)
@@ -232,7 +232,7 @@ func TestQueries_CRUD(t *testing.T) {
 		if err != nil {
 			t.Errorf("No se pudo obtener el turno :%v", err)
 		} else {
-			if turno.Fecha != fecha || turno.Hora != hora || turno.TratamientoID != tratamientoID || turno.ClienteID != clienteID {
+			if turno.Fecha != fecha || turno.Hora != hora || turno.TratamientoID != tratamientoID || turno.ClienteDocumento != documentoCliente {
 				fmt.Print("aca")
 				t.Errorf("Turno no se pudo obtener :%v", err)
 			} else {
@@ -243,7 +243,7 @@ func TestQueries_CRUD(t *testing.T) {
 	})
 
 	t.Run("Update Turno", func(t *testing.T) {
-		turnoToUpdate := sqlc.UpdateTurnoParams{Fecha: fecha, Hora: hora, TratamientoID: tratamientoID, ClienteID: otroClienteID}
+		turnoToUpdate := sqlc.UpdateTurnoParams{Fecha: fecha, Hora: hora, TratamientoID: tratamientoID, ClienteDocumento: otroClienteID}
 		_, err := queries.UpdateTurno(ctx, turnoToUpdate)
 
 		if err != nil {
@@ -260,7 +260,7 @@ func TestQueries_CRUD(t *testing.T) {
 		if err != nil {
 			t.Errorf("Turno no se pudo obtener luego de actualizacion :%v", err)
 		} else {
-			if turno.Fecha != fecha || turno.Hora != hora || turno.TratamientoID != tratamientoID || turno.ClienteID != otroClienteID {
+			if turno.Fecha != fecha || turno.Hora != hora || turno.TratamientoID != tratamientoID || turno.ClienteDocumento != otroClienteID {
 				t.Errorf("Turno no se pudo obtener luego de actualizar por parametros :%v", err)
 			} else {
 				fmt.Println("se comprobó la actualización de los turnos.")
@@ -293,7 +293,7 @@ func TestQueries_CRUD(t *testing.T) {
 	//DELETE CLIENTE Y TRATAMIENTO
 
 	t.Run("Eliminar cliente", func(t *testing.T) {
-		err := queries.DeleteUser(ctx, clienteID)
+		err := queries.DeleteUser(ctx, documentoCliente)
 
 		if err != nil {
 			t.Errorf("No se pudo eliminar el cliente: %v", err)
@@ -303,7 +303,7 @@ func TestQueries_CRUD(t *testing.T) {
 	})
 
 	t.Run("Comprobar eliminación cliente", func(t *testing.T) {
-		_, err := queries.GetUser(ctx, clienteID)
+		_, err := queries.GetUser(ctx, documentoCliente)
 
 		if err != nil {
 			fmt.Println("Se comprobó la eliminación del cliente.")

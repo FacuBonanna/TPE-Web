@@ -10,9 +10,9 @@ async function listar_clientes() {
             lista_clientes.forEach(c => {
                 const fila =
                     document.createElement("tr")
-                    fila.dataset.id = c.id
-                    
-                    fila.innerHTML = `<td > ${c.id}</td>
+                    fila.dataset.id = c.documento
+
+                    fila.innerHTML = `<td > ${c.documento}</td>
                     <td data-campo="nombre">${c.nombre}</td>
                     <td data-campo="apellido">${c.apellido}</td>
                     <td data-campo="deuda">${c.deuda}$</td>
@@ -73,8 +73,8 @@ async function listar_turnos() {
                     fila.dataset.hora = t.hora
                     fila.innerHTML = `<td data-campo="fecha"> ${t.fecha}</td>
                     <td data-campo="hora">${t.hora}</td>
-                    <td data-campo="nombre_tratamiento">${t.nombre_tratamiento}</td>
-                    <td data-campo="nombre_cliente">${t.nombre_cliente}</td>
+                    <td data-campo="tratamiento" data-tratamiento-id="${t.tratamiento_id}">${t.nombre_tratamiento}</td>
+                    <td data-campo="cliente" data-cliente-documento="${t.cliente_documento}">${t.nombre_cliente}</td>
                     <td><button class = "delete-turno-tabla"> Eliminar </button>
                         <button class = "update-turno-tabla"> Modificar </button></td>
                 `; 
@@ -100,9 +100,9 @@ async function listar_vouchers(){
                     fila.dataset.id = v.id_voucher
                     
                     fila.innerHTML = `<td> ${v.id_voucher}</td>
-                    <td data-campo="regalador">${v.regalador}</td>
-                    <td data-campo="cliente">${v.cliente}</td>
-                    <td data-campo="tratamiento">${v.tratamiento}</td>
+                    <td data-campo="regalador" data-regalador-documento="${v.regalador_documento}">${v.regalador}</td>
+                    <td data-campo="cliente" data-cliente-documento="${v.cliente_documento}">${v.cliente}</td>
+                    <td data-campo="tratamiento" data-tratamiento-id="${v.tratamiento_id}">${v.tratamiento}</td>
                     <td><button class = "delete-voucher-tabla"> Eliminar </button>
                         <button class = "update-voucher-tabla"> Modificar </button></td>
                 `; 
@@ -125,7 +125,9 @@ crearClienteForm.addEventListener("submit", async (event) => {
     event.preventDefault(); // Evita que la pagina se recargue al enviar el formulario
     
     const formData = new FormData(crearClienteForm);
+    
     const clienteData = {
+        documento: Number(formData.get("documento")),
         nombre: formData.get("name"),
         apellido: formData.get("surname"),
         deuda: parseFloat(formData.get("debt")),
@@ -142,7 +144,7 @@ crearClienteForm.addEventListener("submit", async (event) => {
         });
         
         if (!response.ok) {
-            throw new Error("Error al crear el cliente");
+            throw new Error("Error al crear el cliente: "+response.text());
         }
         
         alert("Cliente creado exitosamente");
@@ -152,9 +154,9 @@ crearClienteForm.addEventListener("submit", async (event) => {
         const datos = await response.json()
                 const fila =
                     document.createElement("tr")
-                    fila.dataset.id = datos.id
+                    fila.dataset.id = datos.documento
                     
-                    fila.innerHTML = `<td> ${datos.id}</td>
+                    fila.innerHTML = `<td> ${datos.documento}</td>
                     <td data-campo="nombre">${datos.nombre}</td>
                     <td data-campo="apellido">${datos.apellido}</td>
                     <td data-campo="deuda"> ${datos.deuda}$</td>
@@ -174,7 +176,7 @@ buscarClienteForm.addEventListener("submit", async (event) => {
     event.preventDefault(); //  evita que la página se recargue
 
     const formData = new FormData(buscarClienteForm);
-    const id = Number(formData.get("id_cliente"));
+    const id = Number(formData.get("documento"));
 
 
     try{
@@ -243,11 +245,10 @@ crearVoucherForm.addEventListener("submit", async (event) => {
     
     const formData = new FormData(crearVoucherForm);
     const voucherData = {
-        regalador_id: Number(formData.get("regalador_id")),
+        regalador_documento: Number(formData.get("regalador_documento")),
         tratamiento_id: Number(formData.get("tratamiento_id")),
-        cliente_id: Number(formData.get("cliente_id")),
+        cliente_documento: Number(formData.get("cliente_documento")),
     };
-    
     try {
         const response = await fetch("/voucher", {
             method: "POST",
@@ -267,12 +268,12 @@ crearVoucherForm.addEventListener("submit", async (event) => {
         const v = await response.json()
                 const fila =
                 document.createElement("tr")
-                    fila.dataset.id = v.id
+                    fila.dataset.id = v.id_voucher
                     
                     fila.innerHTML = `<td> ${v.id_voucher}</td>
-                    <td data-campo="regalador">${v.regalador_id}</td>
-                    <td data-campo="tratamiento">${v.tratamiento_id}</td>
-                    <td data-campo="cliente">${v.cliente_id}$</td>
+                    <td data-campo="regalador" data-regalador-documento="${v.regalador_documento}">${v.regalador}</td>
+                    <td data-campo="cliente" data-cliente-documento="${v.cliente_documento}">${v.cliente}</td>
+                    <td data-campo="tratamiento" data-tratamiento-id="${v.tratamiento_id}">${v.tratamiento}</td>
                     <td><button class = "delete-voucher-tabla"> Eliminar </button>
                         <button class = "update-voucher-tabla"> Modificar </button></td>`
                 tbody.appendChild(fila); }
@@ -288,9 +289,9 @@ crearTurnoForm.addEventListener("submit", async (event) => {
     
     const formData = new FormData(crearTurnoForm);
     const turnoData = {
-        fecha: formData.get("fecha"),
+        fecha: formData.get("fecha"),  
         hora: Number(formData.get("hora")),
-        cliente_id: Number(formData.get("cliente_id")),
+        cliente_documento: Number(formData.get("cliente_documento")),
         tratamiento_id: Number(formData.get("tratamiento_id")),
     };
     
@@ -316,11 +317,10 @@ crearTurnoForm.addEventListener("submit", async (event) => {
                 document.createElement("tr")
                     fila.dataset.fecha = tu.fecha
                     fila.dataset.hora = tu.hora
-                    
                     fila.innerHTML = `<td data-campo="fecha"> ${tu.fecha}</td>
                     <td data-campo="hora">${tu.hora}</td>
-                    <td data-campo="nombre_tratamiento">${tu.nombre_tratamiento}</td>
-                    <td data-campo="nombre_cliente">${tu.nombre_cliente}</td>
+                    <td data-campo="tratamiento" data-tratamiento-id="${t.tratamiento_id}">${t.nombre_tratamiento}</td>
+                    <td data-campo="cliente" data-cliente-documento="${t.cliente_documento}">${t.nombre_cliente}</td>
                     <td><button class = "delete-turno-tabla"> Eliminar </button>
                         <button class = "update-turno-tabla"> Modificar </button></td>`
                 tbody.appendChild(fila); }
@@ -437,7 +437,7 @@ clientes.addEventListener("click", async (e) => {
   id = datos.id
   datos.deuda = parseFloat(datos.deuda)
   datos.nro_telefono = Number(datos.nro_telefono)
-  clienteData = {nombre: datos.nombre, apellido:datos.apellido, deuda: datos.deuda, nro_telefono:datos.nro_telefono}
+  clienteData = {documento:datos.Documento,nombre: datos.nombre, apellido:datos.apellido, deuda: datos.deuda, nro_telefono:datos.nro_telefono}
      try {
         const response = await fetch(`/cliente/${datos.id}` ,{
             method: "PUT",
@@ -634,6 +634,146 @@ vouchers.addEventListener("click",async (e) =>{
     }
 })
 
+
+//  UPDATE VOUCHER
+vouchers.addEventListener("click", (e) => {
+  const boton = e.target.closest(".update-voucher-tabla");
+  if (!boton) return;
+
+  const fila = boton.closest("tr");
+
+  // Convertir cada celda editable en un input con su contenido actual
+  fila.querySelectorAll("td[data-campo]").forEach((td) => {
+    let valorActual = td.textContent;
+  td.dataset.original = valorActual; // para Cancelar
+
+  const campo = td.dataset.campo;
+  const input = document.createElement("input");
+  input.name = campo;
+  input.placeholder = campo.charAt(0).toUpperCase() + campo.slice(1);
+  input.style.marginBottom = "5px";
+  if (campo === "cliente") {
+    input.type = "number";
+    input.name = "clienteDocumento";
+    input.placeholder = "Documento cliente";
+    valorActual = td.dataset.clienteDocumento;
+  } else if (campo === "tratamiento"){
+    input.type = "number";
+    input.name = "tratamientoId";
+    input.placeholder = "ID Tratamiento";
+    valorActual = td.dataset.tratamientoId;
+  } else if (campo ==="regalador"){
+    input.type = "number";
+    input.name = "regaladorDocumento";
+    input.placeholder = "Documento regalador";
+    valorActual = td.dataset.regaladorDocumento;
+  }
+  input.value = valorActual;
+  input.style.width = "100%";
+  input.style.maxWidth = "200px";
+  input.style.boxSizing = "border-box";
+
+  td.textContent = "";
+  td.appendChild(input);
+  });
+
+
+  const btnConfirmar = document.createElement("button");
+  btnConfirmar.textContent = "Confirmar";
+  btnConfirmar.className = "confirmar-voucher-tabla";
+
+  const btnCancelar = document.createElement("button");
+  btnCancelar.textContent = "Cancelar";
+  btnCancelar.className = "cancelar-voucher-tabla";
+
+  boton.replaceWith(btnConfirmar, btnCancelar);
+});
+
+//  Cancelar modificación
+vouchers.addEventListener("click", (e) => {
+  const boton = e.target.closest(".cancelar-voucher-tabla");
+  if (!boton) return;
+
+  const fila = boton.closest("tr");
+
+  
+  fila.querySelectorAll("td[data-campo]").forEach((td) => {
+    td.textContent = td.dataset.original;
+    delete td.dataset.original;
+  });
+
+  
+  const btnModificar = document.createElement("button");
+  btnModificar.textContent = "Modificar";
+  btnModificar.className = "update-voucher-tabla";
+
+  const btnConfirmar = fila.querySelector(".confirmar-voucher-tabla");
+  btnConfirmar.replaceWith(btnModificar);
+  boton.remove();
+});
+
+//  Confirmar modificación
+vouchers.addEventListener("click", async (e) => {
+  const boton = e.target.closest(".confirmar-voucher-tabla");
+  if (!boton) return;
+
+  const fila = boton.closest("tr");
+
+  const voucherData = {
+  id_voucher: Number(fila.dataset.id),
+  regalador_documento: Number(fila.querySelector('td[data-campo="regalador"] input').value),
+  cliente_documento: Number(fila.querySelector('td[data-campo="cliente"] input').value),
+  tratamiento_id: Number(fila.querySelector('td[data-campo="tratamiento"] input').value),
+  };
+  console.log(voucherData)
+     try {
+        const response = await fetch(`/voucher/${voucherData.id_voucher}` ,{
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(voucherData)
+        });
+        
+        if (!response.ok) {
+            throw new Error(response.text());
+        }
+        const t = await response.json()
+        fila.querySelectorAll("td[data-campo]").forEach((td) => {
+        const campo = td.dataset.campo;
+
+        if (campo === "cliente") {
+            td.dataset.clienteDocumento = t.cliente_documento;
+            td.textContent = t.cliente;
+        } else if (campo === "tratamiento") {
+            td.dataset.tratamientoId = t.tratamiento_id;
+            td.textContent = t.tratamiento;
+        } else if (campo === "tratamiento"){
+            td.dataset.regaladorDocumento = t.regalador_documento;
+            td.textContent = t.regalador;
+        } else {
+            td.textContent = td.dataset.original;
+        }
+
+        delete td.dataset.original;
+        });
+
+        const btnModificar = document.createElement("button");
+        btnModificar.textContent = "Modificar";
+        btnModificar.className = "update-voucher-tabla";
+
+        const btnCancelar = fila.querySelector(".cancelar-voucher-tabla");
+        boton.replaceWith(btnModificar);
+        btnCancelar.remove();
+        alert("Tratamiento actualizado exitosamente");
+     } catch (error){
+        console.error("Error al actualizar el tratamiento: ", error)
+     }
+});
+
+//TURNOS
+
+//  DELETE
 const turnos = document.getElementById("cuerpoTablaTurno")
 turnos.addEventListener("click",async (e) =>{
     e.preventDefault();
@@ -658,3 +798,133 @@ turnos.addEventListener("click",async (e) =>{
         console.error("Error al borrar turno: ", error)
     }
 })
+
+// UPDATE TURNO
+
+// Cambiar a formulario
+turnos.addEventListener("click", (e) => {
+  const boton = e.target.closest(".update-turno-tabla");
+  if (!boton) return;
+
+  const fila = boton.closest("tr");
+
+  // Convertir cada celda editable en un input con su contenido actual
+  fila.querySelectorAll("td[data-campo]").forEach((td) => {
+    let valorActual = td.textContent;
+  td.dataset.original = valorActual; // para Cancelar
+
+  const campo = td.dataset.campo;
+  const input = document.createElement("input");
+  input.name = campo;
+  input.placeholder = campo.charAt(0).toUpperCase() + campo.slice(1);
+  input.style.marginBottom = "5px";
+  if (campo === "cliente") {
+    input.type = "number";
+    input.name = "cliente_id";
+    input.placeholder = "Documento";
+    valorActual = td.dataset.clienteDocumento;
+  } else if (campo === "tratamiento"){
+    input.type = "number";
+    input.name = "tratamiento_id";
+    input.placeholder = "ID Tratamiento";
+    valorActual = td.dataset.tratamientoId;
+  }
+  input.value = valorActual;
+  input.style.width = "100%";
+  input.style.maxWidth = "200px";
+  input.style.boxSizing = "border-box";
+
+  td.textContent = "";
+  td.appendChild(input);
+  });
+
+
+  const btnConfirmar = document.createElement("button");
+  btnConfirmar.textContent = "Confirmar";
+  btnConfirmar.className = "confirmar-turno-tabla";
+
+  const btnCancelar = document.createElement("button");
+  btnCancelar.textContent = "Cancelar";
+  btnCancelar.className = "cancelar-turno-tabla";
+
+  boton.replaceWith(btnConfirmar, btnCancelar);
+});
+
+//  Cancelar modificación
+turnos.addEventListener("click", (e) => {
+  const boton = e.target.closest(".cancelar-turno-tabla");
+  if (!boton) return;
+
+  const fila = boton.closest("tr");
+
+  
+  fila.querySelectorAll("td[data-campo]").forEach((td) => {
+    td.textContent = td.dataset.original;
+    delete td.dataset.original;
+  });
+
+  
+  const btnModificar = document.createElement("button");
+  btnModificar.textContent = "Modificar";
+  btnModificar.className = "update-turno-tabla";
+
+  const btnConfirmar = fila.querySelector(".confirmar-turno-tabla");
+  btnConfirmar.replaceWith(btnModificar);
+  boton.remove();
+});
+
+//  Confirmar modificación
+turnos.addEventListener("click", async (e) => {
+  const boton = e.target.closest(".confirmar-turno-tabla");
+  if (!boton) return;
+
+  const fila = boton.closest("tr");
+
+  const turnoData = {
+  fecha: fila.dataset.fecha,
+  hora: Number(fila.dataset.hora),
+  cliente_documento: Number(fila.querySelector('td[data-campo="cliente"] input').value),
+  tratamiento_id: Number(fila.querySelector('td[data-campo="tratamiento"] input').value),
+  };
+     try {
+        const id = turnoData.fecha+"&"+turnoData.hora
+        const response = await fetch(`/turno/${id}` ,{
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(turnoData)
+        });
+        
+        if (!response.ok) {
+            throw new Error(response.text());
+        }
+        const t = await response.json()
+        fila.querySelectorAll("td[data-campo]").forEach((td) => {
+        const campo = td.dataset.campo;
+
+        if (campo === "cliente") {
+            td.dataset.clienteDocumento = t.cliente_documento;
+            td.textContent = t.nombre_cliente;
+        } else if (campo === "tratamiento") {
+            td.dataset.tratamientoId = t.tratamiento_id;
+            td.textContent = t.nombre_tratamiento;
+        } else {
+            td.textContent = td.dataset.original;
+        }
+
+        delete td.dataset.original;
+        });
+
+        const btnModificar = document.createElement("button");
+        btnModificar.textContent = "Modificar";
+        btnModificar.className = "update-turno-tabla";
+
+        const btnCancelar = fila.querySelector(".cancelar-turno-tabla");
+        boton.replaceWith(btnModificar);
+        btnCancelar.remove();
+        alert("Tratamiento actualizado exitosamente");
+     } catch (error){
+        console.error("Error al actualizar el tratamiento: ", error)
+     }
+});

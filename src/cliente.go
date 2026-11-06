@@ -45,7 +45,7 @@ func updateCliente(w http.ResponseWriter, r *http.Request, id int) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	paramsClienteToUpdate := sqlc.UpdateUserParams{ID: int64(id), Nombre: clienteToUpdate.Nombre, Apellido: clienteToUpdate.Apellido, Deuda: clienteToUpdate.Deuda, NroTelefono: clienteToUpdate.NroTelefono}
+	paramsClienteToUpdate := sqlc.UpdateUserParams{Documento: int64(id), Nombre: clienteToUpdate.Nombre, Apellido: clienteToUpdate.Apellido, Deuda: clienteToUpdate.Deuda, NroTelefono: clienteToUpdate.NroTelefono}
 	updatedCliente, err := queries.UpdateUser(r.Context(), paramsClienteToUpdate)
 
 	if err != nil {
@@ -90,7 +90,7 @@ func createCliente(w http.ResponseWriter, r *http.Request) {
 		fmt.Print(err.Error())
 		return
 	}
-	paramsCreacion := sqlc.CreateUserParams{Nombre: nuevoCliente.Nombre, Apellido: nuevoCliente.Apellido, Deuda: nuevoCliente.Deuda, NroTelefono: nuevoCliente.NroTelefono}
+	paramsCreacion := sqlc.CreateUserParams{Documento: nuevoCliente.Documento, Nombre: nuevoCliente.Nombre, Apellido: nuevoCliente.Apellido, Deuda: nuevoCliente.Deuda, NroTelefono: nuevoCliente.NroTelefono}
 	nuevoClienteRow, err := queries.CreateUser(r.Context(), paramsCreacion)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
