@@ -2,149 +2,52 @@ package main
 
 import (
 	sqlc "TPE/db/sqlc"
-	"encoding/json"
-	"fmt"
+	"context"
 	"net/http"
 	"strconv"
-	"strings"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
-func getCliente(w http.ResponseWriter, r *http.Request, id int) {
-
-	cliente, err := queries.GetUser(r.Context(), int64(id))
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
-		return
-	}
-	json.NewEncoder(w).Encode(cliente)
+func getClientes(ctx context.Context) []sqlc.Cliente {
+	cli, _ := queries.ListUsers(ctx)
+	return cli
 }
 
-func deleteCliente(w http.ResponseWriter, r *http.Request, id int) {
-
-	err := queries.DeleteUser(r.Context(), int64(id))
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
+func crearCliente(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Error al procesar el formulario", http.StatusBadRequest)
 		return
 	}
-	w.WriteHeader(http.StatusNoContent)
-}
 
-func updateCliente(w http.ResponseWriter, r *http.Request, id int) {
-	var clienteToUpdate sqlc.Cliente
-	err := json.NewDecoder(r.Body).Decode(&clienteToUpdate)
+	nombre := r.FormValue("name")
+	apellido := r.FormValue("surname")
+
+	// Convertir deuda a float64
+	deuda, err := strconv.ParseFloat(r.FormValue("debt"), 64)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "La deuda debe ser un número válido", http.StatusBadRequest)
 		return
 	}
-	err = validarCliente(clienteToUpdate)
+
+	// Convertir teléfono a int32
+	telefono, err := strconv.ParseInt(r.FormValue("phone"), 10, 32)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "El teléfono debe ser un número entero válido", http.StatusBadRequest)
 		return
 	}
-	paramsClienteToUpdate := sqlc.UpdateUserParams{ID: int64(id), Nombre: clienteToUpdate.Nombre, Apellido: clienteToUpdate.Apellido, Deuda: clienteToUpdate.Deuda, NroTelefono: clienteToUpdate.NroTelefono}
-	updatedCliente, err := queries.UpdateUser(r.Context(), paramsClienteToUpdate)
+
+	_, err = queries.CreateUser(r.Context(), sqlc.CreateUserParams{
+		Nombre:      nombre,
+		Apellido:    apellido,
+		Deuda:       deuda,
+		NroTelefono: int32(telefono),
+	})
 
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
+		http.Error(w, "Error al crear el cliente: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-	json.NewEncoder(w).Encode(updatedCliente)
-}
 
-func validarCliente(cliente sqlc.Cliente) error {
-	apValido := cliente.Apellido != ""
-	nomValido := cliente.Nombre != ""
-	nroValido := cliente.NroTelefono > 0
-	if !apValido || !nomValido || !nroValido {
-		textoError := ""
-		if !apValido {
-			textoError += "El apellido ingresado no puede ser vacío.\n"
-		}
-		if !nomValido {
-			textoError += "El nombre ingresado no puede ser vacío.\n"
-		}
-		if !nroValido {
-			textoError += "El número de teléfono es inválido.\n"
-		}
-
-		return fmt.Errorf(textoError)
-	}
-	return nil
-}
-
-func createCliente(w http.ResponseWriter, r *http.Request) {
-	var nuevoCliente sqlc.Cliente
-	err := json.NewDecoder(r.Body).Decode(&nuevoCliente)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		fmt.Print(err.Error())
-		return
-	}
-	err = validarCliente(nuevoCliente)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		fmt.Print(err.Error())
-		return
-	}
-	paramsCreacion := sqlc.CreateUserParams{Nombre: nuevoCliente.Nombre, Apellido: nuevoCliente.Apellido, Deuda: nuevoCliente.Deuda, NroTelefono: nuevoCliente.NroTelefono}
-	nuevoClienteRow, err := queries.CreateUser(r.Context(), paramsCreacion)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-	} else {
-		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(nuevoClienteRow)
-	}
-}
-
-func getClientes(w http.ResponseWriter, r *http.Request) {
-
-	clientes, err := queries.ListUsers(r.Context())
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
-		return
-	}
-	json.NewEncoder(w).Encode(clientes)
-
-}
-
-func clientesHandler(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodPost:
-		createCliente(w, r)
-	case http.MethodGet:
-		getClientes(w, r)
-	default:
-		http.Error(w, "Method not allowed",
-			http.StatusMethodNotAllowed)
-	}
-}
-
-func clienteHandler(w http.ResponseWriter, r *http.Request) {
-	parts := strings.Split(r.URL.Path, "/")
-	if len(parts) != 3 {
-		http.Error(w, "Invalid URL", http.StatusBadRequest)
-		return
-	}
-	id, err := strconv.Atoi(parts[2])
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
-		return
-	}
-	switch r.Method {
-	case http.MethodGet:
-		getCliente(w, r, id)
-	case http.MethodPut:
-		updateCliente(w, r, id)
-	case http.MethodDelete:
-		deleteCliente(w, r, id)
-	default:
-		http.Error(w, "Método no permitido",
-			http.StatusMethodNotAllowed)
-	}
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

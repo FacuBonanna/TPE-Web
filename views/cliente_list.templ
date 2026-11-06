@@ -1,0 +1,29 @@
+package views
+
+templ ClienteList(clientes []Cliente) {
+    <h3>Listado de clientes</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Deuda</th>
+                <th>Teléfono</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            for _, cliente := range clientes {
+                <tr>
+                    <td>{cliente.ID}</td>
+                    <td>{cliente.Nombre}</td>
+                    <td>{cliente.Apellido}</td>
+                    <td>{cliente.Deuda}</td>
+                    <td>{cliente.Telefono}</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
