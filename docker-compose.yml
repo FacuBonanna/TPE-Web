@@ -25,6 +25,11 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data 
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h localhost -U postgres -d apirest"]
+      interval: 1s
+      timeout: 3s
+      retries: 30
 
 volumes:
   pgdata: 
