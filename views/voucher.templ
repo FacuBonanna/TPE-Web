@@ -1,13 +1,17 @@
 package views
 
+import (sqlc "TPE/db/sqlc"
+"fmt"
+)
+
 var formCrearVoucher = Formulario{
 	Accion: "/voucher",
 	Metodo: "POST",
 	Etiqueta: "Crear Voucher",
 	Campos: []Campo{
-		Numero("regalador_id", "ID del cliente que regala"),
+		Numero("regalador_documento", "Documento del cliente que regala"),
 		Numero("tratamiento_id", "ID del tratamiento"),
-		Numero("cliente_id", "ID del cliente que recibe el regalo"),
+		Numero("cliente_documento", "Documento del cliente que recibe el regalo"),
 	},
 }
 
@@ -19,10 +23,22 @@ var formBuscarVoucher = Formulario{
 
 var columnasVouchers = []string{"Id", "De", "Para", "Tratamiento"}
 
-templ Vouchers() {
+func celdasVoucher(v sqlc.Voucher) []string {
+	return []string{
+		fmt.Sprint(v.ClienteID),
+		fmt.Sprint(v.TratamientoID),
+		fmt.Sprint(v.RegaladorID),
+	}
+}
+
+templ Vouchers(vouchers []sqlc.Voucher) {
 	@Seccion("vouchers", "Vouchers", "Mostrar vouchers", "/") {
 		@Bloque("Crear Voucher", formCrearVoucher)
 		@Bloque("Buscar Voucher", formBuscarVoucher)
-		@Tabla("tablaVouchers", "cuerpoTablaVoucher", columnasVouchers)
+		@Tabla("tablaVouchers", "cuerpoTablaVoucher", columnasVouchers){
+			for _, v := range vouchers {
+                @Fila(celdasVoucher(v))
+            }
+		}
 	}
 }

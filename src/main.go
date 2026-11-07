@@ -59,10 +59,10 @@ func main() {
 func servidor(w http.ResponseWriter, r *http.Request) {
 	clientes := getClientes(r.Context())
 	tratamientos := getTratamiento(r.Context())
-	//vouchers := getVouchers(r.Context())
+	vouchers := getVouchers(r.Context())
 	//turnos := getTurnos(r.Context())
 
-	err := views.Index(clientes, tratamientos).Render(r.Context(), w)
+	err := views.Index(clientes, tratamientos, vouchers).Render(r.Context(), w)
 
 	if err != nil {
 		http.Error(w, "Error al renderizar la página", http.StatusInternalServerError)
