@@ -5,6 +5,7 @@ COPY go.mod go.sum ./
 RUN go mod download
 COPY /src .
 COPY /db/sqlc ./db/sqlc
+COPY /views ./views
 RUN CGO_ENABLED=0 go build -o /app/api .
 
 #binario

@@ -1,22 +1,61 @@
 package views
 
-templ Layout(title string, errMsg string) {
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>{ title }</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"/>
-</head>
-<body>
-<main class="container">
-<h1>{ title }</h1>
-if errMsg != "" {
-<article role="alert"><strong>No se pudo completar la acción:</strong> { errMsg }</article>
+type Enlace struct {
+	Href  string
+	Texto string
 }
-{ children... }
-</main>
-</body>
-</html>
+
+var enlacesMenu = []Enlace{
+	{"#clientes", "Clientes"},
+	{"#tratamientos", "Tratamientos"},
+	{"#vouchers", "Vouchers"},
+	{"#turnos", "Turnos"},
+}
+
+const emailSoporte = "bisognivalentinaedu@gmail.com"
+
+templ Layout(titulo string) {
+	<!DOCTYPE html>
+	<html lang="es">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>{ titulo }</title>
+			<link rel="stylesheet" href="/static/styles.css"/>
+		</head>
+		<body>
+			@Encabezado(titulo)
+			@Menu(enlacesMenu)
+			{ children... }
+			@Contacto(emailSoporte)
+			<script src="/static/app.js" defer></script>
+		</body>
+	</html>
+}
+
+templ Encabezado(titulo string) {
+	<div class="header">
+		<div class="header_letras">
+			<h1>{ titulo }</h1>
+		</div>
+	</div>
+}
+
+templ Menu(enlaces []Enlace) {
+	<nav class="menu">
+		for _, e := range enlaces {
+			<a href={ templ.SafeURL(e.Href) }>{ e.Texto }</a>
+		}
+	</nav>
+}
+
+templ Contacto(email string) {
+	<h2>contacto soporte</h2>
+	<div>
+		<p>
+			Si tiene alguna pregunta o necesita ayuda, no dude en ponerse en contacto con nuestro equipo de soporte.
+			Puede enviarnos un correo electrónico a
+			<a href={ templ.SafeURL("mailto:" + email) }>{ email }</a>.
+		</p>
+	</div>
 }

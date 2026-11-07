@@ -1,6 +1,8 @@
 package views
 
-templ ClienteList(clientes []Cliente) {
+import sqlc "TPE/db/sqlc"
+
+templ ClienteList(clientes []sqlc.Cliente) {
     <h3>Listado de clientes</h3>
 
     <table>
@@ -21,7 +23,7 @@ templ ClienteList(clientes []Cliente) {
                     <td>{cliente.Nombre}</td>
                     <td>{cliente.Apellido}</td>
                     <td>{cliente.Deuda}</td>
-                    <td>{cliente.Telefono}</td>
+                    <td>{cliente.NroTelefono}</td>
                 </tr>
             }
         </tbody>

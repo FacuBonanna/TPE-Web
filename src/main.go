@@ -1,7 +1,6 @@
 package main
 
 import (
-	db "TPE/db/sqlc"
 	sqlc "TPE/db/sqlc"
 	views "TPE/views"
 	"database/sql"
@@ -40,13 +39,8 @@ func main() {
 
 	queries = sqlc.New(dbase)
 
-	http.Handle(
-		"/static/",
-		http.StripPrefix("/static/", http.FileServer(http.Dir("/app/static"))),
-	)
-
-	http.HandleFunc("GET /", servidor)
-	http.HandleFunc("POST /cliente", crearCliente)
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+	http.HandleFunc("/", servidor)
 
 	port := ":8080"
 	fmt.Printf("Servidor escuchando en http://localhost%s\n", port)
@@ -59,12 +53,12 @@ func main() {
 }
 func servidor(w http.ResponseWriter, r *http.Request) {
 
-	turnos := make([]db.Turno, 0, 0)
-	vouchers := make([]db.Voucher, 0, 0)
-	clientes := make([]db.Cliente, 0, 0)
-	clientes = getClientes(r.Context())
-	pagina := views.PageData{Clientes: clientes, Vouchers: vouchers, Turnos: turnos}
-	err := views.IndexPage(pagina).Render(r.Context(), w)
+	//	turnos := make([]db.Turno, 0, 0)
+	//	vouchers := make([]db.Voucher, 0, 0)
+	//	clientes := make([]db.Cliente, 0, 0)
+	clientes := getClientes(r.Context())
+
+	err := views.Index(clientes).Render(r.Context(), w)
 	if err != nil {
 		http.Error(w, "Error al renderizar la página", http.StatusInternalServerError)
 		return

@@ -1,0 +1,32 @@
+package views
+
+var formCrearTurno = Formulario{
+	ID:       "crear-turno-form",
+	Etiqueta: "Crear Turno",
+	Campos: []Campo{
+		Texto("fecha", "Fecha del turno"),
+		Texto("hora", "Hora del turno"),
+		Numero("cliente_id", "ID del cliente"),
+		Numero("tratamiento_id", "ID del tratamiento"),
+	},
+}
+
+var formBuscarTurno = Formulario{
+	Accion:   "/search-turn",
+	Etiqueta: "Buscar Turno",
+	Campos: []Campo{
+		Texto("date", "Fecha del turno"),
+		Texto("time", "Hora del turno"),
+	},
+}
+
+var columnasTurnos = []string{"Fecha", "Hora", "Tratamiento", "Cliente"}
+
+// El botón "Mostrar turnos" del original no tenía action: ruta vacía.
+templ Turnos() {
+	@Seccion("turnos", "Turno", "Mostrar turnos", "") {
+		@Bloque("Crear Turno", formCrearTurno)
+		@Bloque("Buscar Turno", formBuscarTurno)
+		@Tabla("tablaTurnos", "cuerpoTablaTurno", columnasTurnos)
+	}
+}

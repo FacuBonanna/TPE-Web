@@ -2,29 +2,13 @@ package views
 
 import sqlc "TPE/db/sqlc"
 
-type PageData struct {
-Error    string
-Clientes []sqlc.Cliente
-Turnos   []sqlc.ListTurnosRow
-Vouchers []sqlc.Voucher
-}
-
-templ IndexPage(d PageData) {
-    @Layout("Gestión", d.Error) {
-<section>
-<h2>Clientes</h2>
-    @ClienteForm()
-    @ClienteList(d.Clientes)
-</section>
-<section>
-<h2>Turnos</h2>
-    @TurnoForm(d.Clientes)
-    @TurnoList(d.Turnos)
-</section>
-<section>
-<h2>Vouchers</h2>
-@VoucherForm(d.Clientes)
-@VoucherList(d.Vouchers)
-</section>
-}
+templ Index(clientes []sqlc.Cliente) {
+	@Layout("GLAM Estetica Integral") {
+		<div class="contenedor-flex">
+			@Clientes(clientes)
+			@Tratamientos()
+			@Vouchers()
+			@Turnos()
+		</div>
+	}
 }

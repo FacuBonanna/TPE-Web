@@ -1,0 +1,27 @@
+package views
+
+var formCrearTratamiento = Formulario{
+	ID:       "crear-tratamiento-form",
+	Etiqueta: "Crear Tratamiento",
+	Campos: []Campo{
+		Texto("nombre", "Nombre"),
+		Texto("descripcion_corta", "Descripción"),
+		Numero("costo", "Costo"),
+	},
+}
+
+var formBuscarTratamiento = Formulario{
+	Accion:   "/search-treatment",
+	Etiqueta: "Buscar Tratamiento",
+	Campos:   []Campo{Numero("id_treatment", "ID del tratamiento")},
+}
+
+var columnasTratamientos = []string{"Id", "Nombre", "Descripcion", "Costo"}
+
+templ Tratamientos() {
+	@Seccion("tratamientos", "Tratamientos", "Mostrar tratamientos", "/tratamiento") {
+		@Bloque("Crear Tratamiento", formCrearTratamiento)
+		@Bloque("Buscar Tratamiento", formBuscarTratamiento)
+		@Tabla("tablaTratamientos", "cuerpoTablaTratamiento", columnasTratamientos)
+	}
+}

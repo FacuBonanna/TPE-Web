@@ -1,0 +1,27 @@
+package views
+
+var formCrearVoucher = Formulario{
+	ID:       "crear-voucher-form",
+	Etiqueta: "Crear Voucher",
+	Campos: []Campo{
+		Numero("regalador_id", "ID del cliente que regala"),
+		Numero("tratamiento_id", "ID del tratamiento"),
+		Numero("cliente_id", "ID del cliente que recibe el regalo"),
+	},
+}
+
+var formBuscarVoucher = Formulario{
+	Accion:   "/search-voucher",
+	Etiqueta: "Buscar Voucher",
+	Campos:   []Campo{Numero("id_voucher", "ID del voucher")},
+}
+
+var columnasVouchers = []string{"Id", "De", "Para", "Tratamiento"}
+
+templ Vouchers() {
+	@Seccion("vouchers", "Vouchers", "Mostrar vouchers", "/voucher") {
+		@Bloque("Crear Voucher", formCrearVoucher)
+		@Bloque("Buscar Voucher", formBuscarVoucher)
+		@Tabla("tablaVouchers", "cuerpoTablaVoucher", columnasVouchers)
+	}
+}

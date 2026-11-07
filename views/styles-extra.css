@@ -1,0 +1,4 @@
+/* Reemplaza los style="..." inline del HTML original. Pegalo en static/styles.css */
+.campo { display: block; margin-bottom: 5px; }
+.btn   { border-radius: 5px; margin-top: 10px; }
+.menu a { color: #02484b; }
