@@ -15,7 +15,8 @@ import (
 )
 
 var formCrearCliente = Formulario{
-	ID:       "crear-cliente-form",
+	Accion:   "/cliente",
+	Metodo:   "POST",
 	Etiqueta: "Crear Cliente",
 	Campos: []Campo{
 		Texto("name", "Nombre"),
@@ -107,7 +108,7 @@ func Clientes(clientes []sqlc.Cliente) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = Seccion("clientes", "Clientes", "Mostrar clientes", "/cliente").Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Seccion("clientes", "Clientes", "Mostrar clientes", "/").Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

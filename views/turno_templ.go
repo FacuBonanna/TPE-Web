@@ -10,7 +10,8 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 var formCrearTurno = Formulario{
-	ID:       "crear-turno-form",
+	Accion:   "/turno",
+	Metodo:   "POST",
 	Etiqueta: "Crear Turno",
 	Campos: []Campo{
 		Texto("fecha", "Fecha del turno"),
@@ -75,7 +76,7 @@ func Turnos() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = Seccion("turnos", "Turno", "Mostrar turnos", "").Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Seccion("turnos", "Turno", "Mostrar turnos", "/").Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

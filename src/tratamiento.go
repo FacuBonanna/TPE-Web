@@ -2,144 +2,43 @@ package main
 
 import (
 	sqlc "TPE/db/sqlc"
-	"encoding/json"
-	"fmt"
+	"context"
 	"net/http"
 	"strconv"
-	"strings"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
-func getTratamiento(w http.ResponseWriter, r *http.Request, id int) {
-
-	tratamiento, err := queries.GetTreatment(r.Context(), int64(id))
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
-		return
-	}
-	json.NewEncoder(w).Encode(tratamiento)
+func getTratamiento(ctx context.Context) []sqlc.Tratamiento {
+	tratamientos, _ := queries.ListTreatments(ctx)
+	return tratamientos
 }
 
-func deleteTratamiento(w http.ResponseWriter, r *http.Request, id int) {
-
-	err := queries.DeleteTreatment(r.Context(), int64(id))
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
+func crearTratamiento(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Error al procesar el formulario", http.StatusBadRequest)
 		return
 	}
-	w.WriteHeader(http.StatusNoContent)
-}
-func validarTratamiento(tratamiento sqlc.Tratamiento) error {
-	nomValido := tratamiento.Nombre != ""
-	costValido := tratamiento.Costo > 0
-	if !nomValido || !costValido {
-		textoError := ""
-		if !nomValido {
-			textoError += "El tratamiento debe tener nombre.\n"
-		}
-		if !costValido {
-			textoError += "El tratamiento debe costar algo.\n"
-		}
 
-		return fmt.Errorf(textoError)
-	}
-	return nil
-}
+	nombre := r.FormValue("nombre")
+	descripcionCortaStr := r.FormValue("descripcion_corta")
+	costoStr := r.FormValue("costo")
 
-func updateTratamiento(w http.ResponseWriter, r *http.Request, id int) {
-	var tratamientoToUpdate sqlc.Tratamiento
-	err := json.NewDecoder(r.Body).Decode(&tratamientoToUpdate)
+	costo, err := strconv.ParseFloat(costoStr, 64)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "El costo debe ser un número válido", http.StatusBadRequest)
 		return
 	}
-	err = validarTratamiento(tratamientoToUpdate)
+
+	_, err = queries.CreateTreatment(r.Context(), sqlc.CreateTreatmentParams{
+		Nombre:           nombre,
+		DescripcionCorta: descripcionCortaStr,
+		Costo:            (int32(costo)),
+	})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "Error al crear el tratamiento: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-	paramsTratamientoToUpdate := sqlc.UpdateTreatmentParams{ID: int64(id), Nombre: tratamientoToUpdate.Nombre, DescripcionCorta: tratamientoToUpdate.DescripcionCorta, Costo: tratamientoToUpdate.Costo}
-	updatedTreatment, err := queries.UpdateTreatment(r.Context(), paramsTratamientoToUpdate)
 
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
-		return
-	}
-	json.NewEncoder(w).Encode(updatedTreatment)
-}
-
-func createTratamiento(w http.ResponseWriter, r *http.Request) {
-	var nuevoTratamiento sqlc.Tratamiento
-	err := json.NewDecoder(r.Body).Decode(&nuevoTratamiento)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		fmt.Print(err.Error())
-		return
-	}
-	err = validarTratamiento(nuevoTratamiento)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		fmt.Print(err.Error())
-		return
-	}
-	paramsCreacion := sqlc.CreateTreatmentParams{Nombre: nuevoTratamiento.Nombre, DescripcionCorta: nuevoTratamiento.DescripcionCorta, Costo: nuevoTratamiento.Costo}
-	nuevoTratamientoRow, err := queries.CreateTreatment(r.Context(), paramsCreacion)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-	} else {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(nuevoTratamientoRow)
-	}
-
-}
-
-func getTratamientos(w http.ResponseWriter, r *http.Request) {
-	tratamientos, err := queries.ListTreatments(r.Context())
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
-		return
-	}
-	json.NewEncoder(w).Encode(tratamientos)
-}
-
-func tratamientoHandler(w http.ResponseWriter, r *http.Request) {
-	parts := strings.Split(r.URL.Path, "/")
-	if len(parts) != 3 {
-		http.Error(w, "Invalid URL", http.StatusBadRequest)
-		return
-	}
-	id, err := strconv.Atoi(parts[2])
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
-		return
-	}
-	switch r.Method {
-	case http.MethodGet:
-		getTratamiento(w, r, id)
-	case http.MethodPut:
-		updateTratamiento(w, r, id)
-	case http.MethodDelete:
-		deleteTratamiento(w, r, id)
-	default:
-		http.Error(w, "Método no permitido",
-			http.StatusMethodNotAllowed)
-	}
-}
-
-func tratamientosHandler(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodPost:
-		createTratamiento(w, r)
-	case http.MethodGet:
-		getTratamientos(w, r)
-	default:
-		http.Error(w, "Method not allowed",
-			http.StatusMethodNotAllowed)
-	}
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

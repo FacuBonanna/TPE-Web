@@ -10,7 +10,8 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 var formCrearVoucher = Formulario{
-	ID:       "crear-voucher-form",
+	Accion:   "/voucher",
+	Metodo:   "POST",
 	Etiqueta: "Crear Voucher",
 	Campos: []Campo{
 		Numero("regalador_id", "ID del cliente que regala"),
@@ -70,7 +71,7 @@ func Vouchers() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = Seccion("vouchers", "Vouchers", "Mostrar vouchers", "/voucher").Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Seccion("vouchers", "Vouchers", "Mostrar vouchers", "/").Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -2,87 +2,95 @@ package views
 
 // Campo describe un <input>.
 type Campo struct {
-	Tipo        string
-	Nombre      string
-	Placeholder string
+    Tipo        string
+    Nombre      string
+    Placeholder string
 }
 
 // Formulario describe un <form>.
 // - ID: para formularios que maneja app.js (fetch).
 // - Accion: para formularios GET tradicionales.
 type Formulario struct {
-	ID       string
-	Accion   string
-	Etiqueta string
-	Campos   []Campo
+    ID       string
+    Accion   string
+    Etiqueta string
+    Campos   []Campo
+    Metodo  string
+}
+
+func metodoDe(f Formulario) string {
+    if f.Metodo == "" {
+        return "GET"
+    }
+    return f.Metodo
 }
 
 // Atajos para no repetir el tipo en cada campo.
 func Texto(nombre, placeholder string) Campo {
-	return Campo{Tipo: "text", Nombre: nombre, Placeholder: placeholder}
+    return Campo{Tipo: "text", Nombre: nombre, Placeholder: placeholder}
 }
 
 func Numero(nombre, placeholder string) Campo {
-	return Campo{Tipo: "number", Nombre: nombre, Placeholder: placeholder}
+    return Campo{Tipo: "number", Nombre: nombre, Placeholder: placeholder}
 }
 
 // Form renderiza un formulario genérico a partir de su descripción.
 templ Form(f Formulario) {
-	<form
-		if f.ID != "" {
-			id={ f.ID }
-		}
-		if f.Accion != "" {
-			action={ templ.SafeURL(f.Accion) }
-			method="GET"
-		}
-	>
-		for _, c := range f.Campos {
-			<input class="campo" type={ c.Tipo } name={ c.Nombre } placeholder={ c.Placeholder }/>
-		}
-		<button type="submit" class="btn">{ f.Etiqueta }</button>
-	</form>
+    <form
+        if f.ID != "" {
+            id={ f.ID }
+        }
+        if f.Accion != "" {
+            action={ templ.SafeURL(f.Accion) }
+            method={ metodoDe(f) }  
+        }
+    >
+        for _, c := range f.Campos {
+            <input class="campo" type={ c.Tipo } name={ c.Nombre } placeholder={ c.Placeholder }/>
+        }
+        <button type="submit" class="btn">{ f.Etiqueta }</button>
+    </form>
 }
 
 // Bloque = subtítulo + formulario.
 templ Bloque(titulo string, f Formulario) {
-	<h3>{ titulo }</h3>
-	@Form(f)
+    <h3>{ titulo }</h3>
+    @Form(f)
 }
 
 // Seccion es el contenedor de cada entidad: título, botón "Mostrar" y contenido.
 // Si rutaListado está vacía, el botón queda sin action (igual que el HTML original).
 templ Seccion(id, titulo, etiquetaListar, rutaListado string) {
-	<div id={ id } class="item-flex">
-		<h2>
-			{ titulo }
-			@Form(Formulario{Accion: rutaListado, Etiqueta: etiquetaListar})
-		</h2>
-		{ children... }
-	</div>
+    <div id={ id } class="item-flex">
+        <h2>
+            { titulo }
+            @Form(Formulario{Accion: rutaListado, Etiqueta: etiquetaListar})
+        </h2>
+        { children... }
+    </div>
 }
 
 // Tabla genérica: cabecera + las filas que se le pasen como children.
 templ Tabla(id, idCuerpo string, columnas []string) {
-	<table id={ id }>
-		<thead>
-			<tr>
-				for _, col := range columnas {
-					<th>{ col }</th>
-				}
-			</tr>
-		</thead>
-		<tbody id={ idCuerpo }>
-			{ children... }
-		</tbody>
-	</table>
+    <table id={ id }>
+        <thead>
+            <tr>
+                for _, col := range columnas {
+                    <th>{ col }</th>
+                }
+            </tr>
+        </thead>
+        <tbody id={ idCuerpo }>
+            { children... }
+        </tbody>
+    </table>
 }
 
 // Fila genérica: una celda <td> por cada string.
 templ Fila(celdas []string) {
-	<tr>
-		for _, celda := range celdas {
-			<td>{ celda }</td>
-		}
-	</tr>
+    <tr>
+        for _, celda := range celdas {
+            <td>{ celda }</td>
+        }
+    </tr>
 }

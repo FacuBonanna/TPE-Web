@@ -9,8 +9,15 @@ package views
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
+import (
+	"fmt"
+
+	sqlc "TPE/db/sqlc"
+)
+
 var formCrearTratamiento = Formulario{
-	ID:       "crear-tratamiento-form",
+	Accion:   "/tratamiento",
+	Metodo:   "POST",
 	Etiqueta: "Crear Tratamiento",
 	Campos: []Campo{
 		Texto("nombre", "Nombre"),
@@ -27,7 +34,17 @@ var formBuscarTratamiento = Formulario{
 
 var columnasTratamientos = []string{"Id", "Nombre", "Descripcion", "Costo"}
 
-func Tratamientos() templ.Component {
+// celdasTratamiento mapea un Tratamiento a las celdas de su fila (mismo orden que columnasTratamientos).
+func celdasTratamiento(t sqlc.Tratamiento) []string {
+	return []string{
+		fmt.Sprint(t.ID),
+		t.Nombre,
+		t.DescripcionCorta,
+		fmt.Sprint(t.Costo),
+	}
+}
+
+func Tratamientos(tratamientos []sqlc.Tratamiento) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -64,13 +81,33 @@ func Tratamientos() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = Tabla("tablaTratamientos", "cuerpoTablaTratamiento", columnasTratamientos).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Var3 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+				if !templ_7745c5c3_IsBuffer {
+					defer func() {
+						templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+						if templ_7745c5c3_Err == nil {
+							templ_7745c5c3_Err = templ_7745c5c3_BufErr
+						}
+					}()
+				}
+				ctx = templ.InitializeContext(ctx)
+				for _, t := range tratamientos {
+					templ_7745c5c3_Err = Fila(celdasTratamiento(t)).Render(ctx, templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				}
+				return nil
+			})
+			templ_7745c5c3_Err = Tabla("tablaTratamientos", "cuerpoTablaTratamiento", columnasTratamientos).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = Seccion("tratamientos", "Tratamientos", "Mostrar tratamientos", "/tratamiento").Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Seccion("tratamientos", "Tratamientos", "Mostrar tratamientos", "/").Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

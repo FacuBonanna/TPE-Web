@@ -1,7 +1,14 @@
 package views
 
+import (
+	"fmt"
+
+	sqlc "TPE/db/sqlc"
+)
+
 var formCrearTratamiento = Formulario{
-	ID:       "crear-tratamiento-form",
+	Accion:   "/tratamiento",
+	Metodo:   "POST",
 	Etiqueta: "Crear Tratamiento",
 	Campos: []Campo{
 		Texto("nombre", "Nombre"),
@@ -18,10 +25,24 @@ var formBuscarTratamiento = Formulario{
 
 var columnasTratamientos = []string{"Id", "Nombre", "Descripcion", "Costo"}
 
-templ Tratamientos() {
-	@Seccion("tratamientos", "Tratamientos", "Mostrar tratamientos", "/tratamiento") {
+// celdasTratamiento mapea un Tratamiento a las celdas de su fila (mismo orden que columnasTratamientos).
+func celdasTratamiento(t sqlc.Tratamiento) []string {
+	return []string{
+		fmt.Sprint(t.ID),
+		t.Nombre,
+		t.DescripcionCorta,
+		fmt.Sprint(t.Costo),
+	}
+}
+
+templ Tratamientos(tratamientos []sqlc.Tratamiento) {
+	@Seccion("tratamientos", "Tratamientos", "Mostrar tratamientos", "/") {
 		@Bloque("Crear Tratamiento", formCrearTratamiento)
 		@Bloque("Buscar Tratamiento", formBuscarTratamiento)
-		@Tabla("tablaTratamientos", "cuerpoTablaTratamiento", columnasTratamientos)
+		@Tabla("tablaTratamientos", "cuerpoTablaTratamiento", columnasTratamientos) {
+			for _, t := range tratamientos {
+				@Fila(celdasTratamiento(t))
+			}
+		}
 	}
 }

@@ -41,6 +41,11 @@ func main() {
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	http.HandleFunc("/", servidor)
+	//http.HandleFunc("Get /{$}", servidor)
+	http.HandleFunc("POST /cliente", crearCliente)
+	http.HandleFunc("POST /tratamiento", crearTratamiento)
+	http.HandleFunc("POST /voucher", createVoucher)
+	http.HandleFunc("POST /turno", createturno)
 
 	port := ":8080"
 	fmt.Printf("Servidor escuchando en http://localhost%s\n", port)
@@ -52,15 +57,16 @@ func main() {
 	}
 }
 func servidor(w http.ResponseWriter, r *http.Request) {
-
-	//	turnos := make([]db.Turno, 0, 0)
-	//	vouchers := make([]db.Voucher, 0, 0)
-	//	clientes := make([]db.Cliente, 0, 0)
 	clientes := getClientes(r.Context())
+	tratamientos := getTratamiento(r.Context())
+	//vouchers := getVouchers(r.Context())
+	//turnos := getTurnos(r.Context())
 
-	err := views.Index(clientes).Render(r.Context(), w)
+	err := views.Index(clientes, tratamientos).Render(r.Context(), w)
+
 	if err != nil {
 		http.Error(w, "Error al renderizar la página", http.StatusInternalServerError)
 		return
 	}
+
 }

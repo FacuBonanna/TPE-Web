@@ -1,7 +1,8 @@
 package views
 
 var formCrearVoucher = Formulario{
-	ID:       "crear-voucher-form",
+	Accion: "/voucher",
+	Metodo: "POST",
 	Etiqueta: "Crear Voucher",
 	Campos: []Campo{
 		Numero("regalador_id", "ID del cliente que regala"),
@@ -19,7 +20,7 @@ var formBuscarVoucher = Formulario{
 var columnasVouchers = []string{"Id", "De", "Para", "Tratamiento"}
 
 templ Vouchers() {
-	@Seccion("vouchers", "Vouchers", "Mostrar vouchers", "/voucher") {
+	@Seccion("vouchers", "Vouchers", "Mostrar vouchers", "/") {
 		@Bloque("Crear Voucher", formCrearVoucher)
 		@Bloque("Buscar Voucher", formBuscarVoucher)
 		@Tabla("tablaVouchers", "cuerpoTablaVoucher", columnasVouchers)

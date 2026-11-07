@@ -1,49 +1,50 @@
 package views
 
 import (
-	"fmt"
-	sqlc "TPE/db/sqlc"
+    "fmt"
+    sqlc "TPE/db/sqlc"
 
 )
 
 var formCrearCliente = Formulario{
-	ID:       "crear-cliente-form",
-	Etiqueta: "Crear Cliente",
-	Campos: []Campo{
-		Texto("name", "Nombre"),
-		Texto("surname", "Apellido"),
-		Numero("debt", "Deuda"),
-		Numero("phone", "Número de teléfono"),
-	},
+    Accion:   "/cliente",
+    Metodo:   "POST",
+    Etiqueta: "Crear Cliente",
+    Campos: []Campo{
+        Texto("name", "Nombre"),
+        Texto("surname", "Apellido"),
+        Numero("debt", "Deuda"),
+        Numero("phone", "Número de teléfono"),
+    },
 }
 
 var formBuscarCliente = Formulario{
-	ID:       "buscar-cliente-form",
-	Etiqueta: "Buscar Cliente",
-	Campos:   []Campo{Numero("id_cliente", "ID del cliente")},
+    ID:       "buscar-cliente-form",
+    Etiqueta: "Buscar Cliente",
+    Campos:   []Campo{Numero("id_cliente", "ID del cliente")},
 }
 
 var columnasClientes = []string{"Id", "Nombre", "Apellido", "Deuda", "Nro telefono"}
 
 // celdasCliente mapea un Cliente a las celdas de su fila (mismo orden que columnasClientes).
 func celdasCliente(c sqlc.Cliente) []string {
-	return []string{
-		fmt.Sprint(c.ID),
-		c.Nombre,
-		c.Apellido,
-		fmt.Sprint(c.Deuda),
-		fmt.Sprint(c.NroTelefono),
-	}
+    return []string{
+        fmt.Sprint(c.ID),
+        c.Nombre,
+        c.Apellido,
+        fmt.Sprint(c.Deuda),
+        fmt.Sprint(c.NroTelefono),
+    }
 }
 
 templ Clientes(clientes []sqlc.Cliente) {
-	@Seccion("clientes", "Clientes", "Mostrar clientes", "/cliente") {
-		@Bloque("Crear cliente", formCrearCliente)
-		@Bloque("Buscar cliente", formBuscarCliente)
-		@Tabla("tablaClientes", "cuerpoTablaCliente", columnasClientes) {
-			for _, c := range clientes {
-				@Fila(celdasCliente(c))
-			}
-		}
-	}
+    @Seccion("clientes", "Clientes", "Mostrar clientes", "/") {
+        @Bloque("Crear cliente", formCrearCliente)
+        @Bloque("Buscar cliente", formBuscarCliente)
+        @Tabla("tablaClientes", "cuerpoTablaCliente", columnasClientes) {
+            for _, c := range clientes {
+                @Fila(celdasCliente(c))
+            }
+        }
+    }
 }
