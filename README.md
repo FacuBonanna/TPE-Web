@@ -24,7 +24,7 @@ En este trabajo crearemos una interfaz de usuario (frontend) en HTML, CSS y Java
 ```
 3- Para levantar la aplicación, ejecutar el comando:
 ```
-  
+ make inicializacion
 ```
 4- Para visualizar el sistema, ingresar a: 
 
