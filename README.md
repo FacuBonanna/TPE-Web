@@ -43,7 +43,9 @@ nota: si hay algún problema con los comandos tipo 'make', se puede pedir ayuda 
 ## Documetos de interés para esta entrega:
 
  -Index.html= Define la estructura y el contenido del sistema web. 
+ 
  -Styles.css= controla el diseño y la apariencia visual del sistema web.
+ 
  -App.js= Permite que la pagina web sea interactiva. Utiliza la API REST que previamente creamos.
 
 ## Aclaraciones
