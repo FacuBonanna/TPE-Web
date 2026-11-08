@@ -30,8 +30,9 @@ func getCliente(w http.ResponseWriter, r *http.Request) {
 	clientes := []sqlc.Cliente{cliente}
 	tratamientos := getTratamiento(r.Context())
 	turnos := getTurno(r.Context())
+	voucher := getVouchers(r.Context())
 
-	err = views.Index(clientes, tratamientos, turnos).Render(r.Context(), w)
+	err = views.Index(clientes, tratamientos, turnos, voucher).Render(r.Context(), w)
 	if err != nil {
 		http.Error(w, "Error al renderizar la página", http.StatusInternalServerError)
 	}

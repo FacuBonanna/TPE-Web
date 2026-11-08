@@ -9,14 +9,19 @@ package views
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
+import (
+	sqlc "TPE/db/sqlc"
+	"fmt"
+)
+
 var formCrearVoucher = Formulario{
 	Accion:   "/voucher",
 	Metodo:   "POST",
 	Etiqueta: "Crear Voucher",
 	Campos: []Campo{
-		Numero("regalador_id", "ID del cliente que regala"),
+		Numero("regalador_documento", "Documento del cliente que regala"),
 		Numero("tratamiento_id", "ID del tratamiento"),
-		Numero("cliente_id", "ID del cliente que recibe el regalo"),
+		Numero("cliente_documento", "Documento del cliente que recibe el regalo"),
 	},
 }
 
@@ -28,7 +33,15 @@ var formBuscarVoucher = Formulario{
 
 var columnasVouchers = []string{"Id", "De", "Para", "Tratamiento"}
 
-func Vouchers() templ.Component {
+func celdasVoucher(v sqlc.Voucher) []string {
+	return []string{
+		fmt.Sprint(v.ClienteID),
+		fmt.Sprint(v.TratamientoID),
+		fmt.Sprint(v.RegaladorID),
+	}
+}
+
+func Vouchers(vouchers []sqlc.Voucher) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -65,13 +78,33 @@ func Vouchers() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = Tabla("tablaVouchers", "cuerpoTablaVoucher", columnasVouchers).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Var3 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+				if !templ_7745c5c3_IsBuffer {
+					defer func() {
+						templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+						if templ_7745c5c3_Err == nil {
+							templ_7745c5c3_Err = templ_7745c5c3_BufErr
+						}
+					}()
+				}
+				ctx = templ.InitializeContext(ctx)
+				for _, v := range vouchers {
+					templ_7745c5c3_Err = Fila(celdasVoucher(v)).Render(ctx, templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				}
+				return nil
+			})
+			templ_7745c5c3_Err = Tabla("tablaVouchers", "cuerpoTablaVoucher", columnasVouchers).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = Seccion("vouchers", "Vouchers", "Mostrar vouchers", "/").Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Seccion("vouchers", "Vouchers").Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

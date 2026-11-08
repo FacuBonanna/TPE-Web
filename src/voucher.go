@@ -2,6 +2,7 @@ package main
 
 import (
 	sqlc "TPE/db/sqlc"
+	"context"
 	"encoding/json"
 	"net/http"
 	"strconv"
@@ -31,21 +32,41 @@ func deleteVoucher(w http.ResponseWriter, r *http.Request, id int) {
 }
 
 func createVoucher(w http.ResponseWriter, r *http.Request) {
-	var nuevoVoucher sqlc.Voucher
-	err := json.NewDecoder(r.Body).Decode(&nuevoVoucher)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Error al procesar el formulario", http.StatusBadRequest)
 		return
 	}
-	paramsCreacion := sqlc.CreateVoucherParams{RegaladorID: nuevoVoucher.RegaladorID, TratamientoID: nuevoVoucher.TratamientoID, ClienteID: nuevoVoucher.ClienteID}
-	nuevoVoucherRow, _ := queries.CreateVoucher(r.Context(), paramsCreacion)
+
+	// Convertir documentos a int32
+	regalador_documento, err := strconv.ParseInt(r.FormValue("regalador_documento"), 10, 32)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-	} else {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(nuevoVoucherRow)
+		http.Error(w, "El documento debe ser un número entero válido", http.StatusBadRequest)
+		return
 	}
+	cliente_documento, err := strconv.ParseInt(r.FormValue("cliente_documento"), 10, 32)
+	if err != nil {
+		http.Error(w, "El documento debe ser un número entero válido", http.StatusBadRequest)
+		return
+	}
+	tratamiento_id, err := strconv.ParseInt(r.FormValue("tratamiento_id"), 10, 32)
+	if err != nil {
+		http.Error(w, "El ID del tratamiento debe ser un número entero válido", http.StatusBadRequest)
+		return
+	}
+
+	_, err = queries.CreateVoucher(r.Context(), sqlc.CreateVoucherParams{
+		RegaladorID:   regalador_documento,
+		ClienteID:     cliente_documento,
+		TratamientoID: tratamiento_id,
+	})
+
+	if err != nil {
+		http.Error(w, "Error al crear el voucher: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+
 }
 
 func updateVoucher(w http.ResponseWriter, r *http.Request, id int) {
@@ -65,14 +86,9 @@ func updateVoucher(w http.ResponseWriter, r *http.Request, id int) {
 	json.NewEncoder(w).Encode(updatedVoucher)
 }
 
-func getVouchers(w http.ResponseWriter, r *http.Request) {
-	vouchers, err := queries.GetVouchers(r.Context())
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
-		return
-	}
-	json.NewEncoder(w).Encode(vouchers)
+func getVouchers(ctx context.Context) []sqlc.Voucher {
+	vouchers, _ := queries.ListVouchers(ctx)
+	return vouchers
 }
 
 func voucherHandler(w http.ResponseWriter, r *http.Request) {
@@ -96,18 +112,6 @@ func voucherHandler(w http.ResponseWriter, r *http.Request) {
 		deleteVoucher(w, r, id)
 	default:
 		http.Error(w, "Método no permitido",
-			http.StatusMethodNotAllowed)
-	}
-}
-
-func vouchersHandler(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodGet:
-		getVouchers(w, r)
-	case http.MethodPost:
-		createVoucher(w, r)
-	default:
-		http.Error(w, "Method not allowed",
 			http.StatusMethodNotAllowed)
 	}
 }

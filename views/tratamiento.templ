@@ -36,7 +36,7 @@ func celdasTratamiento(t sqlc.Tratamiento) []string {
 }
 
 templ Tratamientos(tratamientos []sqlc.Tratamiento) {
-	@Seccion("tratamientos", "Tratamientos", "Mostrar tratamientos", "/") {
+	@Seccion("tratamientos", "Tratamientos") {
 		@Bloque("Crear Tratamiento", formCrearTratamiento)
 		@Bloque("Buscar Tratamiento", formBuscarTratamiento)
 		@Tabla("tablaTratamientos", "cuerpoTablaTratamiento", columnasTratamientos) {

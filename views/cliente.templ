@@ -39,7 +39,7 @@ func celdasCliente(c sqlc.Cliente) []string {
 }
 
 templ Clientes(clientes []sqlc.Cliente) {
-    @Seccion("clientes", "Clientes", "Mostrar clientes", "/") {
+    @Seccion("clientes", "Clientes") {
         @Bloque("Crear cliente", formCrearCliente)
         @Bloque("Buscar cliente", formBuscarCliente)
         @Tabla("tablaClientes", "cuerpoTablaCliente", columnasClientes) {
