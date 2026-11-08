@@ -239,6 +239,28 @@ crearTratamientoForm.addEventListener("submit", async (event) => {
     }
 });
 
+const buscarTratamientoForm = document.getElementById("buscar-tratamiento-form");
+buscarTratamientoForm.addEventListener("submit", async (event) => {
+    event.preventDefault(); //  evita que la página se recargue
+
+    const formData = new FormData(buscarTratamientoForm);
+    const id = Number(formData.get("tratamiento_id"));
+
+
+    try{
+        const response = await fetch("/tratamiento/" + id);
+            if (!response.ok) {
+                throw new Error(response.text())
+            }
+        const t = await response.json();
+        alert(`${t.nombre} - ${t.descripcion_corta} - ${t.costo}$`);
+    } catch (error) {
+        console.error("Error al buscar cliente", error);
+        alert("Hubo un error al buscar el cliente: " + error.message);
+    }
+
+});
+
 const crearVoucherForm = document.getElementById("crear-voucher-form");
 crearVoucherForm.addEventListener("submit", async (event) => {
     event.preventDefault(); // Evita que la pagina se recargue al enviar el formulario
@@ -283,6 +305,28 @@ crearVoucherForm.addEventListener("submit", async (event) => {
     }
 });
 
+const buscarVoucherForm = document.getElementById("buscar-voucher-form");
+buscarVoucherForm.addEventListener("submit", async (event) => {
+    event.preventDefault(); //  evita que la página se recargue
+
+    const formData = new FormData(buscarVoucherForm);
+    const id = Number(formData.get("voucher_id"));
+
+
+    try{
+        const response = await fetch("/voucher/" + id);
+            if (!response.ok) {
+                throw new Error(response.text())
+            }
+        const t = await response.json();
+        alert(`De ${t.regalador_documento}, para ${t.cliente_documento}: ${t.tratamiento_id}`);
+    } catch (error) {
+        console.error("Error al buscar voucher", error);
+        alert("Hubo un error al buscar el voucher: " + error.message);
+    }
+
+});
+
 const crearTurnoForm = document.getElementById("crear-turno-form");
 crearTurnoForm.addEventListener("submit", async (event) => {
     event.preventDefault(); // Evita que la pagina se recargue al enviar el formulario
@@ -319,8 +363,8 @@ crearTurnoForm.addEventListener("submit", async (event) => {
                     fila.dataset.hora = tu.hora
                     fila.innerHTML = `<td data-campo="fecha"> ${tu.fecha}</td>
                     <td data-campo="hora">${tu.hora}</td>
-                    <td data-campo="tratamiento" data-tratamiento-id="${t.tratamiento_id}">${t.nombre_tratamiento}</td>
-                    <td data-campo="cliente" data-cliente-documento="${t.cliente_documento}">${t.nombre_cliente}</td>
+                    <td data-campo="tratamiento" data-tratamiento-id="${tu.tratamiento_id}">${tu.nombre_tratamiento}</td>
+                    <td data-campo="cliente" data-cliente-documento="${tu.cliente_documento}">${tu.nombre_cliente}</td>
                     <td><button class = "delete-turno-tabla"> Eliminar </button>
                         <button class = "update-turno-tabla"> Modificar </button></td>`
                 tbody.appendChild(fila); }
@@ -328,6 +372,29 @@ crearTurnoForm.addEventListener("submit", async (event) => {
         console.error("Error al crear el turno:", error);
         alert("Hubo un error al crear el turno. Por favor, inténtalo de nuevo.");
     }
+});
+
+const buscarTurnoForm = document.getElementById("buscar-turno-form");
+buscarTurnoForm.addEventListener("submit", async (event) => {
+    event.preventDefault(); //  evita que la página se recargue
+
+    const formData = new FormData(buscarTurnoForm);
+    const fecha = formData.get("fecha");
+    const hora = Number(formData.get("hora"));
+
+
+    try{
+        const response = await fetch("/turno/" + fecha + "&" + hora);
+            if (!response.ok) {
+                throw new Error(response.text())
+            }
+        const t = await response.json();
+        alert(`${t.fecha} ${t.hora}hs - Cliente: ${t.cliente_documento} Documento: ${t.tratamiento_id}`);
+    } catch (error) {
+        console.error("Error al buscar turno", error);
+        alert("Hubo un error al buscar el turno: " + error.message);
+    }
+
 });
 
 // CLIENTES
