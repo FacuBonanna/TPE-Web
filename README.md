@@ -50,5 +50,5 @@ nota: si hay algún problema con los comandos tipo 'make', se puede pedir ayuda 
 
 ## Aclaraciones
 
--No remover la carpeta static de su ubicación actual en el sistema, porque podría comprometer el funcionamiento del sistema. 
+-No remover la carpeta static de su ubicación actual, porque podría comprometer el funcionamiento del sistema. 
 

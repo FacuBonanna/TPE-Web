@@ -449,7 +449,7 @@ clientes.addEventListener("click", (e) => {
 
   const fila = boton.closest("tr");
 
-  // Convertir cada celda editable en un input con su contenido actual
+  // cada celda  se convierte en un editable en un input con su contenido actual
   fila.querySelectorAll("td[data-campo]").forEach((td) => {
     let valorActual = td.textContent;
   td.dataset.original = valorActual; // para Cancelar

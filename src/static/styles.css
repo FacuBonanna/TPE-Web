@@ -74,7 +74,7 @@ body{
   margin: 10px;
 }
 
-/* Encabezado */
+
 .tabla thead {
   background: #2ab6af;
   color: #066b66fd;
@@ -89,7 +89,7 @@ body{
   letter-spacing: 0.5px;
 }
 
-/* Celdas */
+
 .tabla td {
     margin: 5px;
   padding: 10px;
@@ -97,12 +97,12 @@ body{
   color: #333;
 }
 
-/* Filas alternadas */
+
 .tabla tbody tr:nth-child(even) {
   background: #f7f9fb;
 }
 
-/* Hover */
+
 .tabla tbody tr {
   transition: background 0.2s;
 }
@@ -111,13 +111,11 @@ body{
   background: #6aecd7;
 }
 
-/* Última fila sin borde */
+
 .tabla tbody tr:last-child td {
   border-bottom: none;
 }
 
-
-/* Botón eliminar */
 .delete-cliente-tabla {
   background: #f58be7;
   color: #9c006d;
