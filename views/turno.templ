@@ -25,7 +25,7 @@ var columnasTurnos = []string{"Fecha", "Hora", "Tratamiento", "Cliente"}
 
 // El botón "Mostrar turnos" del original no tenía action: ruta vacía.
 templ Turnos() {
-	@Seccion("turnos", "Turno", "Mostrar turnos", "/") {
+	@Seccion("turnos", "Turno") {
 		@Bloque("Crear Turno", formCrearTurno)
 		@Bloque("Buscar Turno", formBuscarTurno)
 		@Tabla("tablaTurnos", "cuerpoTablaTurno", columnasTurnos)

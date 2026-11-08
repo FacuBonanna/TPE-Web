@@ -32,7 +32,7 @@ func celdasVoucher(v sqlc.Voucher) []string {
 }
 
 templ Vouchers(vouchers []sqlc.Voucher) {
-	@Seccion("vouchers", "Vouchers", "Mostrar vouchers", "/") {
+	@Seccion("vouchers", "Vouchers") {
 		@Bloque("Crear Voucher", formCrearVoucher)
 		@Bloque("Buscar Voucher", formBuscarVoucher)
 		@Tabla("tablaVouchers", "cuerpoTablaVoucher", columnasVouchers){
