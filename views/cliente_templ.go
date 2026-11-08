@@ -19,6 +19,7 @@ var formCrearCliente = Formulario{
 	Metodo:   "POST",
 	Etiqueta: "Crear Cliente",
 	Campos: []Campo{
+		Numero("cliente_documento", "Documento"),
 		Texto("name", "Nombre"),
 		Texto("surname", "Apellido"),
 		Numero("debt", "Deuda"),
@@ -30,15 +31,15 @@ var formBuscarCliente = Formulario{
 	Accion:   "/search-client",
 	Metodo:   "GET",
 	Etiqueta: "Buscar Cliente",
-	Campos:   []Campo{Numero("id_cliente", "ID del cliente")},
+	Campos:   []Campo{Numero("cliente_documento", "Documento del cliente")},
 }
 
-var columnasClientes = []string{"Id", "Nombre", "Apellido", "Deuda", "Nro telefono"}
+var columnasClientes = []string{"Documento", "Nombre", "Apellido", "Deuda", "Nro telefono"}
 
 // celdasCliente mapea un Cliente a las celdas de su fila (mismo orden que columnasClientes).
 func celdasCliente(c sqlc.Cliente) []string {
 	return []string{
-		fmt.Sprint(c.ID),
+		fmt.Sprint(c.Documento),
 		c.Nombre,
 		c.Apellido,
 		fmt.Sprint(c.Deuda),
@@ -109,7 +110,7 @@ func Clientes(clientes []sqlc.Cliente) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = Seccion("clientes", "Clientes").Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Seccion("clientes", "Clientes", "Mostrar clientes", "/cliente").Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

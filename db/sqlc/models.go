@@ -9,7 +9,7 @@ import (
 )
 
 type Cliente struct {
-	ID          int64   `json:"id"`
+	Documento   int64   `json:"documento"`
 	Nombre      string  `json:"nombre"`
 	Apellido    string  `json:"apellido"`
 	Deuda       float64 `json:"deuda"`
@@ -24,15 +24,15 @@ type Tratamiento struct {
 }
 
 type Turno struct {
-	Fecha         pgtype.Date `json:"fecha"`
-	Hora          int32       `json:"hora"`
-	TratamientoID int64       `json:"tratamiento_id"`
-	ClienteID     int64       `json:"cliente_id"`
+	Fecha            pgtype.Date `json:"fecha"`
+	Hora             int32       `json:"hora"`
+	TratamientoID    int64       `json:"tratamiento_id"`
+	ClienteDocumento int64       `json:"cliente_documento"`
 }
 
 type Voucher struct {
-	IDVoucher     int64 `json:"id_voucher"`
-	RegaladorID   int64 `json:"regalador_id"`
-	TratamientoID int64 `json:"tratamiento_id"`
-	ClienteID     int64 `json:"cliente_id"`
+	IDVoucher          int64 `json:"id_voucher"`
+	RegaladorDocumento int64 `json:"regalador_documento"`
+	TratamientoID      int64 `json:"tratamiento_id"`
+	ClienteDocumento   int64 `json:"cliente_documento"`
 }

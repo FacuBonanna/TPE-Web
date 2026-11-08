@@ -2,33 +2,35 @@ package main
 
 import (
 	sqlc "TPE/db/sqlc"
+	"TPE/views"
 	"context"
-	"encoding/json"
 	"net/http"
 	"strconv"
-	"strings"
 )
 
-func getVoucher(w http.ResponseWriter, r *http.Request, id int) {
-
-	voucher, err := queries.GetVoucher(r.Context(), int64(id))
-
+func getVoucher(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.ParseInt(r.URL.Query().Get("voucher_id"), 10, 64)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
+		http.Error(w, "El ID del voucher debe ser un número entero válido", http.StatusBadRequest)
 		return
 	}
-	json.NewEncoder(w).Encode(voucher)
-}
 
-func deleteVoucher(w http.ResponseWriter, r *http.Request, id int) {
-
-	err := queries.DeleteVoucher(r.Context(), int64(id))
-
+	voucher, err := queries.GetVoucher(r.Context(), id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
+		http.Error(w, "No se encontró un voucher con ese ID", http.StatusNotFound)
 		return
 	}
-	w.WriteHeader(http.StatusNoContent)
+
+	clientes := getClientes(r.Context())
+	tratamientos := getTratamientos(r.Context())
+	turnos := getTurnos(r.Context())
+	vouchers := sqlc.GetVouchersRow{IDVoucher: voucher.IDVoucher, RegaladorDocumento: voucher.RegaladorDocumento, ClienteDocumento: voucher.ClienteDocumento, TratamientoID: voucher.TratamientoID, Regalador: voucher.Regalador, Cliente: voucher.Cliente, Tratamiento: voucher.Tratamiento}
+	vouchersArr := []sqlc.GetVouchersRow{vouchers}
+
+	err = views.Index(clientes, tratamientos, turnos, vouchersArr).Render(r.Context(), w)
+	if err != nil {
+		http.Error(w, "Error al renderizar la página", http.StatusInternalServerError)
+	}
 }
 
 func createVoucher(w http.ResponseWriter, r *http.Request) {
@@ -55,9 +57,9 @@ func createVoucher(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_, err = queries.CreateVoucher(r.Context(), sqlc.CreateVoucherParams{
-		RegaladorID:   regalador_documento,
-		ClienteID:     cliente_documento,
-		TratamientoID: tratamiento_id,
+		RegaladorDocumento: regalador_documento,
+		ClienteDocumento:   cliente_documento,
+		TratamientoID:      tratamiento_id,
 	})
 
 	if err != nil {
@@ -69,49 +71,7 @@ func createVoucher(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func updateVoucher(w http.ResponseWriter, r *http.Request, id int) {
-	var voucherToUpdate sqlc.Voucher
-	err := json.NewDecoder(r.Body).Decode(&voucherToUpdate)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	voucherToUpdateParams := sqlc.UpdateVoucherParams{IDVoucher: int64(id), RegaladorID: voucherToUpdate.RegaladorID, TratamientoID: voucherToUpdate.TratamientoID, ClienteID: voucherToUpdate.ClienteID}
-	updatedVoucher, err := queries.UpdateVoucher(r.Context(), voucherToUpdateParams)
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
-		return
-	}
-	json.NewEncoder(w).Encode(updatedVoucher)
-}
-
-func getVouchers(ctx context.Context) []sqlc.Voucher {
-	vouchers, _ := queries.ListVouchers(ctx)
+func getVouchers(ctx context.Context) []sqlc.GetVouchersRow {
+	vouchers, _ := queries.GetVouchers(ctx)
 	return vouchers
-}
-
-func voucherHandler(w http.ResponseWriter, r *http.Request) {
-	parts := strings.Split(r.URL.Path, "/")
-	if len(parts) != 3 {
-		http.Error(w, "Invalid URL", http.StatusBadRequest)
-		return
-	}
-	id, err := strconv.Atoi(parts[2])
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
-		return
-	}
-	switch r.Method {
-	case http.MethodGet:
-		getVoucher(w, r, id)
-	case http.MethodPut:
-		updateVoucher(w, r, id)
-	case http.MethodDelete:
-		deleteVoucher(w, r, id)
-	default:
-		http.Error(w, "Método no permitido",
-			http.StatusMethodNotAllowed)
-	}
 }

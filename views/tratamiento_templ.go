@@ -27,9 +27,9 @@ var formCrearTratamiento = Formulario{
 }
 
 var formBuscarTratamiento = Formulario{
-	Accion:   "/search-treatment",
+	Accion:   "/search-tratamiento",
 	Etiqueta: "Buscar Tratamiento",
-	Campos:   []Campo{Numero("id_treatment", "ID del tratamiento")},
+	Campos:   []Campo{Numero("tratamiento_id", "ID del tratamiento")},
 }
 
 var columnasTratamientos = []string{"Id", "Nombre", "Descripcion", "Costo"}
@@ -107,7 +107,7 @@ func Tratamientos(tratamientos []sqlc.Tratamiento) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = Seccion("tratamientos", "Tratamientos").Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Seccion("tratamientos", "Tratamientos", "Mostrar tratamientos", "/tratamiento").Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

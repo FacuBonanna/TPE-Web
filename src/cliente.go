@@ -15,21 +15,21 @@ func getClientes(ctx context.Context) []sqlc.Cliente {
 }
 
 func getCliente(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.ParseInt(r.URL.Query().Get("id_cliente"), 10, 64)
+	documento, err := strconv.ParseInt(r.URL.Query().Get("cliente_documento"), 10, 64)
 	if err != nil {
-		http.Error(w, "El ID del cliente debe ser un número entero válido", http.StatusBadRequest)
+		http.Error(w, "El Documento del cliente debe ser un número entero válido", http.StatusBadRequest)
 		return
 	}
 
-	cliente, err := queries.GetUser(r.Context(), id)
+	cliente, err := queries.GetUser(r.Context(), documento)
 	if err != nil {
-		http.Error(w, "No se encontró un cliente con ese ID", http.StatusNotFound)
+		http.Error(w, "No se encontró un cliente con ese Documento", http.StatusNotFound)
 		return
 	}
 
 	clientes := []sqlc.Cliente{cliente}
-	tratamientos := getTratamiento(r.Context())
-	turnos := getTurno(r.Context())
+	tratamientos := getTratamientos(r.Context())
+	turnos := getTurnos(r.Context())
 	voucher := getVouchers(r.Context())
 
 	err = views.Index(clientes, tratamientos, turnos, voucher).Render(r.Context(), w)
@@ -61,7 +61,14 @@ func crearCliente(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	documento, err := strconv.ParseInt(r.FormValue("phone"), 10, 32)
+	if err != nil {
+		http.Error(w, "El teléfono debe ser un número entero válido", http.StatusBadRequest)
+		return
+	}
+
 	_, err = queries.CreateUser(r.Context(), sqlc.CreateUserParams{
+		Documento:   documento,
 		Nombre:      nombre,
 		Apellido:    apellido,
 		Deuda:       deuda,

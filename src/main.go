@@ -48,6 +48,9 @@ func main() {
 	http.HandleFunc("POST /turno", createTurno)
 
 	http.HandleFunc("GET /search-client", getCliente)
+	http.HandleFunc("GET /search-tratamiento", getTratamiento)
+	http.HandleFunc("GET /search-voucher", getVoucher)
+	http.HandleFunc("GET /search-turno", getTurno)
 
 	port := ":8080"
 	fmt.Printf("Servidor escuchando en http://localhost%s\n", port)
@@ -60,9 +63,9 @@ func main() {
 }
 func servidor(w http.ResponseWriter, r *http.Request) {
 	clientes := getClientes(r.Context())
-	tratamientos := getTratamiento(r.Context())
+	tratamientos := getTratamientos(r.Context())
 	vouchers := getVouchers(r.Context())
-	turnos := getTurno(r.Context())
+	turnos := getTurnos(r.Context())
 
 	err := views.Index(clientes, tratamientos, turnos, vouchers).Render(r.Context(), w)
 

@@ -18,9 +18,9 @@ var formCrearTratamiento = Formulario{
 }
 
 var formBuscarTratamiento = Formulario{
-	Accion:   "/search-treatment",
+	Accion:   "/search-tratamiento",
 	Etiqueta: "Buscar Tratamiento",
-	Campos:   []Campo{Numero("id_treatment", "ID del tratamiento")},
+	Campos:   []Campo{Numero("tratamiento_id", "ID del tratamiento")},
 }
 
 var columnasTratamientos = []string{"Id", "Nombre", "Descripcion", "Costo"}
@@ -36,7 +36,7 @@ func celdasTratamiento(t sqlc.Tratamiento) []string {
 }
 
 templ Tratamientos(tratamientos []sqlc.Tratamiento) {
-	@Seccion("tratamientos", "Tratamientos") {
+	@Seccion("tratamientos", "Tratamientos","Mostrar tratamientos","/tratamiento") {
 		@Bloque("Crear Tratamiento", formCrearTratamiento)
 		@Bloque("Buscar Tratamiento", formBuscarTratamiento)
 		@Tabla("tablaTratamientos", "cuerpoTablaTratamiento", columnasTratamientos) {

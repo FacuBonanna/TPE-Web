@@ -2,6 +2,7 @@ package main
 
 import (
 	sqlc "TPE/db/sqlc"
+	"TPE/views"
 	"context"
 	"net/http"
 	"strconv"
@@ -9,9 +10,33 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
-func getTratamiento(ctx context.Context) []sqlc.Tratamiento {
+func getTratamientos(ctx context.Context) []sqlc.Tratamiento {
 	tratamientos, _ := queries.ListTreatments(ctx)
 	return tratamientos
+}
+
+func getTratamiento(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.ParseInt(r.URL.Query().Get("tratamiento_id"), 10, 64)
+	if err != nil {
+		http.Error(w, "El ID del tratamiento debe ser un número entero válido", http.StatusBadRequest)
+		return
+	}
+
+	tratamiento, err := queries.GetTreatment(r.Context(), id)
+	if err != nil {
+		http.Error(w, "No se encontró un tratamiento con ese Documento", http.StatusNotFound)
+		return
+	}
+
+	clientes := getClientes(r.Context())
+	tratamientos := []sqlc.Tratamiento{tratamiento}
+	turnos := getTurnos(r.Context())
+	voucher := getVouchers(r.Context())
+
+	err = views.Index(clientes, tratamientos, turnos, voucher).Render(r.Context(), w)
+	if err != nil {
+		http.Error(w, "Error al renderizar la página", http.StatusInternalServerError)
+	}
 }
 
 func crearTratamiento(w http.ResponseWriter, r *http.Request) {

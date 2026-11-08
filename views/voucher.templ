@@ -9,30 +9,31 @@ var formCrearVoucher = Formulario{
 	Metodo: "POST",
 	Etiqueta: "Crear Voucher",
 	Campos: []Campo{
-		Numero("regalador_documento", "Documento del cliente que regala"),
+		Numero("regalador_documento", "Documento de quien regala"),
 		Numero("tratamiento_id", "ID del tratamiento"),
-		Numero("cliente_documento", "Documento del cliente que recibe el regalo"),
+		Numero("cliente_documento", "Documento de quien recibe"),
 	},
 }
 
 var formBuscarVoucher = Formulario{
 	Accion:   "/search-voucher",
 	Etiqueta: "Buscar Voucher",
-	Campos:   []Campo{Numero("id_voucher", "ID del voucher")},
+	Campos:   []Campo{Numero("voucher_id", "ID del voucher")},
 }
 
 var columnasVouchers = []string{"Id", "De", "Para", "Tratamiento"}
 
-func celdasVoucher(v sqlc.Voucher) []string {
+func celdasVoucher(v sqlc.GetVouchersRow) []string {
 	return []string{
-		fmt.Sprint(v.ClienteID),
-		fmt.Sprint(v.TratamientoID),
-		fmt.Sprint(v.RegaladorID),
+		fmt.Sprint(v.IDVoucher),
+		fmt.Sprint(v.Regalador),
+		fmt.Sprint(v.Cliente),
+		fmt.Sprint(v.Tratamiento),
 	}
 }
 
-templ Vouchers(vouchers []sqlc.Voucher) {
-	@Seccion("vouchers", "Vouchers") {
+templ Vouchers(vouchers []sqlc.GetVouchersRow) {
+	@Seccion("vouchers", "Vouchers","Mostrar vouchers","/voucher") {
 		@Bloque("Crear Voucher", formCrearVoucher)
 		@Bloque("Buscar Voucher", formBuscarVoucher)
 		@Tabla("tablaVouchers", "cuerpoTablaVoucher", columnasVouchers){

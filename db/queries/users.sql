@@ -55,8 +55,11 @@ ORDER BY id;
 --TABLA VOUCHER
 
 -- name: GetVoucher :one
-SELECT id_voucher, regalador_documento, tratamiento_id, cliente_documento
-FROM voucher
+SELECT id_voucher, regalador_documento, cliente_documento, tratamiento_id,
+(SELECT CONCAT(nombre,' ',apellido) FROM cliente WHERE v.regalador_documento = documento) AS regalador,
+(SELECT nombre FROM tratamiento WHERE v.tratamiento_id = id) AS tratamiento,
+(SELECT CONCAT(nombre,' ',apellido) FROM cliente WHERE v.cliente_documento = documento) AS cliente
+FROM voucher v
 WHERE id_voucher = $1;
 
 -- name: CreateVoucher :one
@@ -96,8 +99,10 @@ ORDER BY id_voucher;
 --TABLA TURNO
 
 -- name: GetTurno :one
-SELECT fecha, hora, tratamiento_id, cliente_documento
-FROM turno
+SELECT fecha, hora, cliente_documento, tratamiento_id,
+(SELECT CONCAT(nombre,' ',apellido) FROM cliente WHERE t.cliente_documento = documento) AS nombre_cliente,
+(SELECT nombre FROM tratamiento WHERE t.tratamiento_id = id) AS nombre_tratamiento
+FROM turno t
 WHERE fecha = $1 AND hora = $2;
 
 -- name: GetTurnosCompleto :many

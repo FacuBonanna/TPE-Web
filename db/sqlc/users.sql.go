@@ -36,21 +36,24 @@ func (q *Queries) CreateTreatment(ctx context.Context, arg CreateTreatmentParams
 }
 
 const createTurno = `-- name: CreateTurno :one
-INSERT INTO turno (fecha, hora, tratamiento_id, cliente_id)
+INSERT INTO turno (fecha, hora, tratamiento_id, cliente_documento)
 VALUES ($1, $2, $3, $4)
-RETURNING fecha, hora, (SELECT nombre FROM tratamiento WHERE id=turno.tratamiento_id) as nombre_tratamiento,  (SELECT CONCAT(nombre,' ',apellido) FROM cliente WHERE id=turno.cliente_id) as nombre_cliente
+RETURNING fecha, hora, cliente_documento,
+(SELECT nombre FROM tratamiento WHERE id = turno.tratamiento_id) AS nombre_tratamiento,
+(SELECT CONCAT(nombre,' ',apellido) FROM cliente WHERE documento = turno.cliente_documento) AS nombre_cliente
 `
 
 type CreateTurnoParams struct {
-	Fecha         pgtype.Date `json:"fecha"`
-	Hora          int32       `json:"hora"`
-	TratamientoID int64       `json:"tratamiento_id"`
-	ClienteID     int64       `json:"cliente_id"`
+	Fecha            pgtype.Date `json:"fecha"`
+	Hora             int32       `json:"hora"`
+	TratamientoID    int64       `json:"tratamiento_id"`
+	ClienteDocumento int64       `json:"cliente_documento"`
 }
 
 type CreateTurnoRow struct {
 	Fecha             pgtype.Date `json:"fecha"`
 	Hora              int32       `json:"hora"`
+	ClienteDocumento  int64       `json:"cliente_documento"`
 	NombreTratamiento string      `json:"nombre_tratamiento"`
 	NombreCliente     interface{} `json:"nombre_cliente"`
 }
@@ -60,12 +63,13 @@ func (q *Queries) CreateTurno(ctx context.Context, arg CreateTurnoParams) (Creat
 		arg.Fecha,
 		arg.Hora,
 		arg.TratamientoID,
-		arg.ClienteID,
+		arg.ClienteDocumento,
 	)
 	var i CreateTurnoRow
 	err := row.Scan(
 		&i.Fecha,
 		&i.Hora,
+		&i.ClienteDocumento,
 		&i.NombreTratamiento,
 		&i.NombreCliente,
 	)
@@ -73,12 +77,13 @@ func (q *Queries) CreateTurno(ctx context.Context, arg CreateTurnoParams) (Creat
 }
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO cliente (nombre, apellido, deuda, nro_telefono)
-VALUES ($1, $2, $3, $4)
-RETURNING id, nombre, apellido, deuda, nro_telefono
+INSERT INTO cliente (documento, nombre, apellido, deuda, nro_telefono)
+VALUES ($1, $2, $3, $4, $5)
+RETURNING documento, nombre, apellido, deuda, nro_telefono
 `
 
 type CreateUserParams struct {
+	Documento   int64   `json:"documento"`
 	Nombre      string  `json:"nombre"`
 	Apellido    string  `json:"apellido"`
 	Deuda       float64 `json:"deuda"`
@@ -87,6 +92,7 @@ type CreateUserParams struct {
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (Cliente, error) {
 	row := q.db.QueryRowContext(ctx, createUser,
+		arg.Documento,
 		arg.Nombre,
 		arg.Apellido,
 		arg.Deuda,
@@ -94,7 +100,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (Cliente
 	)
 	var i Cliente
 	err := row.Scan(
-		&i.ID,
+		&i.Documento,
 		&i.Nombre,
 		&i.Apellido,
 		&i.Deuda,
@@ -104,25 +110,41 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (Cliente
 }
 
 const createVoucher = `-- name: CreateVoucher :one
-INSERT INTO voucher (regalador_id, tratamiento_id, cliente_id)
+INSERT INTO voucher (regalador_documento, tratamiento_id, cliente_documento)
 VALUES ($1, $2, $3)
-RETURNING id_voucher, regalador_id, tratamiento_id, cliente_id
+RETURNING id_voucher, regalador_documento, tratamiento_id, cliente_documento,
+(SELECT CONCAT(nombre,' ',apellido) FROM cliente WHERE voucher.regalador_documento = documento) AS regalador,
+(SELECT nombre FROM tratamiento WHERE voucher.tratamiento_id = id) AS tratamiento,
+(SELECT CONCAT(nombre,' ',apellido) FROM cliente WHERE voucher.cliente_documento = documento) AS cliente
 `
 
 type CreateVoucherParams struct {
-	RegaladorID   int64 `json:"regalador_id"`
-	TratamientoID int64 `json:"tratamiento_id"`
-	ClienteID     int64 `json:"cliente_id"`
+	RegaladorDocumento int64 `json:"regalador_documento"`
+	TratamientoID      int64 `json:"tratamiento_id"`
+	ClienteDocumento   int64 `json:"cliente_documento"`
 }
 
-func (q *Queries) CreateVoucher(ctx context.Context, arg CreateVoucherParams) (Voucher, error) {
-	row := q.db.QueryRowContext(ctx, createVoucher, arg.RegaladorID, arg.TratamientoID, arg.ClienteID)
-	var i Voucher
+type CreateVoucherRow struct {
+	IDVoucher          int64       `json:"id_voucher"`
+	RegaladorDocumento int64       `json:"regalador_documento"`
+	TratamientoID      int64       `json:"tratamiento_id"`
+	ClienteDocumento   int64       `json:"cliente_documento"`
+	Regalador          interface{} `json:"regalador"`
+	Tratamiento        string      `json:"tratamiento"`
+	Cliente            interface{} `json:"cliente"`
+}
+
+func (q *Queries) CreateVoucher(ctx context.Context, arg CreateVoucherParams) (CreateVoucherRow, error) {
+	row := q.db.QueryRowContext(ctx, createVoucher, arg.RegaladorDocumento, arg.TratamientoID, arg.ClienteDocumento)
+	var i CreateVoucherRow
 	err := row.Scan(
 		&i.IDVoucher,
-		&i.RegaladorID,
+		&i.RegaladorDocumento,
 		&i.TratamientoID,
-		&i.ClienteID,
+		&i.ClienteDocumento,
+		&i.Regalador,
+		&i.Tratamiento,
+		&i.Cliente,
 	)
 	return i, err
 }
@@ -154,11 +176,11 @@ func (q *Queries) DeleteTurno(ctx context.Context, arg DeleteTurnoParams) error 
 
 const deleteUser = `-- name: DeleteUser :exec
 DELETE FROM cliente
-WHERE id = $1
+WHERE documento = $1
 `
 
-func (q *Queries) DeleteUser(ctx context.Context, id int64) error {
-	_, err := q.db.ExecContext(ctx, deleteUser, id)
+func (q *Queries) DeleteUser(ctx context.Context, documento int64) error {
+	_, err := q.db.ExecContext(ctx, deleteUser, documento)
 	return err
 }
 
@@ -194,8 +216,10 @@ func (q *Queries) GetTreatment(ctx context.Context, id int64) (Tratamiento, erro
 
 const getTurno = `-- name: GetTurno :one
 
-SELECT fecha, hora, tratamiento_id, cliente_id
-FROM turno 
+SELECT fecha, hora, cliente_documento, tratamiento_id,
+(SELECT CONCAT(nombre,' ',apellido) FROM cliente WHERE t.cliente_documento = documento) AS nombre_cliente,
+(SELECT nombre FROM tratamiento WHERE t.tratamiento_id = id) AS nombre_tratamiento
+FROM turno t
 WHERE fecha = $1 AND hora = $2
 `
 
@@ -204,29 +228,42 @@ type GetTurnoParams struct {
 	Hora  int32       `json:"hora"`
 }
 
+type GetTurnoRow struct {
+	Fecha             pgtype.Date `json:"fecha"`
+	Hora              int32       `json:"hora"`
+	ClienteDocumento  int64       `json:"cliente_documento"`
+	TratamientoID     int64       `json:"tratamiento_id"`
+	NombreCliente     interface{} `json:"nombre_cliente"`
+	NombreTratamiento string      `json:"nombre_tratamiento"`
+}
+
 // TABLA TURNO
-func (q *Queries) GetTurno(ctx context.Context, arg GetTurnoParams) (Turno, error) {
+func (q *Queries) GetTurno(ctx context.Context, arg GetTurnoParams) (GetTurnoRow, error) {
 	row := q.db.QueryRowContext(ctx, getTurno, arg.Fecha, arg.Hora)
-	var i Turno
+	var i GetTurnoRow
 	err := row.Scan(
 		&i.Fecha,
 		&i.Hora,
+		&i.ClienteDocumento,
 		&i.TratamientoID,
-		&i.ClienteID,
+		&i.NombreCliente,
+		&i.NombreTratamiento,
 	)
 	return i, err
 }
 
 const getTurnosCompleto = `-- name: GetTurnosCompleto :many
-SELECT fecha, hora, 
-(SELECT CONCAT(nombre,' ',apellido) FROM cliente WHERE t.cliente_id = id) as nombre_cliente, 
-(SELECT nombre FROM tratamiento WHERE t.tratamiento_id = id) as nombre_tratamiento
+SELECT fecha, hora, cliente_documento, tratamiento_id,
+(SELECT CONCAT(nombre,' ',apellido) FROM cliente WHERE t.cliente_documento = documento) AS nombre_cliente,
+(SELECT nombre FROM tratamiento WHERE t.tratamiento_id = id) AS nombre_tratamiento
 FROM turno t
 `
 
 type GetTurnosCompletoRow struct {
 	Fecha             pgtype.Date `json:"fecha"`
 	Hora              int32       `json:"hora"`
+	ClienteDocumento  int64       `json:"cliente_documento"`
+	TratamientoID     int64       `json:"tratamiento_id"`
 	NombreCliente     interface{} `json:"nombre_cliente"`
 	NombreTratamiento string      `json:"nombre_tratamiento"`
 }
@@ -243,6 +280,8 @@ func (q *Queries) GetTurnosCompleto(ctx context.Context) ([]GetTurnosCompletoRow
 		if err := rows.Scan(
 			&i.Fecha,
 			&i.Hora,
+			&i.ClienteDocumento,
+			&i.TratamientoID,
 			&i.NombreCliente,
 			&i.NombreTratamiento,
 		); err != nil {
@@ -261,17 +300,17 @@ func (q *Queries) GetTurnosCompleto(ctx context.Context) ([]GetTurnosCompletoRow
 
 const getUser = `-- name: GetUser :one
 
-SELECT id, nombre, apellido, deuda, nro_telefono
+SELECT documento, nombre, apellido, deuda, nro_telefono
 FROM cliente
-WHERE id = $1
+WHERE documento = $1
 `
 
 // TABLA CLIENTE
-func (q *Queries) GetUser(ctx context.Context, id int64) (Cliente, error) {
-	row := q.db.QueryRowContext(ctx, getUser, id)
+func (q *Queries) GetUser(ctx context.Context, documento int64) (Cliente, error) {
+	row := q.db.QueryRowContext(ctx, getUser, documento)
 	var i Cliente
 	err := row.Scan(
-		&i.ID,
+		&i.Documento,
 		&i.Nombre,
 		&i.Apellido,
 		&i.Deuda,
@@ -282,38 +321,57 @@ func (q *Queries) GetUser(ctx context.Context, id int64) (Cliente, error) {
 
 const getVoucher = `-- name: GetVoucher :one
 
-SELECT id_voucher, regalador_id, tratamiento_id, cliente_id
-FROM voucher
+SELECT id_voucher, regalador_documento, cliente_documento, tratamiento_id,
+(SELECT CONCAT(nombre,' ',apellido) FROM cliente WHERE v.regalador_documento = documento) AS regalador,
+(SELECT nombre FROM tratamiento WHERE v.tratamiento_id = id) AS tratamiento,
+(SELECT CONCAT(nombre,' ',apellido) FROM cliente WHERE v.cliente_documento = documento) AS cliente
+FROM voucher v
 WHERE id_voucher = $1
 `
 
+type GetVoucherRow struct {
+	IDVoucher          int64       `json:"id_voucher"`
+	RegaladorDocumento int64       `json:"regalador_documento"`
+	ClienteDocumento   int64       `json:"cliente_documento"`
+	TratamientoID      int64       `json:"tratamiento_id"`
+	Regalador          interface{} `json:"regalador"`
+	Tratamiento        string      `json:"tratamiento"`
+	Cliente            interface{} `json:"cliente"`
+}
+
 // TABLA VOUCHER
-func (q *Queries) GetVoucher(ctx context.Context, idVoucher int64) (Voucher, error) {
+func (q *Queries) GetVoucher(ctx context.Context, idVoucher int64) (GetVoucherRow, error) {
 	row := q.db.QueryRowContext(ctx, getVoucher, idVoucher)
-	var i Voucher
+	var i GetVoucherRow
 	err := row.Scan(
 		&i.IDVoucher,
-		&i.RegaladorID,
+		&i.RegaladorDocumento,
+		&i.ClienteDocumento,
 		&i.TratamientoID,
-		&i.ClienteID,
+		&i.Regalador,
+		&i.Tratamiento,
+		&i.Cliente,
 	)
 	return i, err
 }
 
 const getVouchers = `-- name: GetVouchers :many
-SELECT id_voucher, 
-(SELECT CONCAT(nombre,' ',apellido) FROM cliente WHERE v.regalador_id=id) AS regalador, 
-(SELECT nombre FROM tratamiento WHERE v.tratamiento_id=id) AS tratamiento,
-(SELECT CONCAT(nombre,' ',apellido) FROM cliente WHERE v.cliente_id=id) AS cliente
+SELECT id_voucher, regalador_documento, cliente_documento, tratamiento_id,
+(SELECT CONCAT(nombre,' ',apellido) FROM cliente WHERE v.regalador_documento = documento) AS regalador,
+(SELECT nombre FROM tratamiento WHERE v.tratamiento_id = id) AS tratamiento,
+(SELECT CONCAT(nombre,' ',apellido) FROM cliente WHERE v.cliente_documento = documento) AS cliente
 FROM voucher v
 ORDER BY id_voucher
 `
 
 type GetVouchersRow struct {
-	IDVoucher   int64       `json:"id_voucher"`
-	Regalador   interface{} `json:"regalador"`
-	Tratamiento string      `json:"tratamiento"`
-	Cliente     interface{} `json:"cliente"`
+	IDVoucher          int64       `json:"id_voucher"`
+	RegaladorDocumento int64       `json:"regalador_documento"`
+	ClienteDocumento   int64       `json:"cliente_documento"`
+	TratamientoID      int64       `json:"tratamiento_id"`
+	Regalador          interface{} `json:"regalador"`
+	Tratamiento        string      `json:"tratamiento"`
+	Cliente            interface{} `json:"cliente"`
 }
 
 func (q *Queries) GetVouchers(ctx context.Context) ([]GetVouchersRow, error) {
@@ -327,6 +385,9 @@ func (q *Queries) GetVouchers(ctx context.Context) ([]GetVouchersRow, error) {
 		var i GetVouchersRow
 		if err := rows.Scan(
 			&i.IDVoucher,
+			&i.RegaladorDocumento,
+			&i.ClienteDocumento,
+			&i.TratamientoID,
 			&i.Regalador,
 			&i.Tratamiento,
 			&i.Cliente,
@@ -379,7 +440,7 @@ func (q *Queries) ListTreatments(ctx context.Context) ([]Tratamiento, error) {
 }
 
 const listTurno = `-- name: ListTurno :many
-SELECT fecha, hora, tratamiento_id, cliente_id
+SELECT fecha, hora, tratamiento_id, cliente_documento
 FROM turno
 ORDER BY fecha, hora
 `
@@ -397,7 +458,7 @@ func (q *Queries) ListTurno(ctx context.Context) ([]Turno, error) {
 			&i.Fecha,
 			&i.Hora,
 			&i.TratamientoID,
-			&i.ClienteID,
+			&i.ClienteDocumento,
 		); err != nil {
 			return nil, err
 		}
@@ -413,9 +474,9 @@ func (q *Queries) ListTurno(ctx context.Context) ([]Turno, error) {
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT id, nombre, apellido, deuda, nro_telefono
+SELECT documento, nombre, apellido, deuda, nro_telefono
 FROM cliente
-ORDER BY id
+ORDER BY documento
 `
 
 func (q *Queries) ListUsers(ctx context.Context) ([]Cliente, error) {
@@ -428,7 +489,7 @@ func (q *Queries) ListUsers(ctx context.Context) ([]Cliente, error) {
 	for rows.Next() {
 		var i Cliente
 		if err := rows.Scan(
-			&i.ID,
+			&i.Documento,
 			&i.Nombre,
 			&i.Apellido,
 			&i.Deuda,
@@ -448,7 +509,7 @@ func (q *Queries) ListUsers(ctx context.Context) ([]Cliente, error) {
 }
 
 const listVouchers = `-- name: ListVouchers :many
-SELECT id_voucher, regalador_id, tratamiento_id, cliente_id
+SELECT id_voucher, regalador_documento, tratamiento_id, cliente_documento
 FROM voucher
 ORDER BY id_voucher
 `
@@ -464,9 +525,9 @@ func (q *Queries) ListVouchers(ctx context.Context) ([]Voucher, error) {
 		var i Voucher
 		if err := rows.Scan(
 			&i.IDVoucher,
-			&i.RegaladorID,
+			&i.RegaladorDocumento,
 			&i.TratamientoID,
-			&i.ClienteID,
+			&i.ClienteDocumento,
 		); err != nil {
 			return nil, err
 		}
@@ -514,31 +575,44 @@ func (q *Queries) UpdateTreatment(ctx context.Context, arg UpdateTreatmentParams
 
 const updateTurno = `-- name: UpdateTurno :one
 UPDATE turno
-SET tratamiento_id = $3, cliente_id = $4
+SET tratamiento_id = $3, cliente_documento = $4
 WHERE fecha = $1 AND hora = $2
-RETURNING fecha, hora, tratamiento_id, cliente_id
+RETURNING fecha, hora, tratamiento_id, cliente_documento,
+(SELECT nombre FROM tratamiento WHERE id = turno.tratamiento_id) AS nombre_tratamiento,
+(SELECT CONCAT(nombre,' ',apellido) FROM cliente WHERE documento = turno.cliente_documento) AS nombre_cliente
 `
 
 type UpdateTurnoParams struct {
-	Fecha         pgtype.Date `json:"fecha"`
-	Hora          int32       `json:"hora"`
-	TratamientoID int64       `json:"tratamiento_id"`
-	ClienteID     int64       `json:"cliente_id"`
+	Fecha            pgtype.Date `json:"fecha"`
+	Hora             int32       `json:"hora"`
+	TratamientoID    int64       `json:"tratamiento_id"`
+	ClienteDocumento int64       `json:"cliente_documento"`
 }
 
-func (q *Queries) UpdateTurno(ctx context.Context, arg UpdateTurnoParams) (Turno, error) {
+type UpdateTurnoRow struct {
+	Fecha             pgtype.Date `json:"fecha"`
+	Hora              int32       `json:"hora"`
+	TratamientoID     int64       `json:"tratamiento_id"`
+	ClienteDocumento  int64       `json:"cliente_documento"`
+	NombreTratamiento string      `json:"nombre_tratamiento"`
+	NombreCliente     interface{} `json:"nombre_cliente"`
+}
+
+func (q *Queries) UpdateTurno(ctx context.Context, arg UpdateTurnoParams) (UpdateTurnoRow, error) {
 	row := q.db.QueryRowContext(ctx, updateTurno,
 		arg.Fecha,
 		arg.Hora,
 		arg.TratamientoID,
-		arg.ClienteID,
+		arg.ClienteDocumento,
 	)
-	var i Turno
+	var i UpdateTurnoRow
 	err := row.Scan(
 		&i.Fecha,
 		&i.Hora,
 		&i.TratamientoID,
-		&i.ClienteID,
+		&i.ClienteDocumento,
+		&i.NombreTratamiento,
+		&i.NombreCliente,
 	)
 	return i, err
 }
@@ -546,12 +620,12 @@ func (q *Queries) UpdateTurno(ctx context.Context, arg UpdateTurnoParams) (Turno
 const updateUser = `-- name: UpdateUser :one
 UPDATE cliente
 SET nombre = $2, apellido = $3, deuda = $4, nro_telefono = $5
-WHERE id = $1
-RETURNING id, nombre, apellido, deuda, nro_telefono
+WHERE documento = $1
+RETURNING documento, nombre, apellido, deuda, nro_telefono
 `
 
 type UpdateUserParams struct {
-	ID          int64   `json:"id"`
+	Documento   int64   `json:"documento"`
 	Nombre      string  `json:"nombre"`
 	Apellido    string  `json:"apellido"`
 	Deuda       float64 `json:"deuda"`
@@ -560,7 +634,7 @@ type UpdateUserParams struct {
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (Cliente, error) {
 	row := q.db.QueryRowContext(ctx, updateUser,
-		arg.ID,
+		arg.Documento,
 		arg.Nombre,
 		arg.Apellido,
 		arg.Deuda,
@@ -568,7 +642,7 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (Cliente
 	)
 	var i Cliente
 	err := row.Scan(
-		&i.ID,
+		&i.Documento,
 		&i.Nombre,
 		&i.Apellido,
 		&i.Deuda,
@@ -578,32 +652,48 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (Cliente
 }
 
 const updateVoucher = `-- name: UpdateVoucher :one
-UPDATE voucher
-SET regalador_id = $2, tratamiento_id = $3, cliente_id = $4
+UPDATE voucher v
+SET regalador_documento = $2, tratamiento_id = $3, cliente_documento = $4
 WHERE id_voucher = $1
-RETURNING id_voucher, regalador_id, tratamiento_id, cliente_id
+RETURNING id_voucher, regalador_documento, tratamiento_id, cliente_documento,
+(SELECT CONCAT(nombre,' ',apellido) FROM cliente WHERE v.regalador_documento = documento) AS regalador,
+(SELECT nombre FROM tratamiento WHERE v.tratamiento_id = id) AS tratamiento,
+(SELECT CONCAT(nombre,' ',apellido) FROM cliente WHERE v.cliente_documento = documento) AS cliente
 `
 
 type UpdateVoucherParams struct {
-	IDVoucher     int64 `json:"id_voucher"`
-	RegaladorID   int64 `json:"regalador_id"`
-	TratamientoID int64 `json:"tratamiento_id"`
-	ClienteID     int64 `json:"cliente_id"`
+	IDVoucher          int64 `json:"id_voucher"`
+	RegaladorDocumento int64 `json:"regalador_documento"`
+	TratamientoID      int64 `json:"tratamiento_id"`
+	ClienteDocumento   int64 `json:"cliente_documento"`
 }
 
-func (q *Queries) UpdateVoucher(ctx context.Context, arg UpdateVoucherParams) (Voucher, error) {
+type UpdateVoucherRow struct {
+	IDVoucher          int64       `json:"id_voucher"`
+	RegaladorDocumento int64       `json:"regalador_documento"`
+	TratamientoID      int64       `json:"tratamiento_id"`
+	ClienteDocumento   int64       `json:"cliente_documento"`
+	Regalador          interface{} `json:"regalador"`
+	Tratamiento        string      `json:"tratamiento"`
+	Cliente            interface{} `json:"cliente"`
+}
+
+func (q *Queries) UpdateVoucher(ctx context.Context, arg UpdateVoucherParams) (UpdateVoucherRow, error) {
 	row := q.db.QueryRowContext(ctx, updateVoucher,
 		arg.IDVoucher,
-		arg.RegaladorID,
+		arg.RegaladorDocumento,
 		arg.TratamientoID,
-		arg.ClienteID,
+		arg.ClienteDocumento,
 	)
-	var i Voucher
+	var i UpdateVoucherRow
 	err := row.Scan(
 		&i.IDVoucher,
-		&i.RegaladorID,
+		&i.RegaladorDocumento,
 		&i.TratamientoID,
-		&i.ClienteID,
+		&i.ClienteDocumento,
+		&i.Regalador,
+		&i.Tratamiento,
+		&i.Cliente,
 	)
 	return i, err
 }

@@ -24,17 +24,17 @@ var formCrearTurno = Formulario{
 	Campos: []Campo{
 		Texto("fecha", "Fecha del turno"),
 		Texto("hora", "Hora del turno"),
-		Numero("cliente_id", "ID del cliente"),
+		Numero("cliente_documento", "Documento del cliente"),
 		Numero("tratamiento_id", "ID del tratamiento"),
 	},
 }
 
 var formBuscarTurno = Formulario{
-	Accion:   "/search-turn",
+	Accion:   "/search-turno",
 	Etiqueta: "Buscar Turno",
 	Campos: []Campo{
-		Texto("date", "Fecha del turno"),
-		Texto("time", "Hora del turno"),
+		Texto("fecha", "Fecha del turno"),
+		Texto("hora", "Hora del turno"),
 	},
 }
 
@@ -48,16 +48,16 @@ func fechaAString(d pgtype.Date) string {
 }
 
 // celdasTurno mapea un turno a las celdas de su fila (mismo orden que columnasTurnos).
-func celdasTurno(t sqlc.Turno) []string {
+func celdasTurno(t sqlc.GetTurnosCompletoRow) []string {
 	return []string{
 		fechaAString(t.Fecha),
 		fmt.Sprint(t.Hora),
-		fmt.Sprint(t.TratamientoID),
-		fmt.Sprint(t.ClienteID),
+		fmt.Sprint(t.NombreTratamiento),
+		fmt.Sprint(t.NombreCliente),
 	}
 }
 
-func Turnos(turnos []sqlc.Turno) templ.Component {
+func Turnos(turnos []sqlc.GetTurnosCompletoRow) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
