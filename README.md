@@ -27,7 +27,7 @@ utilizando templ para generar las vistas dinámicamente en Go.
 ```
  make inicializacion
 ```
-4- Para visualizar el sistema, ingresar a:
+4- Para visualizar el sistema, ingresar a
 
 http://localhost:8080
 
@@ -41,8 +41,12 @@ nota: si hay algún problema con los comandos tipo 'make', se puede pedir ayuda 
 
 ## Documetos de interés para esta entrega:
 
--Carpeta views= Ahora que se abandonó la lógica Java script, la caperta views contiene la lógica que hace que el sistema web sea dinámico. Cada archivo con el formato '*.templ' contiene la lógica de formulario y de lista integrados 
+-Carpeta views= Ahora que se abandonó la lógica Java script, la caperta views contiene la lógica que hace que el sistema web sea dinámico y funcional. Cada archivo con el formato '*.templ' contiene la lógica de formulario y de lista de manera conjunta
 
 -Components.templ= Dcoumento que contiene métodos comunes a todos los .templ, se decidió esta implemetación para evitar duplicar código y cometer un code smell. 
+
+## Alaraciones y recomendaciones 
+
+-No borrar la carpeta 'views', de lo contrario el sistema no podrá ser usado
 
 
