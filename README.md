@@ -25,7 +25,7 @@ utilizando templ para generar las vistas dinámicamente en Go.
 ```
 3- Para levantar la aplicación, ejecutar el comando:
 ```
-
+ make inicializacion
 ```
 4- Para visualizar el sistema, ingresar a:
 
