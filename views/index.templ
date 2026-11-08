@@ -2,13 +2,13 @@ package views
 
 import sqlc "TPE/db/sqlc"
 
-templ Index(clientes []sqlc.Cliente, tratamientos []sqlc.Tratamiento) {
+templ Index(clientes []sqlc.Cliente, tratamientos []sqlc.Tratamiento, turnos []sqlc.Turno) {
 	@Layout("GLAM Estetica Integral") {
 		<div class="contenedor-flex">
 			@Clientes(clientes)
 			@Tratamientos(tratamientos)
 			@Vouchers()
-			@Turnos()
+			@Turnos(turnos)
 		</div>
 	}
 }

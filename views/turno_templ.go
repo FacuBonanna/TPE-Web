@@ -9,6 +9,14 @@ package views
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
+import (
+	"fmt"
+
+	sqlc "TPE/db/sqlc"
+
+	"github.com/jackc/pgx/v5/pgtype"
+)
+
 var formCrearTurno = Formulario{
 	Accion:   "/turno",
 	Metodo:   "POST",
@@ -32,8 +40,24 @@ var formBuscarTurno = Formulario{
 
 var columnasTurnos = []string{"Fecha", "Hora", "Tratamiento", "Cliente"}
 
-// El botón "Mostrar turnos" del original no tenía action: ruta vacía.
-func Turnos() templ.Component {
+func fechaAString(d pgtype.Date) string {
+	if !d.Valid {
+		return ""
+	}
+	return d.Time.Format("02/01/2006")
+}
+
+// celdasTurno mapea un turno a las celdas de su fila (mismo orden que columnasTurnos).
+func celdasTurno(t sqlc.Turno) []string {
+	return []string{
+		fechaAString(t.Fecha),
+		fmt.Sprint(t.Hora),
+		fmt.Sprint(t.TratamientoID),
+		fmt.Sprint(t.ClienteID),
+	}
+}
+
+func Turnos(turnos []sqlc.Turno) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -70,7 +94,27 @@ func Turnos() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = Tabla("tablaTurnos", "cuerpoTablaTurno", columnasTurnos).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Var3 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+				if !templ_7745c5c3_IsBuffer {
+					defer func() {
+						templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+						if templ_7745c5c3_Err == nil {
+							templ_7745c5c3_Err = templ_7745c5c3_BufErr
+						}
+					}()
+				}
+				ctx = templ.InitializeContext(ctx)
+				for _, t := range turnos {
+					templ_7745c5c3_Err = Fila(celdasTurno(t)).Render(ctx, templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				}
+				return nil
+			})
+			templ_7745c5c3_Err = Tabla("tablaTurnos", "cuerpoTablaTurno", columnasTurnos).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
