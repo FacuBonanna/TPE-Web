@@ -1,17 +1,41 @@
 package main
 
 import (
-	sqlc "TPE/db/sqlc"
 	"context"
 	"net/http"
 	"strconv"
 
-	_ "github.com/jackc/pgx/v5/stdlib"
+	sqlc "TPE/db/sqlc"
+	"TPE/views"
 )
 
 func getClientes(ctx context.Context) []sqlc.Cliente {
 	cli, _ := queries.ListUsers(ctx)
 	return cli
+}
+
+func getCliente(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.ParseInt(r.URL.Query().Get("id_cliente"), 10, 64)
+	if err != nil {
+		http.Error(w, "El ID del cliente debe ser un número entero válido", http.StatusBadRequest)
+		return
+	}
+
+	cliente, err := queries.GetUser(r.Context(), id)
+	if err != nil {
+		http.Error(w, "No se encontró un cliente con ese ID", http.StatusNotFound)
+		return
+	}
+
+	clientes := []sqlc.Cliente{cliente}
+	tratamientos := getTratamiento(r.Context())
+	turnos := getTurno(r.Context())
+	voucher := getVouchers(r.Context())
+
+	err = views.Index(clientes, tratamientos, turnos, voucher).Render(r.Context(), w)
+	if err != nil {
+		http.Error(w, "Error al renderizar la página", http.StatusInternalServerError)
+	}
 }
 
 func crearCliente(w http.ResponseWriter, r *http.Request) {

@@ -1,8 +1,16 @@
 package views
 
+import (
+	"fmt"
+
+	sqlc "TPE/db/sqlc"
+
+	"github.com/jackc/pgx/v5/pgtype"
+)
+
 var formCrearTurno = Formulario{
-	Accion: "/turno",
-	Metodo: "POST",
+	Accion:   "/turno",
+	Metodo:   "POST",
 	Etiqueta: "Crear Turno",
 	Campos: []Campo{
 		Texto("fecha", "Fecha del turno"),
@@ -23,11 +31,31 @@ var formBuscarTurno = Formulario{
 
 var columnasTurnos = []string{"Fecha", "Hora", "Tratamiento", "Cliente"}
 
-// El botón "Mostrar turnos" del original no tenía action: ruta vacía.
-templ Turnos() {
-	@Seccion("turnos", "Turno") {
+func fechaAString(d pgtype.Date) string {
+	if !d.Valid {
+		return ""
+	}
+	return d.Time.Format("02/01/2006")
+}
+
+// celdasTurno mapea un turno a las celdas de su fila (mismo orden que columnasTurnos).
+func celdasTurno(t sqlc.Turno) []string {
+	return []string{
+		fechaAString(t.Fecha),
+		fmt.Sprint(t.Hora),
+		fmt.Sprint(t.TratamientoID),
+		fmt.Sprint(t.ClienteID),
+	}
+}
+
+templ Turnos(turnos []sqlc.Turno) {
+	@Seccion("turnos", "Turno", "Mostrar turnos", "/") {
 		@Bloque("Crear Turno", formCrearTurno)
 		@Bloque("Buscar Turno", formBuscarTurno)
-		@Tabla("tablaTurnos", "cuerpoTablaTurno", columnasTurnos)
+		@Tabla("tablaTurnos", "cuerpoTablaTurno", columnasTurnos) {
+			for _, t := range turnos {
+				@Fila(celdasTurno(t))
+			}
+		}
 	}
 }

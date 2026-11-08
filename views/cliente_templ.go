@@ -27,7 +27,8 @@ var formCrearCliente = Formulario{
 }
 
 var formBuscarCliente = Formulario{
-	ID:       "buscar-cliente-form",
+	Accion:   "/search-client",
+	Metodo:   "GET",
 	Etiqueta: "Buscar Cliente",
 	Campos:   []Campo{Numero("id_cliente", "ID del cliente")},
 }

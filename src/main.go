@@ -45,7 +45,9 @@ func main() {
 	http.HandleFunc("POST /cliente", crearCliente)
 	http.HandleFunc("POST /tratamiento", crearTratamiento)
 	http.HandleFunc("POST /voucher", createVoucher)
-	http.HandleFunc("POST /turno", createturno)
+	http.HandleFunc("POST /turno", createTurno)
+
+	http.HandleFunc("GET /search-client", getCliente)
 
 	port := ":8080"
 	fmt.Printf("Servidor escuchando en http://localhost%s\n", port)
@@ -60,9 +62,9 @@ func servidor(w http.ResponseWriter, r *http.Request) {
 	clientes := getClientes(r.Context())
 	tratamientos := getTratamiento(r.Context())
 	vouchers := getVouchers(r.Context())
-	//turnos := getTurnos(r.Context())
+	turnos := getTurno(r.Context())
 
-	err := views.Index(clientes, tratamientos, vouchers).Render(r.Context(), w)
+	err := views.Index(clientes, tratamientos, turnos, vouchers).Render(r.Context(), w)
 
 	if err != nil {
 		http.Error(w, "Error al renderizar la página", http.StatusInternalServerError)
