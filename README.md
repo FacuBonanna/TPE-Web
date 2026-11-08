@@ -1,12 +1,12 @@
 # PROYECTO ESPECIAL PROGRAMACIÓN WEB. 
-# Etapa 3: Exponiendo la lógica como API. 
+# Etapa 4: La Capa de Presentación
 
-EL objetivo de esta entrega es construir una API REST para gestionar las entidades de nuestra aplicación para poder conectar la lógica de negocio con la
-capa de datos.
+En este trabajo crearemos una interfaz de usuario (frontend) en HTML, CSS y JavaScript que consuma la API REST que construimos en el práctico anterior.
 
 ## Modelo de la base de datos: 
 
-<img width="1004" height="557" alt="TPE-WEB-DBMODEL-2026-09-24_10-52" src="https://github.com/user-attachments/assets/22cddfb9-52ff-4e93-b1c1-8dec8270a10e" />
+<img width="1004" height="557" alt="TPE-WEB-DBMODEL-2026-11-08_01-19" src="https://github.com/user-attachments/assets/59646eb6-7f19-4c26-be61-10de39b8a5e9" />
+
 
 ## ¿Cómo probar el trabajo? 
 
@@ -18,18 +18,17 @@ capa de datos.
 ```
  cd TPE-Web
 ```
-2- Cambiar la rama actual a la rama "tp3" 
+2- Cambiar la rama actual a la rama "tp4" 
 ```
-  git switch tp3
+  git switch tp4
 ```
-3- Para probar la API REST, ejecutar el comando:
+3- Para levantar la aplicación, ejecutar el comando:
 ```
-  make test_api
+  
 ```
-3.5- Si se quiere probar la base de datos por separado, ejecutar el comando: 
-```
-  make test_base
-```
+4- Para visualizar el sistema, ingresar a: 
+
+http://localhost:8080/?
 
 nota: si hay algún problema con los comandos tipo 'make', se puede pedir ayuda por consola ingresando el comando 
 ```
@@ -37,25 +36,13 @@ nota: si hay algún problema con los comandos tipo 'make', se puede pedir ayuda 
 ```
 ## Herramientas del proyecto 
 
- - Server Docker
- - Make
- - PostgreSQL
- - Sqlc
- - Hurl 
+ - JavaScript
+ - Cascading Style Sheets (CSS)
+ - HyperText Markup Language (HTML)
 
 ## Documetos de interés para esta entrega:
 
-A pesar de que todos las partes del código son importantes para que este proyecto pueda funcionar, estos son los elementos que tuvimos que modificar para poder concretar la entrega: 
-
-- resquests.hurl: Suite de tests de integración para probar la API REST (en especial las reglas de negocio relacionadas a la inserción y actualización de las entidades), escrita en Hurl.
-- Makefile: Dentro del archivo dividimos los tests en dos tipos: test_base (que testea la base de datos) y test_api (que corresponde a esta etrega y solamente prueba la API REST y los endpoints).
-- Carpeta src: Cada una de las entidades tiene dentro sus funcones handlers, que son los que gestionan el ciclo de vida de la entidad y los que separan la lógica de negocio
-  de las operaciones de la base de datos.
-
 
 ## Aclaraciones
-
--Los tests ya están integrados en la lógica del proyecto, se recomienda no remover el archivo requests.hurl del directorio que contiene el archivo. ya que de otra forma el make test no funcionará.
-
 
 
