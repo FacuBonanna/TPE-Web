@@ -37,11 +37,12 @@ nota: si hay algún problema con los comandos tipo 'make', se puede pedir ayuda 
 ```
 ## Herramientas del proyecto 
 
-
+-Templ
 
 ## Documetos de interés para esta entrega:
 
+-Carpeta views= Ahora que se abandonó la lógica Java script, la caperta views contiene la lógica que hace que el sistema web sea dinámico. Cada archivo con el formato '*.templ' contiene la lógica de formulario y de lista integrados 
 
-## Aclaraciones
+-Components.templ= Dcoumento que contiene métodos comunes a todos los .templ, se decidió esta implemetación para evitar duplicar código y cometer un code smell. 
 
 
