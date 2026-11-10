@@ -41,6 +41,7 @@ inicializacion:
 	docker compose build api
 	docker compose up -d database	
 	docker compose up -d --wait database
-	docker compose up api
 	docker exec -i $(CONTAINER_NAME) psql -U postgres -d apirest < ./db/schema/schema.sql 
+	docker compose up api
+	
 
