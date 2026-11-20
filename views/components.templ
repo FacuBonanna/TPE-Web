@@ -80,14 +80,21 @@ templ Bloque(titulo string, f Formulario) {
 
 // Seccion es el contenedor de cada entidad: título, botón "Mostrar" y contenido.
 // Si rutaListado está vacía, el botón queda sin action (igual que el HTML original).
-templ Seccion(id, titulo, etiquetaListar, rutaListado string) {
-	<div id={ id } class="item-flex">
-		<h2>
-			{ titulo }
-			@Form(Formulario{Accion: rutaListado, Etiqueta: etiquetaListar})
-		</h2>
-		{ children... }
-	</div>
+templ Seccion(id, titulo, etiquetaListar, rutaListado, idCuerpo string) {
+    <div id={ id } class="item-flex">
+        <h2>
+            { titulo }
+            @Form(Formulario{
+                Accion:   rutaListado,
+                Metodo:   "GET",
+                Etiqueta: etiquetaListar,
+                HxGet:    rutaListado,
+                HxTarget: "#" + idCuerpo,
+                HxSwap:   "innerHTML",
+            })
+        </h2>
+        { children... }
+    </div>
 }
 
 // Tabla genérica: cabecera + las filas que se le pasen como children.
@@ -146,16 +153,3 @@ templ BotonActualizar(ruta string) {
     </button>
 }
 
-templ BotonGet(ruta string) {
-    <button
-        type="button"
-        class="btn btn-get"
-        if ruta != "" {
-            hx-get={ ruta }
-            hx-target="#tablaClientes"
-            hx-swap="outerHTML"
-        }
-    >
-        Actualizar
-    </button>
-}

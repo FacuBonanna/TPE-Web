@@ -14,6 +14,10 @@ func getClientes(ctx context.Context) []sqlc.Cliente {
 	return cli
 }
 
+func listarClientes(w http.ResponseWriter, r *http.Request) {
+	views.FilasClientes(getClientes(r.Context())).Render(r.Context(), w)
+}
+
 func getCliente(w http.ResponseWriter, r *http.Request) {
 	documento, err := strconv.ParseInt(r.URL.Query().Get("cliente_documento"), 10, 64)
 	if err != nil {

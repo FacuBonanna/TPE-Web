@@ -317,7 +317,7 @@ func Tratamientos(tratamientos []sqlc.Tratamiento) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = Seccion("tratamientos", "Tratamientos", "Mostrar tratamientos", "/tratamiento").Render(templ.WithChildren(ctx, templ_7745c5c3_Var16), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Seccion("tratamientos", "Tratamientos", "Mostrar tratamientos", "/tratamiento", "cuerpoTablaTratamiento").Render(templ.WithChildren(ctx, templ_7745c5c3_Var16), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

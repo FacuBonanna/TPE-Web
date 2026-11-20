@@ -93,7 +93,7 @@ templ TablaClientes(clientes []sqlc.Cliente) {
 }
 
 templ Clientes(clientes []sqlc.Cliente) {
-    @Seccion("clientes", "Clientes","Mostrar clientes","/cliente") {
+    @Seccion("clientes", "Clientes","Mostrar clientes","/clientes-filas","cuerpoTablaCliente") {
         @Bloque("Crear cliente", formCrearCliente)
         @Bloque("Buscar cliente", formBuscarCliente)
         @TablaClientes(clientes)

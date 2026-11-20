@@ -80,7 +80,7 @@ templ TablaTratamientos(tratamientos []sqlc.Tratamiento) {
 }
 
 templ Tratamientos(tratamientos []sqlc.Tratamiento) {
-	@Seccion("tratamientos", "Tratamientos","Mostrar tratamientos","/tratamiento") {
+	@Seccion("tratamientos", "Tratamientos","Mostrar tratamientos","/tratamiento","cuerpoTablaTratamiento") {
 		@Bloque("Crear Tratamiento", formCrearTratamiento)
 		@Bloque("Buscar Tratamiento", formBuscarTratamiento)
 		@TablaTratamientos(tratamientos)

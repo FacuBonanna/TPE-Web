@@ -49,6 +49,7 @@ func main() {
 	http.HandleFunc("PUT /cliente/{id}", actualizarCliente)
 	http.HandleFunc("POST /clientes", crearCliente)
 	http.HandleFunc("DELETE /clientes/{id}", deleteCliente)
+	http.HandleFunc("GET /clientes-filas", listarClientes)
 
 	http.HandleFunc("POST /tratamiento", crearTratamiento)
 	http.HandleFunc("DELETE /tratamiento/{id}", deleteTratamiento)

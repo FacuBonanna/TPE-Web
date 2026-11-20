@@ -50,7 +50,7 @@ templ TablaVouchers(vouchers []sqlc.GetVouchersRow) {
 }
 
 templ Vouchers(vouchers []sqlc.GetVouchersRow) {
-	@Seccion("vouchers", "Vouchers","Mostrar vouchers","/voucher") {
+	@Seccion("vouchers", "Vouchers","Mostrar vouchers","/voucher","cuerpoTablaVoucher") {
 		@Bloque("Crear Voucher", formCrearVoucher)
 		@Bloque("Buscar Voucher", formBuscarVoucher)
 		@TablaVouchers(vouchers)

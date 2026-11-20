@@ -63,7 +63,7 @@ templ TablaTurnos(turnos []sqlc.GetTurnosCompletoRow) {
 }
 
 templ Turnos(turnos []sqlc.GetTurnosCompletoRow) {
-	@Seccion("turnos", "Turno", "Mostrar turnos", "/") {
+	@Seccion("turnos", "Turno", "Mostrar turnos", "/","cuerpoTablaTurno") {
 		@Bloque("Crear Turno", formCrearTurno)
 		@Bloque("Buscar Turno", formBuscarTurno)
 		@TablaTurnos(turnos)
