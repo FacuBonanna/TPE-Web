@@ -18,7 +18,7 @@ type Formulario struct {
     Campos   []Campo
     Metodo   string
     HxPost   string
-    HxGet    string
+    //HxGet    string
     HxTarget string
     HxSwap   string
 }
@@ -51,9 +51,6 @@ templ Form(f Formulario) {
         }
         if f.HxPost != "" {
             hx-post={ f.HxPost }
-        }
-        if f.HxGet != "" {
-            hx-get={ f.HxGet }
         }
         if f.HxTarget != "" {
             hx-target={ f.HxTarget }

@@ -23,9 +23,6 @@ var formCrearCliente = Formulario{
 
 var formBuscarCliente = Formulario{
 	Accion:   "/search-client",
-	HxGet:    "/search-client",
-	HxTarget: "#tablaClientes",
-	HxSwap:   "outerHTML",
     Metodo:   "GET",
     Etiqueta: "Buscar Cliente",
     Campos:   []Campo{Numero("cliente_documento", "Documento del cliente")},

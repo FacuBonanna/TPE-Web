@@ -22,9 +22,6 @@ var formCrearTratamiento = Formulario{
 
 var formBuscarTratamiento = Formulario{
 	Accion:   "/search-tratamiento",
-	HxGet:    "/search-tratamiento",
-	HxTarget: "#tablaTratamientos",
-	HxSwap:   "outerHTML",
 	Etiqueta: "Buscar Tratamiento",
 	Campos:   []Campo{Numero("tratamiento_id", "ID del tratamiento")},
 }
