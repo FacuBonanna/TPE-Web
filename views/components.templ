@@ -126,3 +126,18 @@ templ BotonBorrar(ruta string, confirmacion string) {
         Borrar
     </button>
 }
+
+// BotonActualizar genera un botón al lado de Borrar para actualizar o editar con HTMX.
+templ BotonActualizar(ruta string) {
+    <button
+        type="button"
+        class="btn btn-actualizar"
+        if ruta != "" {
+            hx-get={ ruta }
+            hx-target="closest tr"
+            hx-swap="outerHTML"
+        }
+    >
+        Actualizar
+    </button>
+}

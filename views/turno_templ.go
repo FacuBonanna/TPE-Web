@@ -123,6 +123,10 @@ func FilaTurno(t sqlc.GetTurnosCompletoRow) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = BotonActualizar(fmt.Sprintf("/turno/%s/%d/edit", t.Fecha.Time.Format("2006-01-02"), t.Hora)).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = BotonBorrar(fmt.Sprintf("/turno/%s/%d", t.Fecha.Time.Format("2006-01-02"), t.Hora), "¿Está seguro de que desea eliminar este turno?").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

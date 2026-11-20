@@ -139,3 +139,39 @@ body{
 .btn-borrar:active {
   transform: scale(0.96);
 }
+
+.btn-actualizar {
+  background: #2ab6af;
+  color: white;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  margin-right: 5px;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.btn-actualizar:hover {
+  background: #208e89;
+}
+
+.btn-actualizar:active {
+  transform: scale(0.96);
+}
+
+.btn-cancelar {
+  background: #888;
+  color: white;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  margin-left: 5px;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.btn-cancelar:hover {
+  background: #666;
+}

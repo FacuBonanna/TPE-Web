@@ -110,6 +110,10 @@ func FilaVoucher(v sqlc.GetVouchersRow) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = BotonActualizar(fmt.Sprintf("/voucher/%d/edit", v.IDVoucher)).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = BotonBorrar(fmt.Sprintf("/voucher/%d", v.IDVoucher), "¿Está seguro de que desea eliminar este voucher?").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

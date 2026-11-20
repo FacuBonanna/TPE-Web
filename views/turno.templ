@@ -48,6 +48,7 @@ templ FilaTurno(t sqlc.GetTurnosCompletoRow) {
 		<td>{ fmt.Sprint(t.NombreTratamiento) }</td>
 		<td>{ fmt.Sprint(t.NombreCliente) }</td>
 		<td>
+			@BotonActualizar(fmt.Sprintf("/turno/%s/%d/edit", t.Fecha.Time.Format("2006-01-02"), t.Hora))
 			@BotonBorrar(fmt.Sprintf("/turno/%s/%d", t.Fecha.Time.Format("2006-01-02"), t.Hora), "¿Está seguro de que desea eliminar este turno?")
 		</td>
 	</tr>

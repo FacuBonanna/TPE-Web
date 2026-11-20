@@ -44,11 +44,17 @@ func main() {
 	//http.HandleFunc("Get /{$}", servidor)
 	http.HandleFunc("POST /cliente", crearCliente)
 	http.HandleFunc("DELETE /cliente/{id}", deleteCliente)
+	http.HandleFunc("GET /cliente/{id}/edit", editarClienteFila)
+	http.HandleFunc("GET /cliente/{id}", getClienteFila)
+	http.HandleFunc("PUT /cliente/{id}", actualizarCliente)
 	http.HandleFunc("POST /clientes", crearCliente)
 	http.HandleFunc("DELETE /clientes/{id}", deleteCliente)
 
 	http.HandleFunc("POST /tratamiento", crearTratamiento)
 	http.HandleFunc("DELETE /tratamiento/{id}", deleteTratamiento)
+	http.HandleFunc("GET /tratamiento/{id}/edit", editarTratamientoFila)
+	http.HandleFunc("GET /tratamiento/{id}", getTratamientoFila)
+	http.HandleFunc("PUT /tratamiento/{id}", actualizarTratamiento)
 	http.HandleFunc("POST /tratamientos", crearTratamiento)
 	http.HandleFunc("DELETE /tratamientos/{id}", deleteTratamiento)
 

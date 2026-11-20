@@ -35,7 +35,38 @@ templ FilaTratamiento(t sqlc.Tratamiento) {
 		<td>{ t.DescripcionCorta }</td>
 		<td>{ fmt.Sprint(t.Costo) }</td>
 		<td>
+			@BotonActualizar(fmt.Sprintf("/tratamiento/%d/edit", t.ID))
 			@BotonBorrar(fmt.Sprintf("/tratamiento/%d", t.ID), "¿Está seguro de que desea eliminar este tratamiento?")
+		</td>
+	</tr>
+}
+
+templ FilaTratamientoEdit(t sqlc.Tratamiento) {
+	<tr class="editing">
+		<td>{ fmt.Sprint(t.ID) }</td>
+		<td><input class="campo" type="text" name="nombre" value={ t.Nombre }/></td>
+		<td><input class="campo" type="text" name="descripcion_corta" value={ t.DescripcionCorta }/></td>
+		<td><input class="campo" type="number" name="costo" value={ fmt.Sprint(t.Costo) }/></td>
+		<td>
+			<button
+				type="button"
+				class="btn btn-actualizar"
+				hx-put={ fmt.Sprintf("/tratamiento/%d", t.ID) }
+				hx-include="closest tr"
+				hx-target="closest tr"
+				hx-swap="outerHTML"
+			>
+				Guardar
+			</button>
+			<button
+				type="button"
+				class="btn btn-cancelar"
+				hx-get={ fmt.Sprintf("/tratamiento/%d", t.ID) }
+				hx-target="closest tr"
+				hx-swap="outerHTML"
+			>
+				Cancelar
+			</button>
 		</td>
 	</tr>
 }

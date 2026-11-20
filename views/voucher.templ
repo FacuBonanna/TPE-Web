@@ -35,6 +35,7 @@ templ FilaVoucher(v sqlc.GetVouchersRow) {
 		<td>{ fmt.Sprint(v.Cliente) }</td>
 		<td>{ fmt.Sprint(v.Tratamiento) }</td>
 		<td>
+			@BotonActualizar(fmt.Sprintf("/voucher/%d/edit", v.IDVoucher))
 			@BotonBorrar(fmt.Sprintf("/voucher/%d", v.IDVoucher), "¿Está seguro de que desea eliminar este voucher?")
 		</td>
 	</tr>

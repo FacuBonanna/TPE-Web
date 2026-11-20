@@ -38,7 +38,39 @@ templ FilaCliente(c sqlc.Cliente) {
         <td>{ fmt.Sprint(c.Deuda) }</td>
         <td>{ fmt.Sprint(c.NroTelefono) }</td>
         <td>
+            @BotonActualizar(fmt.Sprintf("/cliente/%d/edit", c.Documento))
             @BotonBorrar(fmt.Sprintf("/cliente/%d", c.Documento), "¿Está seguro de que desea eliminar este cliente?")
+        </td>
+    </tr>
+}
+
+templ FilaClienteEdit(c sqlc.Cliente) {
+    <tr class="editing">
+        <td>{ fmt.Sprint(c.Documento) }</td>
+        <td><input class="campo" type="text" name="name" value={ c.Nombre }/></td>
+        <td><input class="campo" type="text" name="surname" value={ c.Apellido }/></td>
+        <td><input class="campo" type="number" name="debt" value={ fmt.Sprint(c.Deuda) }/></td>
+        <td><input class="campo" type="number" name="phone" value={ fmt.Sprint(c.NroTelefono) }/></td>
+        <td>
+            <button
+                type="button"
+                class="btn btn-actualizar"
+                hx-put={ fmt.Sprintf("/cliente/%d", c.Documento) }
+                hx-include="closest tr"
+                hx-target="closest tr"
+                hx-swap="outerHTML"
+            >
+                Guardar
+            </button>
+            <button
+                type="button"
+                class="btn btn-cancelar"
+                hx-get={ fmt.Sprintf("/cliente/%d", c.Documento) }
+                hx-target="closest tr"
+                hx-swap="outerHTML"
+            >
+                Cancelar
+            </button>
         </td>
     </tr>
 }
