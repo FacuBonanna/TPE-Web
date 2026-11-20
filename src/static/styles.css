@@ -215,6 +215,25 @@ body {
   transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
+/* 1. La tabla ocupa el ancho de la tarjeta y reparte las columnas */
+.item-flex table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+/* 2. El contenido de las celdas no empuja el ancho */
+.item-flex th,
+.item-flex td {
+  overflow-wrap: anywhere;
+}
+
+/* 3. Los inputs de la fila en edición se adaptan a su celda */
+tr.editing .campo {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
 /* Mostrar la sección apuntada por el hash de la URL */
 .item-flex:target {
   display: block;

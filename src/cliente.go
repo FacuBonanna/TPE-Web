@@ -18,17 +18,17 @@ func getCliente(w http.ResponseWriter, r *http.Request) {
 	documento, err := strconv.ParseInt(r.URL.Query().Get("cliente_documento"), 10, 64)
 	if err != nil {
 		// 200 a propósito, ver nota abajo
-		views.TablaClientes(nil).Render(r.Context(), w)
+		views.FilasClientes(nil).Render(r.Context(), w)
 		return
 	}
 
 	cliente, err := queries.GetUser(r.Context(), documento)
 	if err != nil {
-		views.TablaClientes(nil).Render(r.Context(), w)
+		views.FilasClientes(nil).Render(r.Context(), w)
 		return
 	}
 
-	err = views.TablaClientes([]sqlc.Cliente{cliente}).Render(r.Context(), w)
+	err = views.FilasClientes([]sqlc.Cliente{cliente}).Render(r.Context(), w)
 	if err != nil {
 		http.Error(w, "Error al renderizar", http.StatusInternalServerError)
 	}
