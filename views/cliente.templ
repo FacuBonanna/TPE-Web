@@ -25,6 +25,9 @@ var formBuscarCliente = Formulario{
 	Accion:   "/search-client",
     Metodo:   "GET",
     Etiqueta: "Buscar Cliente",
+    HxGet:   "/cliente/{cliente_documeto}",
+    HxTarget: "#tablaClientes",
+    HxSwap:   "outerHTML",
     Campos:   []Campo{Numero("cliente_documento", "Documento del cliente")},
 }
 
