@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	sqlc "TPE/db/sqlc"
@@ -65,7 +66,50 @@ func createTurno(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	turnos := getTurnos(r.Context())
+	err = views.TablaTurnos(turnos).Render(r.Context(), w)
+	if err != nil {
+		http.Error(w, "Error al renderizar los turnos", http.StatusInternalServerError)
+		return
+	}
+}
+
+func deleteTurno(w http.ResponseWriter, r *http.Request) {
+	fechaStr := r.PathValue("fecha")
+	horaStr := r.PathValue("hora")
+
+	if fechaStr == "" && horaStr == "" {
+		idStr := r.PathValue("id")
+		parts := strings.Split(idStr, "_")
+		if len(parts) == 2 {
+			fechaStr = parts[0]
+			horaStr = parts[1]
+		}
+	}
+
+	t, err := time.Parse("2006-01-02", fechaStr)
+	if err != nil {
+		http.Error(w, "La fecha debe tener formato AAAA-MM-DD", http.StatusBadRequest)
+		return
+	}
+	fecha := pgtype.Date{Time: t, Valid: true}
+
+	hora64, err := strconv.ParseInt(horaStr, 10, 32)
+	if err != nil {
+		http.Error(w, "La hora debe ser un número entero válido", http.StatusBadRequest)
+		return
+	}
+
+	err = queries.DeleteTurno(r.Context(), sqlc.DeleteTurnoParams{
+		Fecha: fecha,
+		Hora:  int32(hora64),
+	})
+	if err != nil {
+		http.Error(w, "Error al eliminar el turno: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 func getTurno(w http.ResponseWriter, r *http.Request) {

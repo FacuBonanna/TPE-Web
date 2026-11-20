@@ -67,8 +67,29 @@ func createVoucher(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	vouchers := getVouchers(r.Context())
+	err = views.TablaVouchers(vouchers).Render(r.Context(), w)
+	if err != nil {
+		http.Error(w, "Error al renderizar los vouchers", http.StatusInternalServerError)
+		return
+	}
+}
 
+func deleteVoucher(w http.ResponseWriter, r *http.Request) {
+	idStr := r.PathValue("id")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		http.Error(w, "El ID del voucher debe ser un número entero válido", http.StatusBadRequest)
+		return
+	}
+
+	err = queries.DeleteVoucher(r.Context(), id)
+	if err != nil {
+		http.Error(w, "Error al eliminar el voucher: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 func getVouchers(ctx context.Context) []sqlc.GetVouchersRow {

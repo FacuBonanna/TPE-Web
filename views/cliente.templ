@@ -3,7 +3,6 @@ package views
 import (
     "fmt"
     sqlc "TPE/db/sqlc"
-
 )
 
 var formCrearCliente = Formulario{
@@ -17,6 +16,9 @@ var formCrearCliente = Formulario{
         Numero("debt", "Deuda"),
         Numero("phone", "Número de teléfono"),
     },
+    HxPost:   "/cliente",
+    HxTarget: "#tablaClientes",
+    HxSwap:   "outerHTML",
 }
 
 var formBuscarCliente = Formulario{
@@ -26,16 +28,26 @@ var formBuscarCliente = Formulario{
     Campos:   []Campo{Numero("cliente_documento", "Documento del cliente")},
 }
 
-var columnasClientes = []string{"Documento", "Nombre", "Apellido", "Deuda", "Nro telefono"}
+var columnasClientes = []string{"Documento", "Nombre", "Apellido", "Deuda", "Nro telefono", "Acciones"}
 
-// celdasCliente mapea un Cliente a las celdas de su fila (mismo orden que columnasClientes).
-func celdasCliente(c sqlc.Cliente) []string {
-    return []string{
-        fmt.Sprint(c.Documento),
-        c.Nombre,
-        c.Apellido,
-        fmt.Sprint(c.Deuda),
-        fmt.Sprint(c.NroTelefono),
+templ FilaCliente(c sqlc.Cliente) {
+    <tr>
+        <td>{ fmt.Sprint(c.Documento) }</td>
+        <td>{ c.Nombre }</td>
+        <td>{ c.Apellido }</td>
+        <td>{ fmt.Sprint(c.Deuda) }</td>
+        <td>{ fmt.Sprint(c.NroTelefono) }</td>
+        <td>
+            @BotonBorrar(fmt.Sprintf("/cliente/%d", c.Documento), "¿Está seguro de que desea eliminar este cliente?")
+        </td>
+    </tr>
+}
+
+templ TablaClientes(clientes []sqlc.Cliente) {
+    @Tabla("tablaClientes", "cuerpoTablaCliente", columnasClientes) {
+        for _, c := range clientes {
+            @FilaCliente(c)
+        }
     }
 }
 
@@ -43,10 +55,6 @@ templ Clientes(clientes []sqlc.Cliente) {
     @Seccion("clientes", "Clientes","Mostrar clientes","/cliente") {
         @Bloque("Crear cliente", formCrearCliente)
         @Bloque("Buscar cliente", formBuscarCliente)
-        @Tabla("tablaClientes", "cuerpoTablaCliente", columnasClientes) {
-            for _, c := range clientes {
-                @Fila(celdasCliente(c))
-            }
-        }
+        @TablaClientes(clientes)
     }
 }

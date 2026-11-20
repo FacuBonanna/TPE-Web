@@ -80,5 +80,27 @@ func crearCliente(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	clientes := getClientes(r.Context())
+	err = views.TablaClientes(clientes).Render(r.Context(), w)
+	if err != nil {
+		http.Error(w, "Error al renderizar la lista de clientes", http.StatusInternalServerError)
+		return
+	}
+}
+
+func deleteCliente(w http.ResponseWriter, r *http.Request) {
+	idStr := r.PathValue("id")
+	documento, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		http.Error(w, "El Documento del cliente debe ser un número entero válido", http.StatusBadRequest)
+		return
+	}
+
+	err = queries.DeleteUser(r.Context(), documento)
+	if err != nil {
+		http.Error(w, "Error al eliminar el cliente: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }

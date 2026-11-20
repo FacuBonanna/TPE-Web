@@ -118,7 +118,8 @@ body{
 
 
 /* Botón eliminar */
-.delete-cliente-tabla {
+.delete-cliente-tabla,
+.btn-borrar {
   background: #f58be7;
   color: #9c006d;
   border: none;
@@ -129,10 +130,12 @@ body{
   transition: background 0.2s, transform 0.1s;
 }
 
-.delete-cliente-tabla:hover {
+.delete-cliente-tabla:hover,
+.btn-borrar:hover {
   background: #fa67e6;
 }
 
-.delete-cliente-tabla:active {
+.delete-cliente-tabla:active,
+.btn-borrar:active {
   transform: scale(0.96);
 }

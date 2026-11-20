@@ -2,36 +2,40 @@ package views
 
 // Campo describe un <input>.
 type Campo struct {
-    Tipo        string
-    Nombre      string
-    Placeholder string
+	Tipo        string
+	Nombre      string
+	Placeholder string
 }
 
 // Formulario describe un <form>.
 // - ID: para formularios que maneja app.js (fetch).
 // - Accion: para formularios GET tradicionales.
+// - HxPost, HxTarget, HxSwap: para integración dinámica con HTMX.
 type Formulario struct {
     ID       string
     Accion   string
     Etiqueta string
     Campos   []Campo
-    Metodo  string
+    Metodo   string
+    HxPost   string
+    HxTarget string
+    HxSwap   string
 }
 
 func metodoDe(f Formulario) string {
-    if f.Metodo == "" {
-        return "GET"
-    }
-    return f.Metodo
+	if f.Metodo == "" {
+		return "GET"
+	}
+	return f.Metodo
 }
 
 // Atajos para no repetir el tipo en cada campo.
 func Texto(nombre, placeholder string) Campo {
-    return Campo{Tipo: "text", Nombre: nombre, Placeholder: placeholder}
+	return Campo{Tipo: "text", Nombre: nombre, Placeholder: placeholder}
 }
 
 func Numero(nombre, placeholder string) Campo {
-    return Campo{Tipo: "number", Nombre: nombre, Placeholder: placeholder}
+	return Campo{Tipo: "number", Nombre: nombre, Placeholder: placeholder}
 }
 
 // Form renderiza un formulario genérico a partir de su descripción.
@@ -44,6 +48,18 @@ templ Form(f Formulario) {
             action={ templ.SafeURL(f.Accion) }
             method={ metodoDe(f) }  
         }
+        if f.HxPost != "" {
+            hx-post={ f.HxPost }
+        }
+        if f.HxTarget != "" {
+            hx-target={ f.HxTarget }
+        }
+        if f.HxSwap != "" {
+            hx-swap={ f.HxSwap }
+        }
+        if f.HxPost != "" {
+            hx-on::after-request="if(event.detail.successful) this.reset()"
+        }
     >
         for _, c := range f.Campos {
             <input class="campo" type={ c.Tipo } name={ c.Nombre } placeholder={ c.Placeholder }/>
@@ -54,8 +70,8 @@ templ Form(f Formulario) {
 
 // Bloque = subtítulo + formulario.
 templ Bloque(titulo string, f Formulario) {
-    <h3>{ titulo }</h3>
-    @Form(f)
+	<h3>{ titulo }</h3>
+	@Form(f)
 }
 
 // Seccion es el contenedor de cada entidad: título, botón "Mostrar" y contenido.
@@ -72,25 +88,41 @@ templ Seccion(id, titulo, etiquetaListar, rutaListado string) {
 
 // Tabla genérica: cabecera + las filas que se le pasen como children.
 templ Tabla(id, idCuerpo string, columnas []string) {
-    <table id={ id }>
-        <thead>
-            <tr>
-                for _, col := range columnas {
-                    <th>{ col }</th>
-                }
-            </tr>
-        </thead>
-        <tbody id={ idCuerpo }>
-            { children... }
-        </tbody>
-    </table>
+	<table id={ id }>
+		<thead>
+			<tr>
+				for _, col := range columnas {
+					<th>{ col }</th>
+				}
+			</tr>
+		</thead>
+		<tbody id={ idCuerpo }>
+			{ children... }
+		</tbody>
+	</table>
 }
 
 // Fila genérica: una celda <td> por cada string.
 templ Fila(celdas []string) {
-    <tr>
-        for _, celda := range celdas {
-            <td>{ celda }</td>
+	<tr>
+		for _, celda := range celdas {
+			<td>{ celda }</td>
+		}
+	</tr>
+}
+
+// BotonBorrar genera un botón con HTMX para eliminar una fila del DOM sin recargar la página.
+templ BotonBorrar(ruta string, confirmacion string) {
+    <button
+        type="button"
+        class="btn btn-borrar"
+        hx-delete={ ruta }
+        hx-target="closest tr"
+        hx-swap="outerHTML"
+        if confirmacion != "" {
+            hx-confirm={ confirmacion }
         }
-    </tr>
+    >
+        Borrar
+    </button>
 }

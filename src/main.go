@@ -43,9 +43,26 @@ func main() {
 	http.HandleFunc("/", servidor)
 	//http.HandleFunc("Get /{$}", servidor)
 	http.HandleFunc("POST /cliente", crearCliente)
+	http.HandleFunc("DELETE /cliente/{id}", deleteCliente)
+	http.HandleFunc("POST /clientes", crearCliente)
+	http.HandleFunc("DELETE /clientes/{id}", deleteCliente)
+
 	http.HandleFunc("POST /tratamiento", crearTratamiento)
+	http.HandleFunc("DELETE /tratamiento/{id}", deleteTratamiento)
+	http.HandleFunc("POST /tratamientos", crearTratamiento)
+	http.HandleFunc("DELETE /tratamientos/{id}", deleteTratamiento)
+
 	http.HandleFunc("POST /voucher", createVoucher)
+	http.HandleFunc("DELETE /voucher/{id}", deleteVoucher)
+	http.HandleFunc("POST /vouchers", createVoucher)
+	http.HandleFunc("DELETE /vouchers/{id}", deleteVoucher)
+
 	http.HandleFunc("POST /turno", createTurno)
+	http.HandleFunc("DELETE /turno/{fecha}/{hora}", deleteTurno)
+	http.HandleFunc("DELETE /turno/{id}", deleteTurno)
+	http.HandleFunc("POST /turnos", createTurno)
+	http.HandleFunc("DELETE /turnos/{fecha}/{hora}", deleteTurno)
+	http.HandleFunc("DELETE /turnos/{id}", deleteTurno)
 
 	http.HandleFunc("GET /search-client", getCliente)
 	http.HandleFunc("GET /search-tratamiento", getTratamiento)

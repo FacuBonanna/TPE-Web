@@ -1,7 +1,9 @@
 package views
 
-import (sqlc "TPE/db/sqlc"
-"fmt"
+import (
+	"fmt"
+
+	sqlc "TPE/db/sqlc"
 )
 
 var formCrearVoucher = Formulario{
@@ -13,6 +15,9 @@ var formCrearVoucher = Formulario{
 		Numero("tratamiento_id", "ID del tratamiento"),
 		Numero("cliente_documento", "Documento de quien recibe"),
 	},
+	HxPost:   "/voucher",
+	HxTarget: "#tablaVouchers",
+	HxSwap:   "outerHTML",
 }
 
 var formBuscarVoucher = Formulario{
@@ -21,14 +26,25 @@ var formBuscarVoucher = Formulario{
 	Campos:   []Campo{Numero("voucher_id", "ID del voucher")},
 }
 
-var columnasVouchers = []string{"Id", "De", "Para", "Tratamiento"}
+var columnasVouchers = []string{"Id", "De", "Para", "Tratamiento", "Acciones"}
 
-func celdasVoucher(v sqlc.GetVouchersRow) []string {
-	return []string{
-		fmt.Sprint(v.IDVoucher),
-		fmt.Sprint(v.Regalador),
-		fmt.Sprint(v.Cliente),
-		fmt.Sprint(v.Tratamiento),
+templ FilaVoucher(v sqlc.GetVouchersRow) {
+	<tr>
+		<td>{ fmt.Sprint(v.IDVoucher) }</td>
+		<td>{ fmt.Sprint(v.Regalador) }</td>
+		<td>{ fmt.Sprint(v.Cliente) }</td>
+		<td>{ fmt.Sprint(v.Tratamiento) }</td>
+		<td>
+			@BotonBorrar(fmt.Sprintf("/voucher/%d", v.IDVoucher), "¿Está seguro de que desea eliminar este voucher?")
+		</td>
+	</tr>
+}
+
+templ TablaVouchers(vouchers []sqlc.GetVouchersRow) {
+	@Tabla("tablaVouchers", "cuerpoTablaVoucher", columnasVouchers) {
+		for _, v := range vouchers {
+			@FilaVoucher(v)
+		}
 	}
 }
 
@@ -36,10 +52,6 @@ templ Vouchers(vouchers []sqlc.GetVouchersRow) {
 	@Seccion("vouchers", "Vouchers","Mostrar vouchers","/voucher") {
 		@Bloque("Crear Voucher", formCrearVoucher)
 		@Bloque("Buscar Voucher", formBuscarVoucher)
-		@Tabla("tablaVouchers", "cuerpoTablaVoucher", columnasVouchers){
-			for _, v := range vouchers {
-                @Fila(celdasVoucher(v))
-            }
-		}
+		@TablaVouchers(vouchers)
 	}
 }

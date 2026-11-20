@@ -18,6 +18,9 @@ var formCrearTurno = Formulario{
 		Numero("cliente_documento", "Documento del cliente"),
 		Numero("tratamiento_id", "ID del tratamiento"),
 	},
+	HxPost:   "/turno",
+	HxTarget: "#tablaTurnos",
+	HxSwap:   "outerHTML",
 }
 
 var formBuscarTurno = Formulario{
@@ -29,7 +32,7 @@ var formBuscarTurno = Formulario{
 	},
 }
 
-var columnasTurnos = []string{"Fecha", "Hora", "Tratamiento", "Cliente"}
+var columnasTurnos = []string{"Fecha", "Hora", "Tratamiento", "Cliente", "Acciones"}
 
 func fechaAString(d pgtype.Date) string {
 	if !d.Valid {
@@ -38,13 +41,23 @@ func fechaAString(d pgtype.Date) string {
 	return d.Time.Format("02/01/2006")
 }
 
-// celdasTurno mapea un turno a las celdas de su fila (mismo orden que columnasTurnos).
-func celdasTurno(t sqlc.GetTurnosCompletoRow) []string {
-	return []string{
-		fechaAString(t.Fecha),
-		fmt.Sprint(t.Hora),
-		fmt.Sprint(t.NombreTratamiento)	,
-		fmt.Sprint(t.NombreCliente),
+templ FilaTurno(t sqlc.GetTurnosCompletoRow) {
+	<tr>
+		<td>{ fechaAString(t.Fecha) }</td>
+		<td>{ fmt.Sprint(t.Hora) }</td>
+		<td>{ fmt.Sprint(t.NombreTratamiento) }</td>
+		<td>{ fmt.Sprint(t.NombreCliente) }</td>
+		<td>
+			@BotonBorrar(fmt.Sprintf("/turno/%s/%d", t.Fecha.Time.Format("2006-01-02"), t.Hora), "¿Está seguro de que desea eliminar este turno?")
+		</td>
+	</tr>
+}
+
+templ TablaTurnos(turnos []sqlc.GetTurnosCompletoRow) {
+	@Tabla("tablaTurnos", "cuerpoTablaTurno", columnasTurnos) {
+		for _, t := range turnos {
+			@FilaTurno(t)
+		}
 	}
 }
 
@@ -52,10 +65,6 @@ templ Turnos(turnos []sqlc.GetTurnosCompletoRow) {
 	@Seccion("turnos", "Turno", "Mostrar turnos", "/") {
 		@Bloque("Crear Turno", formCrearTurno)
 		@Bloque("Buscar Turno", formBuscarTurno)
-		@Tabla("tablaTurnos", "cuerpoTablaTurno", columnasTurnos) {
-			for _, t := range turnos {
-				@Fila(celdasTurno(t))
-			}
-		}
+		@TablaTurnos(turnos)
 	}
 }

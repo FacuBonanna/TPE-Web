@@ -65,5 +65,27 @@ func crearTratamiento(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	tratamientos := getTratamientos(r.Context())
+	err = views.TablaTratamientos(tratamientos).Render(r.Context(), w)
+	if err != nil {
+		http.Error(w, "Error al renderizar los tratamientos", http.StatusInternalServerError)
+		return
+	}
+}
+
+func deleteTratamiento(w http.ResponseWriter, r *http.Request) {
+	idStr := r.PathValue("id")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		http.Error(w, "El ID del tratamiento debe ser un número entero válido", http.StatusBadRequest)
+		return
+	}
+
+	err = queries.DeleteTreatment(r.Context(), id)
+	if err != nil {
+		http.Error(w, "Error al eliminar el tratamiento: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }

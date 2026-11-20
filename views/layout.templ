@@ -22,6 +22,8 @@ templ Layout(titulo string) {
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<title>{ titulo }</title>
 			<link rel="stylesheet" href="/static/styles.css"/>
+			<!-- Cargar HTMX desde CDN (o descargarlo en static/htmx.min.js) -->
+    		<script src="https://unpkg.com/htmx.org@2.0.4"></script>
 		</head>
 		<body>
 			@Encabezado(titulo)
