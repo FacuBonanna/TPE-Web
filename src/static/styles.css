@@ -1,10 +1,7 @@
-/* ==========================================================================
-   GLAM - Estética Integral
-   Diseño estructurado, no minimalista, con paleta de verdes y rosas
-   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=GFS+Didot&family=Marcellus&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  /* Paleta Verde proporcionada */
+  /* Paleta Verde */
   --verde-1: #CFF0EA;
   --verde-2: #ACDCD7;
   --verde-3: #88C9C4;
@@ -12,15 +9,34 @@
   --verde-5: #20666B;
   --verde-6: #0C3B45;
 
-  /* Paleta Rosa proporcionada */
+  /* Paleta Rosa */
   --rosa-1: #FDE2E4;
   --rosa-2: #FAD2E1;
-  --rosa-alerta: #D9385C;
+  --rosa-3: #F7B5CD;
+  --rosa-4: #E57399;
+  --rosa-5: #C04370;
 
-  /* Bordes estructurados (sin excesos de óvalos) */
-  --radius-btn: 4px;
-  --radius-card: 8px;
-  --radius-input: 4px;
+  /* Superficies y Neutros */
+  --blanco: #FFFFFF;
+  --fondo-soft: #F4FAF9;
+  --texto-principal: #0C3B45;
+  --texto-secundario: #2A565E;
+  --texto-mutado: #527A81;
+  --borde-suave: rgba(136, 201, 196, 0.45);
+  --borde-rosa: rgba(250, 210, 225, 0.7);
+
+  /* Sombras */
+  --sombra-sm: 0 4px 12px rgba(12, 59, 69, 0.06), 0 2px 6px rgba(250, 210, 225, 0.15);
+  --sombra-md: 0 10px 25px -4px rgba(12, 59, 69, 0.08), 0 6px 14px -2px rgba(229, 115, 153, 0.12);
+  --sombra-lg: 0 20px 40px -8px rgba(12, 59, 69, 0.14), 0 10px 24px -4px rgba(62, 155, 148, 0.18);
+  --sombra-glow-verde: 0 0 14px rgba(62, 155, 148, 0.3);
+  --sombra-glow-rosa: 0 0 14px rgba(229, 115, 153, 0.3);
+
+  /* Radio de bordes */
+  --radius-sm: 10px;
+  --radius-md: 18px;
+  --radius-lg: 28px;
+  --radius-pill: 9999px;
 }
 
 /* Reset y Base */
@@ -35,144 +51,247 @@ html {
 }
 
 body {
-  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
-  color: var(--verde-6);
-  background-color: var(--verde-2);
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--texto-principal);
+  min-height: 100vh;
   padding: 30px 40px;
-  line-height: 1.5;
+  line-height: 1.6;
+  background-color: var(--verde-1);
 }
 
 /* ==========================================================================
-   HEADER / ENCABEZADO
+   ENCABEZADO / HERO
    ========================================================================== */
 .header {
+  position: relative;
   background-color: var(--verde-6);
   background-image: url('./fondo_glam.webp');
   background-size: cover;
   background-position: center;
   background-blend-mode: overlay;
-  padding: 40px 30px;
+  padding: 55px 40px;
   text-align: center;
-  border-radius: var(--radius-card);
-  border: 3px solid var(--verde-5);
-  margin-bottom: 25px;
-  box-shadow: 0 4px 12px rgba(12, 59, 69, 0.25);
+  border-radius: var(--radius-lg);
+  margin-bottom: 30px;
+  box-shadow: var(--sombra-lg);
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  overflow: hidden;
 }
 
 .header_letras {
   display: inline-block;
-  background-color: var(--verde-5);
-  border: 2px solid var(--verde-3);
-  border-radius: var(--radius-card);
-  padding: 16px 36px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  padding: 20px 45px;
+  background-color: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
+/* TÍTULO PRINCIPAL: Didot (GFS Didot) */
 .header_letras h1 {
-  font-size: 2.2rem;
-  font-weight: 800;
+  font-family: 'GFS Didot', 'Didot', serif;
+  font-size: 3.4rem;
+  font-weight: 400;
   letter-spacing: 2px;
   color: #FFFFFF;
+  text-shadow: 0 2px 10px rgba(12, 59, 69, 0.5);
   text-transform: uppercase;
-  margin-bottom: 4px;
+  line-height: 1.2;
 }
 
 .header_letras::after {
-  content: "Centro de Estética & Bienestar";
+  content: "✦ Centro de Estética & Bienestar Integral ✦";
   display: block;
-  font-size: 0.95rem;
-  letter-spacing: 2px;
-  color: var(--rosa-2);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: 4px;
   text-transform: uppercase;
+  color: var(--rosa-1);
+  margin-top: 6px;
   font-weight: 600;
 }
 
 /* ==========================================================================
-   MENÚ DE NAVEGACIÓN
+   MENÚ DE NAVEGACIÓN FLOTANTE
    ========================================================================== */
 .menu {
-  background-color: var(--verde-5);
-  border: 2px solid var(--verde-6);
-  border-radius: var(--radius-card);
-  padding: 12px 20px;
-  margin-bottom: 30px;
+  background-color: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 14px 28px;
+  margin-bottom: 35px;
+  border-radius: var(--radius-pill);
   display: flex;
   justify-content: center;
-  gap: 15px;
-  flex-wrap: wrap;
-  box-shadow: 0 4px 10px rgba(12, 59, 69, 0.2);
+  align-items: center;
+  gap: 18px;
+  box-shadow: var(--sombra-md);
+  border: 1.5px solid rgba(255, 255, 255, 0.95);
+  position: sticky;
+  top: 15px;
+  z-index: 100;
 }
 
 .menu a {
   text-decoration: none;
   font-weight: 700;
-  font-size: 0.95rem;
-  color: #FFFFFF;
-  background-color: var(--verde-4);
-  border: 1.5px solid var(--verde-3);
-  padding: 10px 22px;
-  border-radius: var(--radius-btn);
+  font-size: 0.98rem;
+  color: var(--verde-5);
+  padding: 10px 24px;
+  border-radius: var(--radius-pill);
   transition: background-color 0.2s ease, color 0.2s ease;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
+  background-color: transparent;
+  cursor: pointer;
 }
 
 .menu a:hover {
-  background-color: var(--rosa-2);
-  color: var(--verde-6);
-  border-color: var(--rosa-1);
+  color: #FFFFFF;
+  background-color: var(--verde-4);
+  box-shadow: 0 4px 12px rgba(62, 155, 148, 0.35);
 }
 
-/* ==========================================================================
-   GRID PRINCIPAL Y CUBÍCULOS (SECCIONES)
-   ========================================================================== */
-.contenedor-flex {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 25px;
-  margin-bottom: 35px;
+/* Pestaña activa en el menú */
+.menu a.active {
+  color: #FFFFFF;
+  background-color: var(--verde-4);
+  box-shadow: 0 4px 12px rgba(62, 155, 148, 0.35);
 }
 
-@media (max-width: 1024px) {
-  .contenedor-flex {
-    grid-template-columns: 1fr;
-  }
-}
-
-.item-flex {
-  background-color: var(--rosa-1);
-  border: 2.5px solid var(--verde-4);
-  border-radius: var(--radius-card);
-  padding: 24px;
-  box-shadow: 0 4px 14px rgba(12, 59, 69, 0.12);
-}
-
-/* Título de cada cubículo */
-.item-flex > h2 {
-  font-size: 1.5rem;
-  font-weight: 800;
+/*
+ * Resaltar el enlace del menú cuando su sección está activa por :target.
+ * Usamos el selector :has() para detectar cuál sección está en :target
+ * y aplicar estilo al enlace correspondiente dentro del nav.
+ * El menu .a[href="#X"] se resalta cuando #X es :target.
+ */
+.menu:has(~ .contenedor-flex #clientes:target) a[href="#clientes"],
+.menu:has(~ .contenedor-flex #tratamientos:target) a[href="#tratamientos"],
+.menu:has(~ .contenedor-flex #vouchers:target) a[href="#vouchers"],
+.menu:has(~ .contenedor-flex #turnos:target) a[href="#turnos"] {
   color: #FFFFFF;
   background-color: var(--verde-5);
-  padding: 12px 18px;
-  border-radius: var(--radius-btn);
-  border-left: 6px solid var(--verde-3);
-  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(62, 155, 148, 0.35);
+}
+
+/* Por defecto (sin hash activo) resaltar "Turnos" en el menú */
+.menu:not(:has(~ .contenedor-flex .item-flex:target)) a[href="#turnos"] {
+  color: #FFFFFF;
+  background-color: var(--verde-5);
+  box-shadow: 0 4px 12px rgba(62, 155, 148, 0.35);
+}
+/* ==========================================================================
+   CONTENEDOR CENTRAL - LÓGICA DE PESTAÑAS CON :target (SIN JS)
+   ========================================================================== */
+.contenedor-flex {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  margin-bottom: 40px;
+}
+
+/*
+ * Todas las secciones ocultas por defecto.
+ * Cuando el contenedor contiene alguna sección con :target activo,
+ * se muestra sólo esa. Si ninguna está targetada, se muestra #turnos
+ * (que es el primero en el DOM gracias a index.templ).
+ */
+
+/* Por defecto: ocultar todo */
+.item-flex {
+  display: none;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  background-color: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  padding: 34px 32px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--sombra-md);
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* Mostrar la sección apuntada por el hash de la URL */
+.item-flex:target {
+  display: block;
+}
+
+/* Cuando hay algún :target activo en el contenedor,
+   el default (#turnos = primer hijo) queda oculto.
+   Cuando NO hay ningún :target, el primer .item-flex (turnos) se muestra. */
+.contenedor-flex:not(:has(.item-flex:target)) .item-flex:first-child {
+  display: block;
+}
+
+.item-flex:hover {
+  border-color: var(--verde-3);
+  box-shadow: var(--sombra-lg);
+}
+
+/* TÍTULOS DE LOS GRIDS: Marcellus */
+.item-flex > h2 {
+  font-family: 'Marcellus', serif;
+  font-size: 2.1rem;
+  font-weight: 400;
+  letter-spacing: 1.5px;
+  color: var(--verde-6);
+  margin-bottom: 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
+  border-bottom: 2px dashed rgba(136, 201, 196, 0.55);
+  padding-bottom: 12px;
 }
 
-/* Subtítulos de bloques */
+/* SIN CAJITA EN LOS BOTONES DE "MOSTRAR X" */
+.item-flex > h2 form {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+}
+
+.item-flex > h2 form .btn {
+  background-color: transparent;
+  color: var(--verde-5);
+  border: 1.5px solid var(--verde-4);
+  box-shadow: none;
+  padding: 6px 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: var(--radius-pill);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.item-flex > h2 form .btn:hover {
+  background-color: var(--verde-4);
+  color: #FFFFFF;
+  box-shadow: none;
+}
+
+/* TEXTOS INTERNOS DE LOS GRIDS: Plus Jakarta Sans */
 .item-flex h3 {
-  font-size: 1.05rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.08rem;
   font-weight: 700;
-  color: var(--verde-6);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border-bottom: 2px solid var(--verde-4);
-  padding-bottom: 5px;
-  margin: 18px 0 10px 0;
+  letter-spacing: 0.4px;
+  color: var(--verde-5);
+  margin: 20px 0 10px 0;
+  display: block;
+  background: none;
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
 }
 
 /* ==========================================================================
@@ -181,21 +300,13 @@ body {
 form {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
   align-items: center;
-  background-color: var(--verde-1);
-  padding: 14px;
-  border-radius: var(--radius-card);
-  border: 1.5px solid var(--verde-3);
-  margin-bottom: 15px;
-}
-
-/* Botón "Mostrar" dentro del h2 */
-.item-flex > h2 form {
-  background: transparent;
-  padding: 0;
-  border: none;
-  margin: 0;
+  margin-bottom: 18px;
+  background-color: rgba(255, 255, 255, 0.7);
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--borde-suave);
 }
 
 .campo,
@@ -203,120 +314,140 @@ input[type="text"],
 input[type="number"],
 input[type="date"],
 input.campo {
-  font-family: inherit;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.92rem;
-  color: var(--verde-6);
+  font-weight: 500;
+  color: var(--texto-principal);
   background-color: #FFFFFF;
-  border: 2px solid var(--verde-3);
-  border-radius: var(--radius-input);
-  padding: 9px 12px;
-  flex: 1 1 150px;
-  min-width: 130px;
+  border: 1.5px solid var(--verde-2);
+  border-radius: var(--radius-sm);
+  padding: 11px 16px;
+  flex: 1 1 160px;
+  min-width: 140px;
   outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.campo::placeholder {
+  color: #8CA6AC;
+  font-weight: 400;
 }
 
 .campo:focus,
 input:focus {
-  border-color: var(--verde-5);
-  box-shadow: 0 0 0 2px var(--verde-4);
+  border-color: var(--verde-4);
+  background-color: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(62, 155, 148, 0.2);
 }
 
-/* ==========================================================================
-   BOTONES
-   ========================================================================== */
+/* BOTONES PRINCIPALES */
 .btn {
-  font-family: inherit;
-  font-size: 0.9rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.92rem;
   font-weight: 700;
+  letter-spacing: 0.4px;
   color: #FFFFFF;
   background-color: var(--verde-4);
-  border: 1.5px solid var(--verde-5);
-  border-radius: var(--radius-btn);
-  padding: 9px 18px;
+  border: none;
+  border-radius: var(--radius-pill);
+  padding: 11px 24px;
   cursor: pointer;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 12px rgba(32, 102, 107, 0.25);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
 
 .btn:hover {
   background-color: var(--verde-5);
-  border-color: var(--verde-6);
+  box-shadow: 0 4px 16px rgba(32, 102, 107, 0.35);
 }
 
-/* Botón Actualizar (Verde Azulado) */
+/* BOTÓN ACTUALIZAR / EDITAR */
 .btn-actualizar {
   background-color: var(--verde-4);
   color: #FFFFFF;
-  font-family: inherit;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.82rem;
   font-weight: 700;
-  border: 1px solid var(--verde-5);
-  border-radius: var(--radius-btn);
-  padding: 6px 12px;
+  letter-spacing: 0.3px;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
   cursor: pointer;
-  margin-right: 5px;
+  margin-right: 6px;
+  box-shadow: 0 2px 8px rgba(62, 155, 148, 0.25);
   transition: background-color 0.2s ease;
+  display: inline-block;
 }
 
 .btn-actualizar:hover {
   background-color: var(--verde-5);
 }
 
-/* Botón Borrar (Color contraste rosa profundo / alerta) */
+/* BOTÓN BORRAR */
 .delete-cliente-tabla,
 .btn-borrar {
-  background-color: var(--verde-6);
-  color: var(--rosa-1);
-  font-family: inherit;
+  background-color: var(--rosa-4);
+  color: #FFFFFF;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.82rem;
   font-weight: 700;
-  border: 1px solid var(--verde-6);
-  border-radius: var(--radius-btn);
-  padding: 6px 12px;
+  letter-spacing: 0.3px;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  box-shadow: 0 2px 8px rgba(192, 67, 112, 0.25);
+  transition: background-color 0.2s ease;
+  display: inline-block;
 }
 
 .delete-cliente-tabla:hover,
 .btn-borrar:hover {
-  background-color: var(--rosa-alerta);
-  color: #FFFFFF;
-  border-color: var(--rosa-alerta);
+  background-color: var(--rosa-5);
 }
 
-/* Botón Cancelar */
+/* BOTÓN CANCELAR */
 .btn-cancelar {
-  background-color: var(--verde-3);
-  color: var(--verde-6);
-  font-family: inherit;
+  background-color: #8fa5aa;
+  color: #FFFFFF;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.82rem;
   font-weight: 700;
-  border: 1px solid var(--verde-4);
-  border-radius: var(--radius-btn);
-  padding: 6px 12px;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
   cursor: pointer;
-  margin-left: 5px;
+  margin-left: 6px;
+  transition: background-color 0.2s ease;
 }
 
 .btn-cancelar:hover {
-  background-color: var(--verde-2);
+  background-color: #748c91;
 }
 
 /* ==========================================================================
-   TABLAS ESTRUCTURADAS CON COLORES VIVOS
+   TABLAS
    ========================================================================== */
 table,
 .tabla {
   width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9rem;
-  margin-top: 15px;
-  border: 2px solid var(--verde-5);
-  border-radius: var(--radius-card);
+  border-collapse: separate;
+  border-spacing: 0;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.92rem;
+  background-color: #FFFFFF;
+  border-radius: var(--radius-md);
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(12, 59, 69, 0.1);
+  box-shadow: var(--sombra-md);
+  margin-top: 15px;
+  border: 1px solid var(--borde-suave);
 }
 
-/* Cabecera sólida */
+/* Cabecera de la tabla */
 table thead,
 .tabla thead {
   background-color: var(--verde-5);
@@ -325,110 +456,118 @@ table thead,
 
 table th,
 .tabla th {
-  padding: 12px 14px;
+  padding: 14px 16px;
   text-align: left;
   font-weight: 700;
-  font-size: 0.85rem;
-  letter-spacing: 0.5px;
+  font-size: 0.82rem;
+  letter-spacing: 1px;
   text-transform: uppercase;
-  border-bottom: 2px solid var(--verde-6);
-  border-right: 1px solid var(--verde-4);
+  border: none;
 }
 
-table th:last-child,
-.tabla th:last-child {
-  border-right: none;
+table th:first-child {
+  border-top-left-radius: var(--radius-md);
 }
 
-/* Celdas con líneas divisorias claras */
+table th:last-child {
+  border-top-right-radius: var(--radius-md);
+}
+
+/* Filas y Celdas */
 table td,
 .tabla td {
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--verde-3);
-  border-right: 1px solid var(--verde-3);
-  color: var(--verde-6);
+  padding: 13px 16px;
+  color: var(--texto-secundario);
+  border-bottom: 1px solid rgba(207, 240, 234, 0.6);
   vertical-align: middle;
+  transition: background-color 0.2s ease;
 }
 
-table td:last-child,
-.tabla td:last-child {
-  border-right: none;
-}
-
-/* Filas alternadas con verde pastel y rosa pastel */
+/* Filas alternadas suaves */
 table tbody tr:nth-child(even),
 .tabla tbody tr:nth-child(even) {
-  background-color: var(--verde-1);
+  background-color: var(--fondo-soft);
 }
 
 table tbody tr:nth-child(odd),
 .tabla tbody tr:nth-child(odd) {
-  background-color: var(--rosa-2);
+  background-color: #FFFFFF;
 }
 
-/* Hover de fila */
+/* Hover sólido sobre filas */
 table tbody tr:hover,
 .tabla tbody tr:hover {
-  background-color: var(--verde-3);
-  color: var(--verde-6);
+  background-color: var(--verde-1);
 }
 
-/* Fila en modo edición */
+/* Fila en modo de edición interactiva */
 tr.editing {
   background-color: var(--rosa-1) !important;
-  outline: 2px dashed var(--verde-5);
 }
 
 tr.editing input {
-  padding: 5px 8px;
+  padding: 6px 10px;
   font-size: 0.85rem;
-  min-width: 90px;
+  min-width: 100px;
+}
+
+table tbody tr:last-child td,
+.tabla tbody tr:last-child td {
+  border-bottom: none;
 }
 
 /* ==========================================================================
-   SECCIÓN CONTACTO / SOPORTE (PIE)
+   SECCIÓN SOPORTE TÉCNICO / CONTACTO
    ========================================================================== */
 body > h2:last-of-type {
   text-align: center;
-  font-size: 1.6rem;
-  font-weight: 800;
+  font-family: 'Marcellus', serif;
+  font-size: 2.1rem;
+  font-weight: 400;
+  letter-spacing: 1.5px;
   color: var(--verde-6);
-  margin-top: 35px;
-  margin-bottom: 12px;
+  margin-top: 40px;
+  margin-bottom: 15px;
   text-transform: uppercase;
-  letter-spacing: 1px;
 }
 
 body > div:last-of-type {
-  background-color: var(--verde-1);
-  border: 2px solid var(--verde-4);
-  border-radius: var(--radius-card);
-  padding: 24px 30px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: var(--radius-lg);
+  padding: 30px 40px;
+  margin-top: 20px;
+  border: 1.5px solid var(--borde-rosa);
+  box-shadow: var(--sombra-md);
   text-align: center;
-  box-shadow: 0 4px 10px rgba(12, 59, 69, 0.1);
-  max-width: 800px;
-  margin: 0 auto 20px auto;
+  max-width: 960px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 body > div:last-of-type p {
-  color: var(--verde-6);
-  font-size: 1rem;
-  font-weight: 500;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: var(--texto-secundario);
+  font-size: 1.05rem;
+  max-width: 700px;
+  margin: 0 auto;
 }
 
 body > div:last-of-type a {
-  color: #FFFFFF;
-  background-color: var(--verde-5);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: var(--rosa-5);
   font-weight: 700;
   text-decoration: none;
-  padding: 6px 14px;
-  border-radius: var(--radius-btn);
-  border: 1px solid var(--verde-6);
+  background-color: #FFFFFF;
+  padding: 6px 16px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--rosa-2);
   display: inline-block;
   margin-top: 8px;
-  transition: background-color 0.2s ease;
+  box-shadow: 0 2px 8px rgba(192, 67, 112, 0.15);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 body > div:last-of-type a:hover {
-  background-color: var(--verde-4);
+  background-color: var(--rosa-5);
+  color: #FFFFFF;
 }

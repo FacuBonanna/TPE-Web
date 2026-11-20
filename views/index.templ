@@ -5,10 +5,10 @@ import sqlc "TPE/db/sqlc"
 templ Index(clientes []sqlc.Cliente, tratamientos []sqlc.Tratamiento, turnos []sqlc.GetTurnosCompletoRow, voucher []sqlc.GetVouchersRow) {
 	@Layout("GLAM Estetica Integral") {
 		<div class="contenedor-flex">
+			@Turnos(turnos)
 			@Clientes(clientes)
 			@Tratamientos(tratamientos)
 			@Vouchers(voucher)
-			@Turnos(turnos)
 		</div>
 	}
 }

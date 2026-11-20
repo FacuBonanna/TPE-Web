@@ -22,6 +22,9 @@ var formCrearVoucher = Formulario{
 
 var formBuscarVoucher = Formulario{
 	Accion:   "/search-voucher",
+	HxGet:    "/search-voucher",
+	HxTarget: "#tablaVouchers",
+	HxSwap:   "outerHTML",
 	Etiqueta: "Buscar Voucher",
 	Campos:   []Campo{Numero("voucher_id", "ID del voucher")},
 }

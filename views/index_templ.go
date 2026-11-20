@@ -44,6 +44,10 @@ func Index(clientes []sqlc.Cliente, tratamientos []sqlc.Tratamiento, turnos []sq
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
+			templ_7745c5c3_Err = Turnos(turnos).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 			templ_7745c5c3_Err = Clientes(clientes).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -53,10 +57,6 @@ func Index(clientes []sqlc.Cliente, tratamientos []sqlc.Tratamiento, turnos []sq
 				return templ_7745c5c3_Err
 			}
 			templ_7745c5c3_Err = Vouchers(voucher).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = Turnos(turnos).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
