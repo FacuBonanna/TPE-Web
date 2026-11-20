@@ -1,7 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+/* ==========================================================================
+   GLAM - Estética Integral
+   Diseño estructurado, no minimalista, con paleta de verdes y rosas
+   ========================================================================== */
 
 :root {
-  /* Paleta Verde */
+  /* Paleta Verde proporcionada */
   --verde-1: #CFF0EA;
   --verde-2: #ACDCD7;
   --verde-3: #88C9C4;
@@ -9,34 +12,15 @@
   --verde-5: #20666B;
   --verde-6: #0C3B45;
 
-  /* Paleta Rosa */
+  /* Paleta Rosa proporcionada */
   --rosa-1: #FDE2E4;
   --rosa-2: #FAD2E1;
-  --rosa-3: #F7B5CD;
-  --rosa-4: #E57399;
-  --rosa-5: #C04370;
+  --rosa-alerta: #D9385C;
 
-  /* Superficies y Neutros */
-  --blanco: #FFFFFF;
-  --fondo-soft: #F4FAF9;
-  --texto-principal: #0C3B45;
-  --texto-secundario: #2A565E;
-  --texto-mutado: #527A81;
-  --borde-suave: rgba(136, 201, 196, 0.45);
-  --borde-rosa: rgba(250, 210, 225, 0.7);
-
-  /* Sombras dinámicas y profundas (estilo no minimalista) */
-  --sombra-sm: 0 4px 12px rgba(12, 59, 69, 0.06), 0 2px 6px rgba(250, 210, 225, 0.15);
-  --sombra-md: 0 10px 25px -4px rgba(12, 59, 69, 0.08), 0 6px 14px -2px rgba(229, 115, 153, 0.12);
-  --sombra-lg: 0 20px 40px -8px rgba(12, 59, 69, 0.14), 0 10px 24px -4px rgba(62, 155, 148, 0.18);
-  --sombra-glow-verde: 0 0 20px rgba(62, 155, 148, 0.35);
-  --sombra-glow-rosa: 0 0 20px rgba(229, 115, 153, 0.35);
-
-  /* Radio de bordes */
-  --radius-sm: 10px;
-  --radius-md: 18px;
-  --radius-lg: 28px;
-  --radius-pill: 9999px;
+  /* Bordes estructurados (sin excesos de óvalos) */
+  --radius-btn: 4px;
+  --radius-card: 8px;
+  --radius-input: 4px;
 }
 
 /* Reset y Base */
@@ -51,221 +35,167 @@ html {
 }
 
 body {
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  color: var(--texto-principal);
-  min-height: 100vh;
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+  color: var(--verde-6);
+  background-color: var(--verde-2);
   padding: 30px 40px;
-  line-height: 1.6;
-  background-color: var(--verde-1);
-  background-image: 
-    radial-gradient(circle at 10% 15%, rgba(253, 226, 228, 0.85) 0%, transparent 45%),
-    radial-gradient(circle at 85% 20%, rgba(207, 240, 234, 0.9) 0%, transparent 40%),
-    radial-gradient(circle at 50% 55%, rgba(250, 210, 221, 0.5) 0%, transparent 50%),
-    radial-gradient(circle at 90% 90%, rgba(172, 220, 215, 0.75) 0%, transparent 45%),
-    linear-gradient(135deg, #F8FCFB 0%, #E2F6F3 40%, #FDE9EE 80%, #F5FAFA 100%);
-  background-attachment: fixed;
-  background-size: cover;
+  line-height: 1.5;
 }
 
-/* ENCABEZADO / HERO */
+/* ==========================================================================
+   HEADER / ENCABEZADO
+   ========================================================================== */
 .header {
-  position: relative;
-  background-image: 
-    linear-gradient(135deg, rgba(12, 59, 69, 0.82) 0%, rgba(32, 102, 107, 0.78) 45%, rgba(62, 155, 148, 0.7) 100%),
-    url('./fondo_glam.webp');
+  background-color: var(--verde-6);
+  background-image: url('./fondo_glam.webp');
   background-size: cover;
   background-position: center;
-  padding: 60px 40px;
+  background-blend-mode: overlay;
+  padding: 40px 30px;
   text-align: center;
-  border-radius: var(--radius-lg);
-  margin-bottom: 30px;
-  box-shadow: var(--sombra-lg);
-  border: 2px solid rgba(255, 255, 255, 0.35);
-  overflow: hidden;
-  backdrop-filter: blur(4px);
-}
-
-.header::before {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(250, 210, 225, 0.25) 0%, transparent 60%);
-  pointer-events: none;
-  animation: pulseLight 8s ease-in-out infinite alternate;
-}
-
-@keyframes pulseLight {
-  0% { transform: scale(1) translate(0, 0); }
-  100% { transform: scale(1.15) translate(3%, 3%); }
+  border-radius: var(--radius-card);
+  border: 3px solid var(--verde-5);
+  margin-bottom: 25px;
+  box-shadow: 0 4px 12px rgba(12, 59, 69, 0.25);
 }
 
 .header_letras {
-  position: relative;
   display: inline-block;
-  padding: 20px 45px;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: var(--radius-pill);
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.6);
+  background-color: var(--verde-5);
+  border: 2px solid var(--verde-3);
+  border-radius: var(--radius-card);
+  padding: 16px 36px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .header_letras h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: 2.8rem;
-  font-weight: 700;
+  font-size: 2.2rem;
+  font-weight: 800;
   letter-spacing: 2px;
   color: #FFFFFF;
-  text-shadow: 0 2px 10px rgba(12, 59, 69, 0.5), 0 0 20px rgba(253, 226, 228, 0.6);
   text-transform: uppercase;
+  margin-bottom: 4px;
 }
 
 .header_letras::after {
-  content: "✦ Centro de Estética & Bienestar Integral ✦";
+  content: "Centro de Estética & Bienestar";
   display: block;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 0.85rem;
-  letter-spacing: 4px;
+  font-size: 0.95rem;
+  letter-spacing: 2px;
+  color: var(--rosa-2);
   text-transform: uppercase;
-  color: var(--rosa-1);
-  margin-top: 6px;
   font-weight: 600;
 }
 
-/* MENÚ DE NAVEGACIÓN FLOTANTE */
+/* ==========================================================================
+   MENÚ DE NAVEGACIÓN
+   ========================================================================== */
 .menu {
-  background: rgba(255, 255, 255, 0.78);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  padding: 14px 28px;
-  margin-bottom: 35px;
-  border-radius: var(--radius-pill);
+  background-color: var(--verde-5);
+  border: 2px solid var(--verde-6);
+  border-radius: var(--radius-card);
+  padding: 12px 20px;
+  margin-bottom: 30px;
   display: flex;
   justify-content: center;
-  align-items: center;
-  gap: 18px;
-  box-shadow: var(--sombra-md);
-  border: 1.5px solid rgba(255, 255, 255, 0.9);
-  position: sticky;
-  top: 15px;
-  z-index: 100;
+  gap: 15px;
+  flex-wrap: wrap;
+  box-shadow: 0 4px 10px rgba(12, 59, 69, 0.2);
 }
 
 .menu a {
   text-decoration: none;
   font-weight: 700;
-  font-size: 0.98rem;
-  color: var(--verde-5);
-  padding: 10px 24px;
-  border-radius: var(--radius-pill);
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  position: relative;
-  letter-spacing: 0.3px;
-  background: transparent;
+  font-size: 0.95rem;
+  color: #FFFFFF;
+  background-color: var(--verde-4);
+  border: 1.5px solid var(--verde-3);
+  padding: 10px 22px;
+  border-radius: var(--radius-btn);
+  transition: background-color 0.2s ease, color 0.2s ease;
+  letter-spacing: 0.5px;
 }
 
 .menu a:hover {
-  color: var(--blanco);
-  background: linear-gradient(135deg, var(--verde-4) 0%, var(--verde-5) 100%);
-  box-shadow: 0 6px 18px rgba(62, 155, 148, 0.4);
-  transform: translateY(-2px);
+  background-color: var(--rosa-2);
+  color: var(--verde-6);
+  border-color: var(--rosa-1);
 }
 
-.menu a:active {
-  transform: translateY(0);
-}
-
-/* CONTENEDOR GRID PRINCIPAL */
+/* ==========================================================================
+   GRID PRINCIPAL Y CUBÍCULOS (SECCIONES)
+   ========================================================================== */
 .contenedor-flex {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 30px;
-  margin-bottom: 40px;
+  gap: 25px;
+  margin-bottom: 35px;
 }
 
-@media (max-width: 1080px) {
+@media (max-width: 1024px) {
   .contenedor-flex {
     grid-template-columns: 1fr;
   }
 }
 
-/* TARJETAS DE SECCIÓN (Clientes, Tratamientos, etc.) */
 .item-flex {
-  background: linear-gradient(165deg, rgba(255, 255, 255, 0.95) 0%, rgba(247, 253, 252, 0.88) 60%, rgba(253, 241, 244, 0.85) 100%);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  padding: 32px 28px;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--sombra-md);
-  border: 1.5px solid rgba(255, 255, 255, 0.9);
-  position: relative;
-  transition: all 0.35s ease;
-  overflow: hidden;
+  background-color: var(--rosa-1);
+  border: 2.5px solid var(--verde-4);
+  border-radius: var(--radius-card);
+  padding: 24px;
+  box-shadow: 0 4px 14px rgba(12, 59, 69, 0.12);
 }
 
-.item-flex::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 6px;
-  background: linear-gradient(90deg, var(--verde-4) 0%, var(--verde-2) 40%, var(--rosa-3) 80%, var(--rosa-4) 100%);
-}
-
-.item-flex:hover {
-  box-shadow: var(--sombra-lg);
-  transform: translateY(-4px);
-  border-color: var(--verde-3);
-}
-
-/* TÍTULOS DENTRO DE LAS SECCIONES */
+/* Título de cada cubículo */
 .item-flex > h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.9rem;
-  color: var(--verde-6);
-  margin-bottom: 24px;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  background-color: var(--verde-5);
+  padding: 12px 18px;
+  border-radius: var(--radius-btn);
+  border-left: 6px solid var(--verde-3);
+  margin-bottom: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
-  border-bottom: 2px dashed rgba(136, 201, 196, 0.45);
-  padding-bottom: 14px;
+  gap: 10px;
 }
 
+/* Subtítulos de bloques */
 .item-flex h3 {
-  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 1.05rem;
   font-weight: 700;
-  color: var(--verde-5);
-  margin: 22px 0 12px 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 16px;
-  background: linear-gradient(135deg, var(--verde-1) 0%, var(--rosa-1) 100%);
-  border-radius: var(--radius-pill);
-  border: 1px solid var(--borde-suave);
-  box-shadow: 0 2px 6px rgba(12, 59, 69, 0.04);
+  color: var(--verde-6);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid var(--verde-4);
+  padding-bottom: 5px;
+  margin: 18px 0 10px 0;
 }
 
-/* FORMULARIOS Y CAMPOS */
+/* ==========================================================================
+   FORMULARIOS Y CAMPOS
+   ========================================================================== */
 form {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 10px;
   align-items: center;
-  margin-bottom: 18px;
-  background: rgba(255, 255, 255, 0.65);
-  padding: 16px;
-  border-radius: var(--radius-md);
-  border: 1px solid rgba(172, 220, 215, 0.45);
-  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.02);
+  background-color: var(--verde-1);
+  padding: 14px;
+  border-radius: var(--radius-card);
+  border: 1.5px solid var(--verde-3);
+  margin-bottom: 15px;
+}
+
+/* Botón "Mostrar" dentro del h2 */
+.item-flex > h2 form {
+  background: transparent;
+  padding: 0;
+  border: none;
+  margin: 0;
 }
 
 .campo,
@@ -273,276 +203,232 @@ input[type="text"],
 input[type="number"],
 input[type="date"],
 input.campo {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: inherit;
   font-size: 0.92rem;
-  font-weight: 500;
-  color: var(--texto-principal);
-  background: #FFFFFF;
-  border: 1.5px solid var(--verde-2);
-  border-radius: var(--radius-sm);
-  padding: 11px 16px;
-  flex: 1 1 160px;
-  min-width: 140px;
+  color: var(--verde-6);
+  background-color: #FFFFFF;
+  border: 2px solid var(--verde-3);
+  border-radius: var(--radius-input);
+  padding: 9px 12px;
+  flex: 1 1 150px;
+  min-width: 130px;
   outline: none;
-  transition: all 0.25s ease;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.03);
-}
-
-.campo::placeholder {
-  color: #8CA6AC;
-  font-weight: 400;
 }
 
 .campo:focus,
 input:focus {
-  border-color: var(--verde-4);
-  background: #FFFFFF;
-  box-shadow: 0 0 0 4px rgba(62, 155, 148, 0.18), inset 0 1px 2px rgba(0, 0, 0, 0.03);
-  transform: translateY(-1px);
+  border-color: var(--verde-5);
+  box-shadow: 0 0 0 2px var(--verde-4);
 }
 
-/* BOTONES PRINCIPALES (No minimalistas: degradados ricos, sombras y elevación) */
+/* ==========================================================================
+   BOTONES
+   ========================================================================== */
 .btn {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 0.92rem;
+  font-family: inherit;
+  font-size: 0.9rem;
   font-weight: 700;
-  letter-spacing: 0.4px;
   color: #FFFFFF;
-  background: linear-gradient(135deg, var(--verde-4) 0%, var(--verde-5) 100%);
-  border: none;
-  border-radius: var(--radius-pill);
-  padding: 11px 24px;
+  background-color: var(--verde-4);
+  border: 1.5px solid var(--verde-5);
+  border-radius: var(--radius-btn);
+  padding: 9px 18px;
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
-  box-shadow: 0 6px 16px -2px rgba(32, 102, 107, 0.35);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .btn:hover {
-  background: linear-gradient(135deg, #47aba3 0%, var(--verde-5) 100%);
-  box-shadow: 0 8px 20px -2px rgba(32, 102, 107, 0.5), var(--sombra-glow-verde);
-  transform: translateY(-2px);
+  background-color: var(--verde-5);
+  border-color: var(--verde-6);
 }
 
-.btn:active {
-  transform: translateY(1px);
-  box-shadow: 0 3px 8px rgba(32, 102, 107, 0.3);
-}
-
-/* BOTÓN ACTUALIZAR / EDITAR (Verde / Cyan refinado) */
+/* Botón Actualizar (Verde Azulado) */
 .btn-actualizar {
-  background: linear-gradient(135deg, var(--verde-4) 0%, #2A8881 100%);
+  background-color: var(--verde-4);
   color: #FFFFFF;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: inherit;
   font-size: 0.82rem;
   font-weight: 700;
-  letter-spacing: 0.3px;
-  border: none;
-  border-radius: var(--radius-sm);
-  padding: 8px 14px;
+  border: 1px solid var(--verde-5);
+  border-radius: var(--radius-btn);
+  padding: 6px 12px;
   cursor: pointer;
-  margin-right: 6px;
-  box-shadow: 0 4px 10px rgba(62, 155, 148, 0.3);
-  transition: all 0.2s ease;
-  display: inline-block;
+  margin-right: 5px;
+  transition: background-color 0.2s ease;
 }
 
 .btn-actualizar:hover {
-  background: linear-gradient(135deg, #4ab7af 0%, var(--verde-4) 100%);
-  box-shadow: 0 6px 14px rgba(62, 155, 148, 0.45);
-  transform: translateY(-2px);
+  background-color: var(--verde-5);
 }
 
-.btn-actualizar:active {
-  transform: translateY(0);
-}
-
-/* BOTÓN BORRAR (Rosa vibrante / Frambuesa estética) */
+/* Botón Borrar (Color contraste rosa profundo / alerta) */
 .delete-cliente-tabla,
 .btn-borrar {
-  background: linear-gradient(135deg, var(--rosa-4) 0%, var(--rosa-5) 100%);
-  color: #FFFFFF;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--verde-6);
+  color: var(--rosa-1);
+  font-family: inherit;
   font-size: 0.82rem;
   font-weight: 700;
-  letter-spacing: 0.3px;
-  border: none;
-  border-radius: var(--radius-sm);
-  padding: 8px 14px;
+  border: 1px solid var(--verde-6);
+  border-radius: var(--radius-btn);
+  padding: 6px 12px;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(192, 67, 112, 0.3);
-  transition: all 0.2s ease;
-  display: inline-block;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .delete-cliente-tabla:hover,
 .btn-borrar:hover {
-  background: linear-gradient(135deg, #f082a5 0%, #cf4d7b 100%);
-  box-shadow: 0 6px 16px rgba(192, 67, 112, 0.5), var(--sombra-glow-rosa);
-  transform: translateY(-2px);
-}
-
-.delete-cliente-tabla:active,
-.btn-borrar:active {
-  transform: translateY(0);
-}
-
-/* BOTÓN CANCELAR */
-.btn-cancelar {
-  background: linear-gradient(135deg, #9bb0b5 0%, #7e9499 100%);
+  background-color: var(--rosa-alerta);
   color: #FFFFFF;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  border-color: var(--rosa-alerta);
+}
+
+/* Botón Cancelar */
+.btn-cancelar {
+  background-color: var(--verde-3);
+  color: var(--verde-6);
+  font-family: inherit;
   font-size: 0.82rem;
   font-weight: 700;
-  border: none;
-  border-radius: var(--radius-sm);
-  padding: 8px 14px;
+  border: 1px solid var(--verde-4);
+  border-radius: var(--radius-btn);
+  padding: 6px 12px;
   cursor: pointer;
-  margin-left: 6px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
-  transition: all 0.2s ease;
+  margin-left: 5px;
 }
 
 .btn-cancelar:hover {
-  background: #6b8287;
-  transform: translateY(-2px);
+  background-color: var(--verde-2);
 }
 
-/* TABLAS ESTILIZADAS Y DINÁMICAS */
+/* ==========================================================================
+   TABLAS ESTRUCTURADAS CON COLORES VIVOS
+   ========================================================================== */
 table,
 .tabla {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  font-size: 0.92rem;
-  background: #FFFFFF;
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  box-shadow: var(--sombra-md);
+  border-collapse: collapse;
+  font-size: 0.9rem;
   margin-top: 15px;
-  border: 1px solid var(--borde-suave);
+  border: 2px solid var(--verde-5);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(12, 59, 69, 0.1);
 }
 
-/* Cabecera de la tabla */
+/* Cabecera sólida */
 table thead,
 .tabla thead {
-  background: linear-gradient(135deg, var(--verde-6) 0%, var(--verde-5) 50%, var(--verde-4) 100%);
+  background-color: var(--verde-5);
   color: #FFFFFF;
 }
 
 table th,
 .tabla th {
-  padding: 14px 16px;
+  padding: 12px 14px;
   text-align: left;
   font-weight: 700;
-  font-size: 0.82rem;
-  letter-spacing: 1px;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
   text-transform: uppercase;
-  border: none;
+  border-bottom: 2px solid var(--verde-6);
+  border-right: 1px solid var(--verde-4);
 }
 
-table th:first-child {
-  border-top-left-radius: var(--radius-md);
+table th:last-child,
+.tabla th:last-child {
+  border-right: none;
 }
 
-table th:last-child {
-  border-top-right-radius: var(--radius-md);
-}
-
-/* Filas y Celdas */
+/* Celdas con líneas divisorias claras */
 table td,
 .tabla td {
-  padding: 13px 16px;
-  color: var(--texto-secundario);
-  border-bottom: 1px solid rgba(207, 240, 234, 0.6);
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--verde-3);
+  border-right: 1px solid var(--verde-3);
+  color: var(--verde-6);
   vertical-align: middle;
-  transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
-/* Filas alternadas en tonos pasteles verdes y rosas sutiles */
+table td:last-child,
+.tabla td:last-child {
+  border-right: none;
+}
+
+/* Filas alternadas con verde pastel y rosa pastel */
 table tbody tr:nth-child(even),
 .tabla tbody tr:nth-child(even) {
-  background-color: rgba(244, 250, 249, 0.7);
+  background-color: var(--verde-1);
 }
 
 table tbody tr:nth-child(odd),
 .tabla tbody tr:nth-child(odd) {
-  background-color: #FFFFFF;
+  background-color: var(--rosa-2);
 }
 
-/* Hover interactivo sobre filas */
+/* Hover de fila */
 table tbody tr:hover,
 .tabla tbody tr:hover {
-  background: linear-gradient(90deg, rgba(207, 240, 234, 0.6) 0%, rgba(253, 226, 228, 0.5) 100%);
-  box-shadow: inset 3px 0 0 var(--verde-4);
+  background-color: var(--verde-3);
+  color: var(--verde-6);
 }
 
-/* Fila en modo de edición interactiva */
+/* Fila en modo edición */
 tr.editing {
-  background: linear-gradient(90deg, rgba(253, 226, 228, 0.7) 0%, rgba(250, 210, 225, 0.5) 100%) !important;
-  box-shadow: inset 4px 0 0 var(--rosa-4);
+  background-color: var(--rosa-1) !important;
+  outline: 2px dashed var(--verde-5);
 }
 
 tr.editing input {
-  padding: 6px 10px;
+  padding: 5px 8px;
   font-size: 0.85rem;
-  min-width: 100px;
+  min-width: 90px;
 }
 
-table tbody tr:last-child td,
-.tabla tbody tr:last-child td {
-  border-bottom: none;
-}
-
-/* CONTACTO / SOPORTE (PIE DE PÁGINA) */
-h2 + div,
-body > div:last-of-type {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(253, 226, 228, 0.8) 100%);
-  border-radius: var(--radius-lg);
-  padding: 30px 40px;
-  margin-top: 20px;
-  border: 1.5px solid var(--borde-rosa);
-  box-shadow: var(--sombra-md);
-  text-align: center;
-}
-
+/* ==========================================================================
+   SECCIÓN CONTACTO / SOPORTE (PIE)
+   ========================================================================== */
 body > h2:last-of-type {
   text-align: center;
-  font-family: 'Playfair Display', serif;
-  font-size: 1.8rem;
+  font-size: 1.6rem;
+  font-weight: 800;
   color: var(--verde-6);
-  margin-top: 40px;
-  margin-bottom: 15px;
-  text-transform: capitalize;
+  margin-top: 35px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+body > div:last-of-type {
+  background-color: var(--verde-1);
+  border: 2px solid var(--verde-4);
+  border-radius: var(--radius-card);
+  padding: 24px 30px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(12, 59, 69, 0.1);
+  max-width: 800px;
+  margin: 0 auto 20px auto;
 }
 
 body > div:last-of-type p {
-  color: var(--texto-secundario);
-  font-size: 1.05rem;
-  max-width: 700px;
-  margin: 0 auto;
+  color: var(--verde-6);
+  font-size: 1rem;
+  font-weight: 500;
 }
 
 body > div:last-of-type a {
-  color: var(--rosa-5);
+  color: #FFFFFF;
+  background-color: var(--verde-5);
   font-weight: 700;
   text-decoration: none;
-  background: rgba(255, 255, 255, 0.8);
-  padding: 6px 16px;
-  border-radius: var(--radius-pill);
-  border: 1px solid var(--rosa-2);
+  padding: 6px 14px;
+  border-radius: var(--radius-btn);
+  border: 1px solid var(--verde-6);
   display: inline-block;
   margin-top: 8px;
-  box-shadow: 0 2px 8px rgba(192, 67, 112, 0.15);
-  transition: all 0.25s ease;
+  transition: background-color 0.2s ease;
 }
 
 body > div:last-of-type a:hover {
-  background: var(--rosa-5);
-  color: #FFFFFF;
-  box-shadow: 0 4px 14px rgba(192, 67, 112, 0.35);
-  transform: translateY(-2px);
+  background-color: var(--verde-4);
 }
