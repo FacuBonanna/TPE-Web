@@ -61,9 +61,9 @@ func crearCliente(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	documento, err := strconv.ParseInt(r.FormValue("phone"), 10, 32)
+	documento, err := strconv.ParseInt(r.FormValue("cliente_documento"), 10, 32)
 	if err != nil {
-		http.Error(w, "El teléfono debe ser un número entero válido", http.StatusBadRequest)
+		http.Error(w, "El documento debe ser un número entero válido.", http.StatusBadRequest)
 		return
 	}
 
