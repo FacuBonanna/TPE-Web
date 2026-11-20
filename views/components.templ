@@ -18,7 +18,7 @@ type Formulario struct {
     Campos   []Campo
     Metodo   string
     HxPost   string
-    //HxGet    string
+    HxGet    string
     HxTarget string
     HxSwap   string
 }
@@ -47,7 +47,10 @@ templ Form(f Formulario) {
         }
         if f.Accion != "" {
             action={ templ.SafeURL(f.Accion) }
-            method={ metodoDe(f) }  
+            method={ metodoDe(f) }
+        }
+        if f.HxGet != "" {
+            hx-get={ f.HxGet }
         }
         if f.HxPost != "" {
             hx-post={ f.HxPost }
@@ -136,6 +139,20 @@ templ BotonActualizar(ruta string) {
         if ruta != "" {
             hx-get={ ruta }
             hx-target="closest tr"
+            hx-swap="outerHTML"
+        }
+    >
+        Actualizar
+    </button>
+}
+
+templ BotonGet(ruta string) {
+    <button
+        type="button"
+        class="btn btn-get"
+        if ruta != "" {
+            hx-get={ ruta }
+            hx-target="#tablaClientes"
             hx-swap="outerHTML"
         }
     >

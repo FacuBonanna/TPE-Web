@@ -17,24 +17,20 @@ func getClientes(ctx context.Context) []sqlc.Cliente {
 func getCliente(w http.ResponseWriter, r *http.Request) {
 	documento, err := strconv.ParseInt(r.URL.Query().Get("cliente_documento"), 10, 64)
 	if err != nil {
-		http.Error(w, "El Documento del cliente debe ser un número entero válido", http.StatusBadRequest)
+		// 200 a propósito, ver nota abajo
+		views.TablaClientes(nil).Render(r.Context(), w)
 		return
 	}
 
 	cliente, err := queries.GetUser(r.Context(), documento)
 	if err != nil {
-		http.Error(w, "No se encontró un cliente con ese Documento", http.StatusNotFound)
+		views.TablaClientes(nil).Render(r.Context(), w)
 		return
 	}
 
-	clientes := []sqlc.Cliente{cliente}
-	tratamientos := getTratamientos(r.Context())
-	turnos := getTurnos(r.Context())
-	voucher := getVouchers(r.Context())
-
-	err = views.Index(clientes, tratamientos, turnos, voucher).Render(r.Context(), w)
+	err = views.TablaClientes([]sqlc.Cliente{cliente}).Render(r.Context(), w)
 	if err != nil {
-		http.Error(w, "Error al renderizar la página", http.StatusInternalServerError)
+		http.Error(w, "Error al renderizar", http.StatusInternalServerError)
 	}
 }
 
