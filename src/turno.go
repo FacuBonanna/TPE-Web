@@ -143,3 +143,83 @@ func getTurno(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error al renderizar la página", http.StatusInternalServerError)
 	}
 }
+
+func editarTurnoFila(w http.ResponseWriter, r *http.Request) {
+	fechaStr := r.PathValue("fecha")
+	horaStr := r.PathValue("hora")
+
+	// Fecha: "2006-01-02" (formato de <input type="date">)
+	t, err := time.Parse("2006-01-02", fechaStr)
+	if err != nil {
+		views.FilasTurno(nil).Render(r.Context(), w)
+		return
+	}
+	fecha := pgtype.Date{Time: t, Valid: true}
+
+	hora64, err := strconv.ParseInt(horaStr, 10, 32)
+	if err != nil {
+		views.FilasTurno(nil).Render(r.Context(), w)
+		return
+	}
+	turno, err := queries.GetTurno(r.Context(), sqlc.GetTurnoParams{Fecha: fecha, Hora: int32(hora64)})
+
+	_ = views.FilaTurnoEdit(turno).Render(r.Context(), w)
+}
+
+func getTurnoFila(w http.ResponseWriter, r *http.Request) {
+	fechaStr := r.PathValue("fecha")
+	horaStr := r.PathValue("hora")
+
+	// Fecha: "2006-01-02" (formato de <input type="date">)
+	t, err := time.Parse("2006-01-02", fechaStr)
+	if err != nil {
+		views.FilasTurno(nil).Render(r.Context(), w)
+		return
+	}
+	fecha := pgtype.Date{Time: t, Valid: true}
+
+	hora64, err := strconv.ParseInt(horaStr, 10, 32)
+	if err != nil {
+		views.FilasTurno(nil).Render(r.Context(), w)
+		return
+	}
+	tu, err := queries.GetTurno(r.Context(), sqlc.GetTurnoParams{Fecha: fecha, Hora: int32(hora64)})
+	turno := sqlc.GetTurnosCompletoRow{Fecha: tu.Fecha, Hora: tu.Hora, ClienteDocumento: tu.ClienteDocumento, TratamientoID: tu.TratamientoID, NombreCliente: tu.NombreCliente, NombreTratamiento: tu.NombreTratamiento}
+	_ = views.FilaTurno(turno).Render(r.Context(), w)
+}
+
+func actualizarTurno(w http.ResponseWriter, r *http.Request) {
+	fechaStr := r.PathValue("fecha")
+	horaStr := r.PathValue("hora")
+
+	time, err := time.Parse("2006-01-02", fechaStr)
+	fecha := pgtype.Date{Time: time, Valid: true}
+
+	hora, err := strconv.ParseInt(horaStr, 10, 64)
+	if err != nil {
+		http.Error(w, "Hora inválida", http.StatusBadRequest)
+		return
+	}
+
+	tratamientoIdStr := r.FormValue("tratamiento_id")
+	tratamientoId, err := strconv.ParseInt(tratamientoIdStr, 10, 64)
+	if err != nil {
+		http.Error(w, "ID del tratamiento inválido", http.StatusBadRequest)
+		return
+	}
+
+	clienteDocStr := r.FormValue("cliente_documento")
+	clienteDoc, err := strconv.ParseInt(clienteDocStr, 10, 64)
+	if err != nil {
+		http.Error(w, "Documento del cliente inválido", http.StatusBadRequest)
+		return
+	}
+	t, err := queries.UpdateTurno(r.Context(), sqlc.UpdateTurnoParams{
+		Fecha:            fecha,
+		Hora:             int32(hora),
+		TratamientoID:    tratamientoId,
+		ClienteDocumento: clienteDoc,
+	})
+	turno := sqlc.GetTurnosCompletoRow{Fecha: t.Fecha, Hora: t.Hora, ClienteDocumento: t.ClienteDocumento, TratamientoID: t.ClienteDocumento, NombreCliente: t.NombreCliente, NombreTratamiento: t.NombreTratamiento}
+	_ = views.FilaTurno(turno).Render(r.Context(), w)
+}
