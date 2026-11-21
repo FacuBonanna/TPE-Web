@@ -42,7 +42,7 @@ func getCliente(w http.ResponseWriter, r *http.Request) {
 
 func crearCliente(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
-		http.Error(w, "Error al procesar el formulario", http.StatusBadRequest)
+		errorHTMX(w, r, "Error al procesar el formulario")
 		return
 	}
 
@@ -52,20 +52,20 @@ func crearCliente(w http.ResponseWriter, r *http.Request) {
 	// Convertir deuda a float64
 	deuda, err := strconv.ParseFloat(r.FormValue("debt"), 64)
 	if err != nil {
-		http.Error(w, "La deuda debe ser un número válido", http.StatusBadRequest)
+		errorHTMX(w, r, "La deuda debe ser un número entero válido")
 		return
 	}
 
 	// Convertir teléfono a int32
 	telefono, err := strconv.ParseInt(r.FormValue("phone"), 10, 32)
 	if err != nil {
-		http.Error(w, "El teléfono debe ser un número entero válido", http.StatusBadRequest)
+		errorHTMX(w, r, "El teléfono debe ser un número entero válido")
 		return
 	}
 
 	documento, err := strconv.ParseInt(r.FormValue("cliente_documento"), 10, 32)
 	if err != nil {
-		http.Error(w, "El documento debe ser un número entero válido.", http.StatusBadRequest)
+		errorHTMX(w, r, "El documento debe ser un número entero válido.")
 		return
 	}
 
@@ -78,7 +78,8 @@ func crearCliente(w http.ResponseWriter, r *http.Request) {
 	})
 
 	if err != nil {
-		http.Error(w, "Error al crear el cliente: "+err.Error(), http.StatusInternalServerError)
+        log.Printf("createTurno: %v", err)
+        errorHTMX(w, r, motivoCreacion(err, "turno"))
 		return
 	}
 
@@ -101,7 +102,7 @@ func deleteCliente(w http.ResponseWriter, r *http.Request) {
 	err = queries.DeleteUser(r.Context(), documento)
 	if err != nil {
 		log.Printf("deleteCliente %d: %v", documento, err) // el detalle técnico queda en el log
-    	errorHTMX(w, r, motivoBorrado(err))
+    	errorHTMX(w, r, motivoBorrado(err, "Cliente"))
     	return
 	}
 

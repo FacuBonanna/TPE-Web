@@ -30,6 +30,10 @@ var formBuscarTurno = Formulario{
 		Texto("fecha", "Fecha del turno"),
 		Texto("hora", "Hora del turno"),
 	},
+	Metodo: "GET",
+    HxGet:    "/search-turno",
+    HxTarget: "#cuerpoTablaTurno",
+    HxSwap:   "innerHTML",
 }
 
 var columnasTurnos = []string{"Fecha", "Hora", "Tratamiento", "Cliente", "Acciones"}
@@ -54,6 +58,12 @@ templ FilaTurno(t sqlc.GetTurnosCompletoRow) {
 	</tr>
 }
 
+templ FilasTurno(turnos []sqlc.GetTurnosCompletoRow){
+    for _, t := range turnos {
+        @FilaTurno(t)
+    }
+}
+
 templ TablaTurnos(turnos []sqlc.GetTurnosCompletoRow) {
 	@Tabla("tablaTurnos", "cuerpoTablaTurno", columnasTurnos) {
 		for _, t := range turnos {
@@ -63,7 +73,7 @@ templ TablaTurnos(turnos []sqlc.GetTurnosCompletoRow) {
 }
 
 templ Turnos(turnos []sqlc.GetTurnosCompletoRow) {
-	@Seccion("turnos", "Turno", "Mostrar turnos", "/","cuerpoTablaTurno") {
+	@Seccion("turnos", "Turno", "Mostrar turnos", "/turno-filas","cuerpoTablaTurno") {
 		@Bloque("Crear Turno", formCrearTurno)
 		@Bloque("Buscar Turno", formBuscarTurno)
 		@TablaTurnos(turnos)

@@ -21,9 +21,13 @@ var formCrearTratamiento = Formulario{
 }
 
 var formBuscarTratamiento = Formulario{
-	Accion:   "/search-tratamiento",
-	Etiqueta: "Buscar Tratamiento",
-	Campos:   []Campo{Numero("tratamiento_id", "ID del tratamiento")},
+    Accion: "/search-tratamiento",
+    Metodo: "GET",
+    HxGet:    "/search-tratamiento",
+    HxTarget: "#cuerpoTablaTratamiento",
+    HxSwap:   "innerHTML",
+    Etiqueta: "Buscar Tratamiento",
+    Campos:   []Campo{Numero("id_tratamiento", "ID del tratamiento")},
 }
 
 var columnasTratamientos = []string{"Id", "Nombre", "Descripcion", "Costo", "Acciones"}
@@ -80,9 +84,16 @@ templ TablaTratamientos(tratamientos []sqlc.Tratamiento) {
 }
 
 templ Tratamientos(tratamientos []sqlc.Tratamiento) {
-	@Seccion("tratamientos", "Tratamientos","Mostrar tratamientos","/tratamiento","cuerpoTablaTratamiento") {
+	@Seccion("tratamientos", "Tratamientos","Mostrar tratamientos","/tratamiento-filas","cuerpoTablaTratamiento") {
 		@Bloque("Crear Tratamiento", formCrearTratamiento)
 		@Bloque("Buscar Tratamiento", formBuscarTratamiento)
 		@TablaTratamientos(tratamientos)
 	}
 }
+
+templ FilasTratamientos(tratamientos []sqlc.Tratamiento){
+    for _, t := range tratamientos {
+        @FilaTratamiento(t)
+    }
+}
+

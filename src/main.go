@@ -60,11 +60,13 @@ func main() {
 	http.HandleFunc("PUT /tratamiento/{id}", actualizarTratamiento)
 	http.HandleFunc("POST /tratamientos", crearTratamiento)
 	http.HandleFunc("DELETE /tratamientos/{id}", deleteTratamiento)
+	http.HandleFunc("GET /tratamiento-filas", listarTratamientos)
 
 	http.HandleFunc("POST /voucher", createVoucher)
 	http.HandleFunc("DELETE /voucher/{id}", deleteVoucher)
 	http.HandleFunc("POST /vouchers", createVoucher)
 	http.HandleFunc("DELETE /vouchers/{id}", deleteVoucher)
+	http.HandleFunc("GET /vouchers-filas", listarVouchers)
 
 	http.HandleFunc("POST /turno", createTurno)
 	http.HandleFunc("DELETE /turno/{fecha}/{hora}", deleteTurno)
@@ -72,6 +74,7 @@ func main() {
 	http.HandleFunc("POST /turnos", createTurno)
 	http.HandleFunc("DELETE /turnos/{fecha}/{hora}", deleteTurno)
 	http.HandleFunc("DELETE /turnos/{id}", deleteTurno)
+	http.HandleFunc("GET /turno-filas", listarTurnos)
 
 	http.HandleFunc("GET /search-client", getCliente)
 	http.HandleFunc("GET /search-tratamiento", getTratamiento)
@@ -106,15 +109,28 @@ func errorHTMX(w http.ResponseWriter, r *http.Request, texto string) {
     views.MensajeError(texto).Render(r.Context(), w)
 }
 
-func motivoBorrado(err error) string {
+func motivoBorrado(err error, entidad string) string {
     var pgErr *pgconn.PgError
     if errors.As(err, &pgErr) {
         switch pgErr.Code {
         case "23503": // foreign_key_violation
-            return "No se puede eliminar: el cliente tiene registros asociados (" + pgErr.TableName + ")."
+            return "No se puede eliminar: el " + entidad + " tiene registros asociados (" + pgErr.TableName + ")."
         case "23502": // not_null_violation
             return "No se puede eliminar: falta un dato obligatorio."
         }
     }
-    return "No se pudo eliminar el cliente por un error inesperado."
+    return "No se pudo eliminar el " + entidad + " por un error inesperado."
+}
+
+func motivoCreacion(err error, entidad string) string {
+    var pgErr *pgconn.PgError
+    if errors.As(err, &pgErr) {
+        switch pgErr.Code {
+        case "23503": // foreign_key_violation
+            return "El cliente o el tratamiento ingresado no existe."
+        case "23505": // unique_violation
+            return "Ya existe un " + entidad + " con esos datos."
+        }
+    }
+    return "No se pudo crear el " + entidad + "."
 }

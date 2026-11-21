@@ -66,8 +66,8 @@ templ Form(f Formulario) {
         }
     >
         for _, c := range f.Campos {
-            <input class="campo" type={ c.Tipo } name={ c.Nombre } placeholder={ c.Placeholder }/>
-        }
+    <input class="campo" type={ c.Tipo } name={ c.Nombre } placeholder={ c.Placeholder } required/>
+}
         <button type="submit" class="btn">{ f.Etiqueta }</button>
     </form>
 }
