@@ -4,9 +4,10 @@ import (
 	sqlc "TPE/db/sqlc"
 	views "TPE/views"
 	"database/sql"
+	"errors"
 	"fmt"
 	"net/http"
-	"errors"
+
 	"github.com/jackc/pgx/v5/pgconn"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -111,32 +112,32 @@ func servidor(w http.ResponseWriter, r *http.Request) {
 
 }
 func errorHTMX(w http.ResponseWriter, r *http.Request, texto string) {
-    w.Header().Set("HX-Reswap", "none") // no toca la fila
-    views.MensajeError(texto).Render(r.Context(), w)
+	w.Header().Set("HX-Reswap", "none") // no toca la fila
+	views.MensajeError(texto).Render(r.Context(), w)
 }
 
 func motivoBorrado(err error, entidad string) string {
-    var pgErr *pgconn.PgError
-    if errors.As(err, &pgErr) {
-        switch pgErr.Code {
-        case "23503": // foreign_key_violation
-            return "No se puede eliminar: el " + entidad + " tiene registros asociados (" + pgErr.TableName + ")."
-        case "23502": // not_null_violation
-            return "No se puede eliminar: falta un dato obligatorio."
-        }
-    }
-    return "No se pudo eliminar el " + entidad + " por un error inesperado."
+	var pgErr *pgconn.PgError
+	if errors.As(err, &pgErr) {
+		switch pgErr.Code {
+		case "23503": // foreign_key_violation
+			return "No se puede eliminar: el " + entidad + " tiene registros asociados (" + pgErr.TableName + ")."
+		case "23502": // not_null_violation
+			return "No se puede eliminar: falta un dato obligatorio."
+		}
+	}
+	return "No se pudo eliminar el " + entidad + " por un error inesperado."
 }
 
 func motivoCreacion(err error, entidad string) string {
-    var pgErr *pgconn.PgError
-    if errors.As(err, &pgErr) {
-        switch pgErr.Code {
-        case "23503": // foreign_key_violation
-            return "El cliente o el tratamiento ingresado no existe."
-        case "23505": // unique_violation
-            return "Ya existe un " + entidad + " con esos datos."
-        }
-    }
-    return "No se pudo crear el " + entidad + "."
+	var pgErr *pgconn.PgError
+	if errors.As(err, &pgErr) {
+		switch pgErr.Code {
+		case "23503": // foreign_key_violation
+			return "El cliente o el tratamiento ingresado no existe."
+		case "23505": // unique_violation
+			return "Ya existe un " + entidad + " con esos datos."
+		}
+	}
+	return "No se pudo crear el " + entidad + "."
 }

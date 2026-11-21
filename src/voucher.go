@@ -4,9 +4,9 @@ import (
 	sqlc "TPE/db/sqlc"
 	"TPE/views"
 	"context"
+	"log"
 	"net/http"
 	"strconv"
-	"log"
 )
 
 func getVoucher(w http.ResponseWriter, r *http.Request) {
@@ -65,9 +65,9 @@ func createVoucher(w http.ResponseWriter, r *http.Request) {
 	})
 
 	if err != nil {
-	    log.Printf("crearTurno: %v", err)
-    	errorHTMX(w, r, motivoCreacion(err, "voucher"))
-    	return
+		log.Printf("crearVoucher: %v", err)
+		errorHTMX(w, r, motivoCreacion(err, "voucher"))
+		return
 	}
 
 	vouchers := getVouchers(r.Context())

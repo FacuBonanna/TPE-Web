@@ -2,14 +2,13 @@ package main
 
 import (
 	"context"
+	"log"
 	"net/http"
 	"strconv"
-	"log"
 
 	sqlc "TPE/db/sqlc"
 	"TPE/views"
 )
-
 
 func getClientes(ctx context.Context) []sqlc.Cliente {
 	cli, _ := queries.ListUsers(ctx)
@@ -78,8 +77,8 @@ func crearCliente(w http.ResponseWriter, r *http.Request) {
 	})
 
 	if err != nil {
-        log.Printf("createTurno: %v", err)
-        errorHTMX(w, r, motivoCreacion(err, "turno"))
+		log.Printf("createCliente: %v", err)
+		errorHTMX(w, r, motivoCreacion(err, "cliente"))
 		return
 	}
 
@@ -102,8 +101,8 @@ func deleteCliente(w http.ResponseWriter, r *http.Request) {
 	err = queries.DeleteUser(r.Context(), documento)
 	if err != nil {
 		log.Printf("deleteCliente %d: %v", documento, err) // el detalle técnico queda en el log
-    	errorHTMX(w, r, motivoBorrado(err, "Cliente"))
-    	return
+		errorHTMX(w, r, motivoBorrado(err, "Cliente"))
+		return
 	}
 
 	w.WriteHeader(http.StatusOK)
