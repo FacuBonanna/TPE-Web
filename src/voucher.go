@@ -11,26 +11,27 @@ import (
 func getVoucher(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseInt(r.URL.Query().Get("voucher_id"), 10, 64)
 	if err != nil {
-		http.Error(w, "El ID del voucher debe ser un número entero válido", http.StatusBadRequest)
+		views.FilasVouchers(nil).Render(r.Context(), w)
 		return
 	}
 
 	voucher, err := queries.GetVoucher(r.Context(), id)
 	if err != nil {
-		http.Error(w, "No se encontró un voucher con ese ID", http.StatusNotFound)
+		views.FilasVouchers(nil).Render(r.Context(), w)
 		return
 	}
 
-	clientes := getClientes(r.Context())
-	tratamientos := getTratamientos(r.Context())
-	turnos := getTurnos(r.Context())
 	vouchers := sqlc.GetVouchersRow{IDVoucher: voucher.IDVoucher, RegaladorDocumento: voucher.RegaladorDocumento, ClienteDocumento: voucher.ClienteDocumento, TratamientoID: voucher.TratamientoID, Regalador: voucher.Regalador, Cliente: voucher.Cliente, Tratamiento: voucher.Tratamiento}
 	vouchersArr := []sqlc.GetVouchersRow{vouchers}
 
-	err = views.Index(clientes, tratamientos, turnos, vouchersArr).Render(r.Context(), w)
+	err = views.FilasVouchers(vouchersArr).Render(r.Context(), w)
 	if err != nil {
 		http.Error(w, "Error al renderizar la página", http.StatusInternalServerError)
 	}
+}
+
+func listarVouchers(w http.ResponseWriter, r *http.Request) {
+	views.FilasVouchers(getVouchers(r.Context())).Render(r.Context(), w)
 }
 
 func createVoucher(w http.ResponseWriter, r *http.Request) {

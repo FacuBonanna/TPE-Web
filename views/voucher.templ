@@ -24,7 +24,12 @@ var formBuscarVoucher = Formulario{
 	Accion:   "/search-voucher",
 	Etiqueta: "Buscar Voucher",
 	Campos:   []Campo{Numero("voucher_id", "ID del voucher")},
+    Metodo: "GET",
+    HxGet:    "/search-voucher",
+    HxTarget: "#cuerpoTablaVoucher",
+    HxSwap:   "innerHTML",
 }
+
 
 var columnasVouchers = []string{"Id", "De", "Para", "Tratamiento", "Acciones"}
 
@@ -41,6 +46,12 @@ templ FilaVoucher(v sqlc.GetVouchersRow) {
 	</tr>
 }
 
+templ FilasVouchers(vouchers []sqlc.GetVouchersRow){
+    for _, v := range vouchers {
+        @FilaVoucher(v)
+    }
+}
+
 templ TablaVouchers(vouchers []sqlc.GetVouchersRow) {
 	@Tabla("tablaVouchers", "cuerpoTablaVoucher", columnasVouchers) {
 		for _, v := range vouchers {
@@ -50,7 +61,7 @@ templ TablaVouchers(vouchers []sqlc.GetVouchersRow) {
 }
 
 templ Vouchers(vouchers []sqlc.GetVouchersRow) {
-	@Seccion("vouchers", "Vouchers","Mostrar vouchers","/voucher","cuerpoTablaVoucher") {
+	@Seccion("vouchers", "Vouchers","Mostrar vouchers","/vouchers-filas","cuerpoTablaVoucher") {
 		@Bloque("Crear Voucher", formCrearVoucher)
 		@Bloque("Buscar Voucher", formBuscarVoucher)
 		@TablaVouchers(vouchers)

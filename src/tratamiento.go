@@ -15,25 +15,26 @@ func getTratamientos(ctx context.Context) []sqlc.Tratamiento {
 	return tratamientos
 }
 
+func listarTratamientos(w http.ResponseWriter, r *http.Request) {
+	views.FilasTratamientos(getTratamientos(r.Context())).Render(r.Context(), w)
+}
+
 func getTratamiento(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.ParseInt(r.URL.Query().Get("tratamiento_id"), 10, 64)
+	id, err := strconv.ParseInt(r.URL.Query().Get("id_tratamiento"), 10, 64)
 	if err != nil {
-		http.Error(w, "El ID del tratamiento debe ser un número entero válido", http.StatusBadRequest)
+		views.FilasTratamientos(nil).Render(r.Context(), w)
 		return
 	}
 
 	tratamiento, err := queries.GetTreatment(r.Context(), id)
 	if err != nil {
-		http.Error(w, "No se encontró un tratamiento con ese Documento", http.StatusNotFound)
+		views.FilasTratamientos(nil).Render(r.Context(), w)
 		return
 	}
 
-	clientes := getClientes(r.Context())
 	tratamientos := []sqlc.Tratamiento{tratamiento}
-	turnos := getTurnos(r.Context())
-	voucher := getVouchers(r.Context())
 
-	err = views.Index(clientes, tratamientos, turnos, voucher).Render(r.Context(), w)
+	err = views.FilasTratamientos(tratamientos).Render(r.Context(), w)
 	if err != nil {
 		http.Error(w, "Error al renderizar la página", http.StatusInternalServerError)
 	}

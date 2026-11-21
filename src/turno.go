@@ -18,6 +18,10 @@ func getTurnos(ctx context.Context) []sqlc.GetTurnosCompletoRow {
 	return tur
 }
 
+func listarTurnos(w http.ResponseWriter, r *http.Request) {
+	views.FilasTurno(getTurnos(r.Context())).Render(r.Context(), w)
+}
+
 func createTurno(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		http.Error(w, "Error al procesar el formulario", http.StatusBadRequest)
@@ -119,25 +123,22 @@ func getTurno(w http.ResponseWriter, r *http.Request) {
 	// Fecha: "2006-01-02" (formato de <input type="date">)
 	t, err := time.Parse("2006-01-02", fechaStr)
 	if err != nil {
-		http.Error(w, "La fecha debe tener formato AAAA-MM-DD", http.StatusBadRequest)
+		views.FilasTurno(nil).Render(r.Context(), w)
 		return
 	}
 	fecha := pgtype.Date{Time: t, Valid: true}
 
 	hora64, err := strconv.ParseInt(horaStr, 10, 32)
 	if err != nil {
-		http.Error(w, "La hora debe ser un número entero válido", http.StatusBadRequest)
+		views.FilasTurno(nil).Render(r.Context(), w)
 		return
 	}
 	turno, err := queries.GetTurno(r.Context(), sqlc.GetTurnoParams{Fecha: fecha, Hora: int32(hora64)})
 
-	clientes := getClientes(r.Context())
-	tratamientos := getTratamientos(r.Context())
 	turnos := sqlc.GetTurnosCompletoRow{Fecha: turno.Fecha, Hora: turno.Hora, ClienteDocumento: turno.ClienteDocumento, TratamientoID: turno.TratamientoID, NombreCliente: turno.NombreCliente, NombreTratamiento: turno.NombreTratamiento}
 	turnosArr := []sqlc.GetTurnosCompletoRow{turnos}
-	voucher := getVouchers(r.Context())
 
-	err = views.Index(clientes, tratamientos, turnosArr, voucher).Render(r.Context(), w)
+	err = views.FilasTurno(turnosArr).Render(r.Context(), w)
 	if err != nil {
 		http.Error(w, "Error al renderizar la página", http.StatusInternalServerError)
 	}
