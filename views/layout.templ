@@ -51,12 +51,11 @@ templ Menu(enlaces []Enlace) {
 }
 
 templ Contacto(email string) {
-	<h2>contacto soporte</h2>
-	<div>
+	<footer class="footer-contacto">
+		<h3>Contacto soporte</h3>
 		<p>
 			Si tiene alguna pregunta o necesita ayuda, no dude en ponerse en contacto con nuestro equipo de soporte.
-			Puede enviarnos un correo electrónico a
-			<a href={ templ.SafeURL("mailto:" + email) }>{ email }</a>.
+			Puede enviarnos un correo electrónico a <a href={ templ.SafeURL("mailto:" + email) }>{ email }</a>.
 		</p>
-	</div>
+	</footer>
 }

@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 	"log"
+	"sort"
 
 	sqlc "TPE/db/sqlc"
 	"TPE/views"
@@ -15,7 +16,14 @@ import (
 )
 
 func getTurnos(ctx context.Context) []sqlc.GetTurnosCompletoRow {
-	tur, _ := queries.GetTurnosCompleto(ctx)
+tur, _ := queries.GetTurnosCompleto(ctx)
+
+	sort.Slice(tur, func(i, j int) bool {
+	if !tur[i].Fecha.Time.Equal(tur[j].Fecha.Time) {
+		return tur[i].Fecha.Time.Before(tur[j].Fecha.Time)
+	}
+	return tur[i].Hora < tur[j].Hora
+	})
 	return tur
 }
 

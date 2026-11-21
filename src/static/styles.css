@@ -138,7 +138,7 @@ body {
   text-decoration: none;
   font-weight: 700;
   font-size: 0.98rem;
-  color: var(--verde-5);
+  color: var(--rosa-5);
   padding: 10px 24px;
   border-radius: var(--radius-pill);
   transition: background-color 0.2s ease, color 0.2s ease;
@@ -156,7 +156,7 @@ body {
 /* Pestaña activa en el menú */
 .menu a.active {
   color: #FFFFFF;
-  background-color: var(--verde-4);
+  background-color: var(--rosa-4);
   box-shadow: 0 4px 12px rgba(62, 155, 148, 0.35);
 }
 
@@ -171,7 +171,7 @@ body {
 .menu:has(~ .contenedor-flex #vouchers:target) a[href="#vouchers"],
 .menu:has(~ .contenedor-flex #turnos:target) a[href="#turnos"] {
   color: #FFFFFF;
-  background-color: var(--verde-5);
+  background-color: var(--rosa-5);
   box-shadow: 0 4px 12px rgba(62, 155, 148, 0.35);
 }
 
@@ -538,7 +538,7 @@ table tbody tr:last-child td,
 /* ==========================================================================
    SECCIÓN SOPORTE TÉCNICO / CONTACTO
    ========================================================================== */
-body > h2:last-of-type {
+/*body > h2:last-of-type {
   text-align: center;
   font-family: 'Marcellus', serif;
   font-size: 2.1rem;
@@ -589,6 +589,32 @@ body > div:last-of-type a {
 body > div:last-of-type a:hover {
   background-color: var(--rosa-5);
   color: #FFFFFF;
+}*/
+
+.footer-contacto {
+    margin-top: auto;
+    padding: .5rem 1rem;
+    text-align: center;
+    color: #6b8a8c;
+    background: var(--verde-2);
+    border-top: 1px solid rgba(34, 100, 105, .15);
+}
+
+.footer-contacto h3 {
+    display: inline;
+    margin: 0 .4rem 0 0;
+    font-weight: 600;
+    color: inherit;
+}
+
+.footer-contacto p {
+    display: inline;
+    margin: 0;
+}
+
+.footer-contacto a {
+    color: inherit;
+    text-decoration: underline;
 }
 
 .mensajes {
