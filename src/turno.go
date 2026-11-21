@@ -220,6 +220,10 @@ func actualizarTurno(w http.ResponseWriter, r *http.Request) {
 		TratamientoID:    tratamientoId,
 		ClienteDocumento: clienteDoc,
 	})
+	if err != nil {
+		http.Error(w, "Error al actualizar el turno: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
 	turno := sqlc.GetTurnosCompletoRow{Fecha: t.Fecha, Hora: t.Hora, ClienteDocumento: t.ClienteDocumento, TratamientoID: t.ClienteDocumento, NombreCliente: t.NombreCliente, NombreTratamiento: t.NombreTratamiento}
 	_ = views.FilaTurno(turno).Render(r.Context(), w)
 }

@@ -44,8 +44,8 @@ NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
--- Reference: vocuher_cliente (table: voucher)
-ALTER TABLE voucher ADD CONSTRAINT vocuher_cliente
+-- Reference: voucher_cliente (table: voucher)
+ALTER TABLE voucher ADD CONSTRAINT voucher_cliente
 FOREIGN KEY (cliente_documento)
 REFERENCES cliente (documento)
 NOT DEFERRABLE
@@ -61,13 +61,20 @@ ALTER TABLE turno ADD CONSTRAINT turno_tratamiento
 ;
 
 
--- Reference: vocuher_tratamiento (table: voucher)
-ALTER TABLE voucher ADD CONSTRAINT vocuher_tratamiento
+-- Reference: voucher_tratamiento (table: voucher)
+ALTER TABLE voucher ADD CONSTRAINT voucher_tratamiento
     FOREIGN KEY (tratamiento_id)
     REFERENCES tratamiento (id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
 
+-- Reference: voucher_doc_regalador (table: voucher)
+ALTER TABLE voucher ADD CONSTRAINT voucher_doc_regalador
+    FOREIGN KEY (regalador_documento)
+    REFERENCES cliente (documento)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
 
 
