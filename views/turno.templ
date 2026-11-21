@@ -58,6 +58,36 @@ templ FilaTurno(t sqlc.GetTurnosCompletoRow) {
 	</tr>
 }
 
+templ FilaTurnoEdit(t sqlc.GetTurnoRow) {
+    <tr class="editing">
+        <td>{ fechaAString(t.Fecha) }</td>
+		<td>{ fmt.Sprint(t.Hora) }</td>
+        <td><input class="campo" type="number" name="tratamiento_id" value={ fmt.Sprint(t.TratamientoID) }/></td>
+		<td><input class="campo" type="number" name="cliente_documento" value={ fmt.Sprint(t.ClienteDocumento) }/></td>
+        <td>
+            <button
+                type="button"
+                class="btn btn-actualizar"
+                hx-put={ fmt.Sprintf("/turno/%s/%d", t.Fecha.Time.Format("2006-01-02") ,t.Hora) }
+                hx-include="closest tr"
+                hx-target="closest tr"
+                hx-swap="outerHTML"
+            >
+                Guardar
+            </button>
+            <button
+                type="button"
+                class="btn btn-cancelar"
+                hx-get={ fmt.Sprintf("/turno/%s/%d", t.Fecha.Time.Format("2006-01-02") ,t.Hora) }
+                hx-target="closest tr"
+                hx-swap="outerHTML"
+            >
+                Cancelar
+            </button>
+        </td>
+    </tr>
+}
+
 templ FilasTurno(turnos []sqlc.GetTurnosCompletoRow){
     for _, t := range turnos {
         @FilaTurno(t)

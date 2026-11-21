@@ -78,7 +78,9 @@ func main() {
 	http.HandleFunc("DELETE /turnos/{fecha}/{hora}", deleteTurno)
 	http.HandleFunc("DELETE /turnos/{id}", deleteTurno)
 	http.HandleFunc("GET /turno-filas", listarTurnos)
-	//http.HandleFunc("PUT /turno/{fecha}/{hora}/edit", editarVoucherFila)
+	http.HandleFunc("GET /turno/{fecha}/{hora}/edit", editarTurnoFila)
+	http.HandleFunc("GET /turno/{fecha}/{hora}", getTurnoFila)
+	http.HandleFunc("PUT /turno/{fecha}/{hora}", actualizarTurno)
 
 	http.HandleFunc("GET /search-client", getCliente)
 	http.HandleFunc("GET /search-tratamiento", getTratamiento)
