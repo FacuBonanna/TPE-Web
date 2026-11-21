@@ -97,3 +97,38 @@ func getVouchers(ctx context.Context) []sqlc.GetVouchersRow {
 	vouchers, _ := queries.GetVouchers(ctx)
 	return vouchers
 }
+
+func actualizarVoucher(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Error al procesar el formulario", http.StatusBadRequest)
+		return
+	}
+
+	idStr := r.PathValue("id")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		http.Error(w, "ID inválido", http.StatusBadRequest)
+		return
+	}
+
+	nombre := r.FormValue("nombre")
+	descripcionCorta := r.FormValue("descripcion_corta")
+	costo, err := strconv.ParseFloat(r.FormValue("costo"), 64)
+	if err != nil {
+		http.Error(w, "Costo inválido", http.StatusBadRequest)
+		return
+	}
+
+	t, err := queries.UpdateTreatment(r.Context(), sqlc.UpdateTreatmentParams{
+		ID:               id,
+		Nombre:           nombre,
+		DescripcionCorta: descripcionCorta,
+		Costo:            int32(costo),
+	})
+	if err != nil {
+		http.Error(w, "Error al actualizar el tratamiento: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	_ = views.FilaTratamiento(t).Render(r.Context(), w)
+}
