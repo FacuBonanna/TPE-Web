@@ -46,6 +46,37 @@ templ FilaVoucher(v sqlc.GetVouchersRow) {
 	</tr>
 }
 
+templ FilaVoucherEdit(v sqlc.Voucher) {
+    <tr class="editing">
+        <td>{ fmt.Sprint(v.IDVoucher) }</td>
+        <td><input class="campo" type="number" name="regalador_documento" value={ fmt.Sprint(v.RegaladorDocumento) }/></td>
+        <td><input class="campo" type="number" name="cliente_documento" value={ fmt.Sprint(v.ClienteDocumento) }/></td>
+		<td><input class="campo" type="number" name="tratamiento_id" value={ fmt.Sprint(v.TratamientoID) }/></td>
+        <td>
+            <button
+                type="button"
+                class="btn btn-actualizar"
+                hx-put={ fmt.Sprintf("/voucher/%d", v.IDVoucher) }
+                hx-include="closest tr"
+                hx-target="closest tr"
+                hx-swap="outerHTML"
+            >
+                Guardar
+            </button>
+            <button
+                type="button"
+                class="btn btn-cancelar"
+                hx-get={ fmt.Sprintf("/voucher/%d", v.IDVoucher) }
+                hx-target="closest tr"
+                hx-swap="outerHTML"
+            >
+                Cancelar
+            </button>
+        </td>
+    </tr>
+}
+
+
 templ FilasVouchers(vouchers []sqlc.GetVouchersRow){
     for _, v := range vouchers {
         @FilaVoucher(v)

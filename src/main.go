@@ -67,6 +67,9 @@ func main() {
 	http.HandleFunc("POST /vouchers", createVoucher)
 	http.HandleFunc("DELETE /vouchers/{id}", deleteVoucher)
 	http.HandleFunc("GET /vouchers-filas", listarVouchers)
+	http.HandleFunc("GET /voucher/{id}/edit", editarVoucherFila)
+	http.HandleFunc("GET /voucher/{id}", getVoucherFila)
+	http.HandleFunc("PUT /voucher/{id_voucher}", actualizarVoucher)
 
 	http.HandleFunc("POST /turno", createTurno)
 	http.HandleFunc("DELETE /turno/{fecha}/{hora}", deleteTurno)
@@ -75,6 +78,7 @@ func main() {
 	http.HandleFunc("DELETE /turnos/{fecha}/{hora}", deleteTurno)
 	http.HandleFunc("DELETE /turnos/{id}", deleteTurno)
 	http.HandleFunc("GET /turno-filas", listarTurnos)
+	//http.HandleFunc("PUT /turno/{fecha}/{hora}/edit", editarVoucherFila)
 
 	http.HandleFunc("GET /search-client", getCliente)
 	http.HandleFunc("GET /search-tratamiento", getTratamiento)
