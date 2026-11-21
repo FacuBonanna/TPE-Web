@@ -4,10 +4,12 @@ import (
 	"context"
 	"net/http"
 	"strconv"
+	"log"
 
 	sqlc "TPE/db/sqlc"
 	"TPE/views"
 )
+
 
 func getClientes(ctx context.Context) []sqlc.Cliente {
 	cli, _ := queries.ListUsers(ctx)
@@ -98,8 +100,9 @@ func deleteCliente(w http.ResponseWriter, r *http.Request) {
 
 	err = queries.DeleteUser(r.Context(), documento)
 	if err != nil {
-		http.Error(w, "Error al eliminar el cliente: "+err.Error(), http.StatusInternalServerError)
-		return
+		log.Printf("deleteCliente %d: %v", documento, err) // el detalle técnico queda en el log
+    	errorHTMX(w, r, motivoBorrado(err))
+    	return
 	}
 
 	w.WriteHeader(http.StatusOK)

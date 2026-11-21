@@ -6,6 +6,8 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
+	"errors"
+	"github.com/jackc/pgx/v5/pgconn"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
@@ -98,4 +100,21 @@ func servidor(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+}
+func errorHTMX(w http.ResponseWriter, r *http.Request, texto string) {
+    w.Header().Set("HX-Reswap", "none") // no toca la fila
+    views.MensajeError(texto).Render(r.Context(), w)
+}
+
+func motivoBorrado(err error) string {
+    var pgErr *pgconn.PgError
+    if errors.As(err, &pgErr) {
+        switch pgErr.Code {
+        case "23503": // foreign_key_violation
+            return "No se puede eliminar: el cliente tiene registros asociados (" + pgErr.TableName + ")."
+        case "23502": // not_null_violation
+            return "No se puede eliminar: falta un dato obligatorio."
+        }
+    }
+    return "No se pudo eliminar el cliente por un error inesperado."
 }

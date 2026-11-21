@@ -153,3 +153,8 @@ templ BotonActualizar(ruta string) {
     </button>
 }
 
+templ MensajeError(texto string) {
+    <div id="mensajes" class="mensajes" hx-swap-oob="true">
+        <div class="mensaje-error">{ texto }</div>
+    </div>
+}

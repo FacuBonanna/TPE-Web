@@ -9,6 +9,7 @@ templ Index(clientes []sqlc.Cliente, tratamientos []sqlc.Tratamiento, turnos []s
 			@Clientes(clientes)
 			@Tratamientos(tratamientos)
 			@Vouchers(voucher)
+			<div id="mensajes" class="mensajes" role="alert" aria-live="polite"></div>
 		</div>
 	}
 }

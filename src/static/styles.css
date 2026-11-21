@@ -590,3 +590,21 @@ body > div:last-of-type a:hover {
   background-color: var(--rosa-5);
   color: #FFFFFF;
 }
+
+.mensajes {
+    position: fixed;
+    z-index: 1000;
+    pointer-events: none;
+}
+.mensaje-error {
+    background: #e8789c;
+    color: #fff;
+    padding: .75rem 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.2);
+    animation: desvanecer 5s forwards;
+}
+@keyframes desvanecer {
+    0%, 80% { opacity: 1; }
+    100%    { opacity: 0; visibility: hidden; }
+}

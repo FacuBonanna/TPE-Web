@@ -6,6 +6,7 @@ import (
 	"context"
 	"net/http"
 	"strconv"
+	"log"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
@@ -24,7 +25,7 @@ func getTratamiento(w http.ResponseWriter, r *http.Request) {
 
 	tratamiento, err := queries.GetTreatment(r.Context(), id)
 	if err != nil {
-		http.Error(w, "No se encontró un tratamiento con ese Documento", http.StatusNotFound)
+		http.Error(w, "No se encontró un tratamiento con ese ID", http.StatusNotFound)
 		return
 	}
 
@@ -83,8 +84,9 @@ func deleteTratamiento(w http.ResponseWriter, r *http.Request) {
 
 	err = queries.DeleteTreatment(r.Context(), id)
 	if err != nil {
-		http.Error(w, "Error al eliminar el tratamiento: "+err.Error(), http.StatusInternalServerError)
-		return
+		log.Printf("deleteTreatment %d: %v", id, err) // el detalle técnico queda en el log
+    	errorHTMX(w, r, motivoBorrado(err))
+    	return
 	}
 
 	w.WriteHeader(http.StatusOK)
