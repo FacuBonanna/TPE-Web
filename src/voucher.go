@@ -147,8 +147,8 @@ func actualizarVoucher(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	idRegalador := r.FormValue("regalador_documento")
-	idRegStr, err := strconv.ParseInt(idRegalador, 10, 64)
+	documentoRegaladorStr := r.FormValue("regalador_documento")
+	documentoRegalador, err := strconv.ParseInt(documentoRegaladorStr, 10, 64)
 	if err != nil {
 		http.Error(w, "Documento del regalador inválido", http.StatusBadRequest)
 		return
@@ -170,7 +170,7 @@ func actualizarVoucher(w http.ResponseWriter, r *http.Request) {
 
 	v, err := queries.UpdateVoucher(r.Context(), sqlc.UpdateVoucherParams{
 		IDVoucher:          idStr,
-		RegaladorDocumento: idRegStr,
+		RegaladorDocumento: documentoRegalador,
 		TratamientoID:      tratamientoIdStr,
 		ClienteDocumento:   clienteIdStr,
 	})
