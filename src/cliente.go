@@ -151,20 +151,28 @@ func actualizarCliente(w http.ResponseWriter, r *http.Request) {
 	idStr := r.PathValue("id")
 	documento, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
-		http.Error(w, "Documento inválido", http.StatusBadRequest)
+		errorHTMX(w, r, "Documento inválido")
 		return
 	}
 
 	nombre := r.FormValue("name")
+	if nombre == "" {
+		errorHTMX(w, r, "El nombre del cliente no puede ser vacío.")
+		return
+	}
 	apellido := r.FormValue("surname")
+	if apellido == "" {
+		errorHTMX(w, r, "El apellido del cliente no puede ser vacío.")
+		return
+	}
 	deuda, err := strconv.ParseFloat(r.FormValue("debt"), 64)
 	if err != nil {
-		http.Error(w, "La deuda debe ser un número válido", http.StatusBadRequest)
+		errorHTMX(w, r, "La deuda debe ser un número válido")
 		return
 	}
 	telefono, err := strconv.ParseInt(r.FormValue("phone"), 10, 32)
 	if err != nil {
-		http.Error(w, "El teléfono debe ser un número entero válido", http.StatusBadRequest)
+		errorHTMX(w, r, "El teléfono debe ser un número entero válido")
 		return
 	}
 
