@@ -98,12 +98,24 @@ func getVouchers(ctx context.Context) []sqlc.GetVouchersRow {
 	return vouchers
 }
 
-func actualizarVoucher(w http.ResponseWriter, r *http.Request) {
-	if err := r.ParseForm(); err != nil {
-		http.Error(w, "Error al procesar el formulario", http.StatusBadRequest)
+func getVoucherFila(w http.ResponseWriter, r *http.Request) {
+	idStr := r.PathValue("id")
+	documento, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		http.Error(w, "ID inválido", http.StatusBadRequest)
 		return
 	}
 
+	v, err := queries.GetVoucher(r.Context(), documento)
+	if err != nil {
+		http.Error(w, "Voucher no encontrado", http.StatusNotFound)
+		return
+	}
+	vo := sqlc.GetVouchersRow{IDVoucher: v.IDVoucher, RegaladorDocumento: v.RegaladorDocumento, ClienteDocumento: v.ClienteDocumento, Regalador: v.Regalador, Cliente: v.Cliente, Tratamiento: v.Tratamiento}
+	_ = views.FilaVoucher(vo).Render(r.Context(), w)
+}
+
+func editarVoucherFila(w http.ResponseWriter, r *http.Request) {
 	idStr := r.PathValue("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
@@ -111,24 +123,59 @@ func actualizarVoucher(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	nombre := r.FormValue("nombre")
-	descripcionCorta := r.FormValue("descripcion_corta")
-	costo, err := strconv.ParseFloat(r.FormValue("costo"), 64)
+	v, err := queries.GetVoucher(r.Context(), id)
 	if err != nil {
-		http.Error(w, "Costo inválido", http.StatusBadRequest)
+		http.Error(w, "Voucher no encontrado", http.StatusNotFound)
+		return
+	}
+	sqlcV := sqlc.Voucher{IDVoucher: v.IDVoucher, RegaladorDocumento: v.RegaladorDocumento, TratamientoID: v.TratamientoID, ClienteDocumento: v.ClienteDocumento}
+	_ = views.FilaVoucherEdit(sqlcV).Render(r.Context(), w)
+}
+
+func actualizarVoucher(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Error al procesar el formulario", http.StatusBadRequest)
 		return
 	}
 
-	t, err := queries.UpdateTreatment(r.Context(), sqlc.UpdateTreatmentParams{
-		ID:               id,
-		Nombre:           nombre,
-		DescripcionCorta: descripcionCorta,
-		Costo:            int32(costo),
+	id := r.PathValue("id_voucher")
+	idStr, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		http.Error(w, "ID de voucher inválido", http.StatusBadRequest)
+		return
+	}
+
+	idRegalador := r.FormValue("regalador_documento")
+	idRegStr, err := strconv.ParseInt(idRegalador, 10, 64)
+	if err != nil {
+		http.Error(w, "Documento del regalador inválido", http.StatusBadRequest)
+		return
+	}
+
+	tratamientoId := r.FormValue("tratamiento_id")
+	tratamientoIdStr, err := strconv.ParseInt(tratamientoId, 10, 64)
+	if err != nil {
+		http.Error(w, "ID del tratamiento inválido", http.StatusBadRequest)
+		return
+	}
+
+	clienteId := r.FormValue("cliente_documento")
+	clienteIdStr, err := strconv.ParseInt(clienteId, 10, 64)
+	if err != nil {
+		http.Error(w, "Documento del cliente inválido", http.StatusBadRequest)
+		return
+	}
+
+	v, err := queries.UpdateVoucher(r.Context(), sqlc.UpdateVoucherParams{
+		IDVoucher:          idStr,
+		RegaladorDocumento: idRegStr,
+		TratamientoID:      tratamientoIdStr,
+		ClienteDocumento:   clienteIdStr,
 	})
 	if err != nil {
-		http.Error(w, "Error al actualizar el tratamiento: "+err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Error al actualizar el voucher: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	_ = views.FilaTratamiento(t).Render(r.Context(), w)
+	vo := sqlc.GetVouchersRow{IDVoucher: v.IDVoucher, RegaladorDocumento: v.RegaladorDocumento, ClienteDocumento: v.ClienteDocumento, Regalador: v.Regalador, Cliente: v.Cliente, Tratamiento: v.Tratamiento}
+	_ = views.FilaVoucher(vo).Render(r.Context(), w)
 }
