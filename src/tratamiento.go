@@ -93,7 +93,7 @@ func deleteTratamiento(w http.ResponseWriter, r *http.Request) {
 	err = queries.DeleteTreatment(r.Context(), id)
 	if err != nil {
 		log.Printf("deleteTreatment %d: %v", id, err) // el detalle técnico queda en el log
-		errorHTMX(w, r, "Tratamiento")
+		errorHTMX(w, r, motivoBorrado(err,"Tratamiento"))
 		return
 	}
 
