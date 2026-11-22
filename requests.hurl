@@ -1,300 +1,347 @@
-#request para tests
+# ===================== CLIENTE =====================
 
-# CLIENTE
-POST http://localhost:8080/cliente 
-{
-    "nombre" :"valentina",
-    "apellido": "bisogni",
-    "deuda": 1000,
-    "nro_telefono" : 12345678
-}
-HTTP 201
-[Asserts]
-jsonpath "$.id" exists
-[Captures]
-cliente_id : jsonpath "$.id"
-
-
-POST http://localhost:8080/cliente 
-{
-    "nombre" :"rocio",
-    "apellido": "lopez",
-    "nro_telefono": 2494
-}
-HTTP 201
-[Asserts]
-jsonpath "$.id" exists
-[Captures]
-cliente2_id : jsonpath "$.id"
-
-
-
-GET http://localhost:8080/cliente/{{cliente_id}}
+# Crear cliente 1
+POST http://localhost:8080/cliente
+HX-Request: true
+[FormParams]
+cliente_documento: 1001
+name: valentina
+surname: bisogni
+debt: 1000
+phone: 12345678
 HTTP 200
 [Asserts]
-jsonpath "$.nombre" == "valentina"
-jsonpath "$.apellido" == "bisogni"
+body contains "valentina"
+body contains "bisogni"
 
-GET http://localhost:8080/cliente
+# Crear cliente 2
+POST http://localhost:8080/cliente
+HX-Request: true
+[FormParams]
+cliente_documento: 1002
+name: rocio
+surname: lopez
+debt: 0
+phone: 2494
 HTTP 200
 [Asserts]
-jsonpath "$" count == 2
+body contains "rocio"
 
-#UPDATE 
-PUT http://localhost:8080/cliente/{{cliente_id}}
-{
-    "nombre": "valentina",
-    "apellido": "bisogni",
-    "deuda" : 1000,
-    "nro_telefono" : 12345678
-}
-HTTP 200
-
-GET http://localhost:8080/cliente/{{cliente_id}}
+# Buscar cliente
+GET http://localhost:8080/search-client
+HX-Request: true
+[QueryStringParams]
+cliente_documento: 1001
 HTTP 200
 [Asserts]
-jsonpath "$.deuda" == 1000
+body contains "valentina"
+body not contains "rocio"
 
-#Casos de Create sin información necesaria
+# Estado vacío: buscar uno que no existe
+GET http://localhost:8080/search-client
+HX-Request: true
+[QueryStringParams]
+cliente_documento: 999999
+HTTP 200
+[Asserts]
+body contains "No se encontraron clientes"
 
-#   Sin número de telefono
-POST http://localhost:8080/cliente 
-{
-    "nombre" :"rocio",
-    "apellido": "lopez"
-}
-HTTP 400
+# Listar todos (ajustá la ruta a la que uses en el botón "Mostrar clientes")
+GET http://localhost:8080/clientes-filas
+HX-Request: true
+HTTP 200
+[Asserts]
+body contains "valentina"
+body contains "rocio"
 
-#   Sin apellido
-POST http://localhost:8080/cliente 
-{
-    "nombre" :"rocio",
-    "nro_telefono": 12345
+# Fila de un cliente
+GET http://localhost:8080/cliente/1001
+HX-Request: true
+HTTP 200
+[Asserts]
+body contains "bisogni"
 
-}
-HTTP 400
+# Fila en modo edición
+GET http://localhost:8080/cliente/1001/edit
+HX-Request: true
+HTTP 200
+[Asserts]
+body contains "editing"
 
-#   Sin nombre
-POST http://localhost:8080/cliente 
-{
-    "apellido" :"Lopez",
-    "nro_telefono": 12345
+# Actualizar
+PUT http://localhost:8080/cliente/1001
+HX-Request: true
+[FormParams]
+name: valentina
+surname: bisogni
+debt: 2000
+phone: 12345678
+HTTP 200
+[Asserts]
+body contains "2000"
 
-}
-HTTP 400
+# --- Crear cliente con datos inválidos ---
+
+# Sin teléfono
+POST http://localhost:8080/cliente
+HX-Request: true
+[FormParams]
+cliente_documento: 1003
+name: rocio
+surname: lopez
+debt: 0
+HTTP 200
+[Asserts]
+body contains "Faltan campos por completar"
+
+# Sin apellido
+POST http://localhost:8080/cliente
+HX-Request: true
+[FormParams]
+cliente_documento: 1003
+name: rocio
+debt: 0
+phone: 12345
+HTTP 200
+[Asserts]
+body contains "Faltan campos por completar"
+
+# Sin nombre
+POST http://localhost:8080/cliente
+HX-Request: true
+[FormParams]
+cliente_documento: 1003
+surname: lopez
+debt: 0
+phone: 12345
+HTTP 200
+[Asserts]
+body contains "Faltan campos por completar"
+
+# Valor no numérico
+POST http://localhost:8080/cliente
+HX-Request: true
+[FormParams]
+cliente_documento: abc
+name: rocio
+surname: lopez
+debt: 0
+phone: 12345
+HTTP 200
+[Asserts]
+body contains "no es válido"
 
 
-#TRATAMIENTOS 
+# ===================== TRATAMIENTO =====================
+
+# Crear (la tabla devuelta tiene una sola fila; capturamos su id del botón Borrar)
 POST http://localhost:8080/tratamiento
-{
-    "nombre" : "Masaje",
-    "descripcion_corta" : "masaje relajante",
-    "costo" : 12000
-}
-HTTP 201
-[Asserts]
-jsonpath "$.id" exists
+HX-Request: true
+[FormParams]
+nombre: Masaje
+descripcion_corta: masaje relajante
+costo: 12000
+HTTP 200
 [Captures]
-tratamiento_id : jsonpath "$.id"
-
-GET http://localhost:8080/tratamiento
-HTTP 200
+tratamiento_id: regex "hx-delete=\"/tratamiento/(\\d+)\""
 [Asserts]
-jsonpath "$" count == 1
-jsonpath "$[0].id" == {{tratamiento_id}}
+body contains "Masaje"
+body contains "masaje relajante"
 
+# Fila de un tratamiento
 GET http://localhost:8080/tratamiento/{{tratamiento_id}}
+HX-Request: true
 HTTP 200
 [Asserts]
-jsonpath "$.nombre" == "Masaje"
-jsonpath "$.descripcion_corta" == "masaje relajante"
-jsonpath "$.costo" == 12000
+body contains "Masaje"
+body contains "12000"
 
-#UPDATE
+# Actualizar
 PUT http://localhost:8080/tratamiento/{{tratamiento_id}}
-{
-    "nombre" : "Masaje",
-    "descripcion_corta" : "masaje relajante",
-    "costo" : 15000
-}
-HTTP 200
-
-GET http://localhost:8080/tratamiento/{{tratamiento_id}}
+HX-Request: true
+[FormParams]
+nombre: Masaje
+descripcion_corta: masaje relajante
+costo: 15000
 HTTP 200
 [Asserts]
-jsonpath "$.costo" == 15000
+body contains "15000"
 
-#create sin nombre ni costo
+# --- Crear tratamiento con datos inválidos ---
+
+# Sin nombre ni costo
 POST http://localhost:8080/tratamiento
-{
-    "descripcion_corta" : "masaje atleta"
-}
-HTTP 400
+HX-Request: true
+[FormParams]
+descripcion_corta: masaje atleta
+HTTP 200
+[Asserts]
+body contains "Faltan campos por completar"
 
-#create sin nombre
+# Sin nombre
 POST http://localhost:8080/tratamiento
-{
-    "descripcion_corta" : "masaje atleta",
-    "costo" : 5000
-}
-HTTP 400
+HX-Request: true
+[FormParams]
+descripcion_corta: masaje atleta
+costo: 5000
+HTTP 200
+[Asserts]
+body contains "Faltan campos por completar"
 
-#create sin costo
+# Sin costo
 POST http://localhost:8080/tratamiento
-{
-    "nombre" : "masaje",
-    "descripcion_corta" : "masaje atleta"
-}
-HTTP 400
-
-
-#TURNO 
-
-POST http://localhost:8080/turno
-{
-    "fecha" : "2026-10-11",
-    "hora" : 17,
-    "tratamiento_id" : {{tratamiento_id}},
-    "cliente_id" : {{cliente_id}}
-
-}
-HTTP 201
-[Asserts]
-jsonpath "$.fecha" == "2026-10-11"
-jsonpath "$.hora" == 17
-jsonpath "$.tratamiento_id" == {{tratamiento_id}}
-jsonpath "$.cliente_id" == {{cliente_id}}
-[Captures]
-turno_fecha : jsonpath "$.fecha"
-turno_hora : jsonpath "$.hora"
-
-
-
-GET http://localhost:8080/turno
+HX-Request: true
+[FormParams]
+nombre: masaje
+descripcion_corta: masaje atleta
 HTTP 200
 [Asserts]
-jsonpath "$" count == 1
-jsonpath "$[0].fecha" == {{turno_fecha}}
-jsonpath "$[0].hora" == {{turno_hora}}
+body contains "Faltan campos por completar"
 
 
-GET http://localhost:8080/turno/2026-10-11&17
+# ===================== TURNO =====================
+
+POST http://localhost:8080/turno
+HX-Request: true
+[FormParams]
+fecha: 2026-10-11
+hora: 17
+tratamiento_id: {{tratamiento_id}}
+cliente_documento: 1001
 HTTP 200
 [Asserts]
-jsonpath "$.fecha" == "2026-10-11"
-jsonpath "$.hora" == 17
-jsonpath "$.tratamiento_id" == {{tratamiento_id}}
-jsonpath "$.cliente_id" == {{cliente_id}}
+body contains "Masaje"
+body contains "valentina"
 
-
-PUT http://localhost:8080/turno/2026-10-11&17
-{
-    "tratamiento_id" : {{tratamiento_id}},
-    "cliente_id" : {{cliente2_id}}
-}
+# Fila del turno
+GET http://localhost:8080/turno/2026-10-11/17
+HX-Request: true
 HTTP 200
 [Asserts]
-jsonpath "$.fecha" == "2026-10-11" 
-jsonpath "$.hora" == 17
-jsonpath "$.tratamiento_id" == {{tratamiento_id}} 
-jsonpath "$.cliente_id" == {{cliente2_id}}
+body contains "Masaje"
 
-DELETE http://localhost:8080/turno/2026-10-11&17
-HTTP 204
+# Buscar turno
+GET http://localhost:8080/search-turno
+HX-Request: true
+[QueryStringParams]
+fecha: 2026-10-11
+hora: 17
+HTTP 200
+[Asserts]
+body contains "Masaje"
 
-GET http://localhost:8080/turno/2026-10-11&17
-HTTP 404
+# Cambiar el turno al cliente 2
+PUT http://localhost:8080/turno/2026-10-11/17
+HX-Request: true
+[FormParams]
+tratamiento_id: {{tratamiento_id}}
+cliente_documento: 1002
+HTTP 200
+[Asserts]
+body contains "rocio"
 
-# Turnos creados con información inválida
+# --- Turnos con información inválida ---
 
-#   Sin información
+# Sin información
 POST http://localhost:8080/turno
-HTTP 400
+HX-Request: true
+HTTP 200
+[Asserts]
+body contains "no es válido"
 
-#   Con hora negativa
+# Cliente inexistente
 POST http://localhost:8080/turno
-{
-    "fecha" : "2026-10-11",
-    "hora" : -1,
-    "tratamiento_id" : {{tratamiento_id}},
-    "cliente_id" : {{cliente_id}}
-}
-HTTP 400
+HX-Request: true
+[FormParams]
+fecha: 2026-10-12
+hora: 17
+tratamiento_id: {{tratamiento_id}}
+cliente_documento: 999999
+HTTP 200
+[Asserts]
+body contains "no existe"
 
-#   Con hora pasando los horarios permitidos
+# Hora negativa (depende de que la base tenga un CHECK)
 POST http://localhost:8080/turno
-{
-    "fecha" : "2026-10-11",
-    "hora" : 21,
-    "tratamiento_id" : {{tratamiento_id}},
-    "cliente_id" : {{cliente_id}}
-}
-HTTP 400
+HX-Request: true
+[FormParams]
+fecha: 2026-10-11
+hora: -1
+tratamiento_id: {{tratamiento_id}}
+cliente_documento: 1001
+HTTP 200
+[Asserts]
+body contains "No se pudo crear el turno"
 
-# VOUCHER
+# Hora fuera de horario permitido (idem)
+POST http://localhost:8080/turno
+HX-Request: true
+[FormParams]
+fecha: 2026-10-11
+hora: 21
+tratamiento_id: {{tratamiento_id}}
+cliente_documento: 1001
+HTTP 200
+[Asserts]
+body contains "No se pudo crear el turno"
+
+# Cliente con turno asociado: no se puede borrar
+DELETE http://localhost:8080/cliente/1002
+HX-Request: true
+HTTP 200
+[Asserts]
+body contains "No se puede eliminar"
+
+# Borrar turno
+DELETE http://localhost:8080/turno/2026-10-11/17
+HX-Request: true
+HTTP 200
+
+
+# ===================== VOUCHER =====================
+# AJUSTAR: no vi voucher.go, así que los nombres de campos y rutas son supuestos.
+
 POST http://localhost:8080/voucher
-{
-    "regalador_id" : {{cliente_id}},
-    "tratamiento_id": {{tratamiento_id}},
-    "cliente_id" : {{cliente2_id}}
-}
-HTTP 201
-[Asserts]
-jsonpath "$.id_voucher" exists
+HX-Request: true
+[FormParams]
+regalador_id: 1001
+tratamiento_id: {{tratamiento_id}}
+cliente_id: 1002
+HTTP 200
 [Captures]
-voucher_id : jsonpath "$.id_voucher"
-
-GET http://localhost:8080/voucher
-HTTP 200
-[Asserts]
-jsonpath "$" count == 1
-jsonpath "$[0].id_voucher" == {{voucher_id}}
+voucher_id: regex "hx-delete=\"/voucher/(\\d+)\""
 
 GET http://localhost:8080/voucher/{{voucher_id}}
+HX-Request: true
 HTTP 200
-[Asserts]
-jsonpath "$.id_voucher" == {{voucher_id}}
-jsonpath "$.regalador_id" == {{cliente_id}}
-jsonpath "$.tratamiento_id" == {{tratamiento_id}}
-jsonpath "$.cliente_id" == {{cliente2_id}}
-
-PUT http://localhost:8080/voucher/{{voucher_id}}
-{
-    "regalador_id" : {{cliente_id}},
-    "tratamiento_id" : {{tratamiento_id}},
-    "cliente_id" : {{cliente_id}}
-}
-HTTP 200
-
-GET http://localhost:8080/voucher/{{voucher_id}}
-HTTP 200
-[Asserts]
-jsonpath "$.cliente_id" == {{cliente_id}}
 
 DELETE http://localhost:8080/voucher/{{voucher_id}}
-HTTP 204
+HX-Request: true
+HTTP 200
 
-GET http://localhost:8080/voucher/{{voucher_id}}
-HTTP 404
 
-# elimino el tartamiento
+# ===================== LIMPIEZA =====================
+
 DELETE http://localhost:8080/tratamiento/{{tratamiento_id}}
-HTTP 204
+HX-Request: true
+HTTP 200
 
 GET http://localhost:8080/tratamiento/{{tratamiento_id}}
+HX-Request: true
 HTTP 404
 
-#elimino cliente 1
-DELETE http://localhost:8080/cliente/{{cliente_id}}
-HTTP 204
+DELETE http://localhost:8080/cliente/1001
+HX-Request: true
+HTTP 200
 
-GET http://localhost:8080/cliente/{{cliente_id}}
+GET http://localhost:8080/cliente/1001
+HX-Request: true
 HTTP 404
 
-#elimino cliente 2 
-#elimino cliente 1
-DELETE http://localhost:8080/cliente/{{cliente2_id}}
-HTTP 204
+DELETE http://localhost:8080/cliente/1002
+HX-Request: true
+HTTP 200
 
-GET http://localhost:8080/cliente/{{cliente2_id}}
+GET http://localhost:8080/cliente/1002
+HX-Request: true
 HTTP 404

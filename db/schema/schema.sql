@@ -70,11 +70,11 @@ ALTER TABLE voucher ADD CONSTRAINT voucher_tratamiento
 ;
 
 -- Reference: voucher_doc_regalador (table: voucher)
-ALTER TABLE voucher ADD CONSTRAINT voucher_doc_regalador
-    FOREIGN KEY (regalador_documento)
-    REFERENCES cliente (documento)  
-    NOT DEFERRABLE 
-    INITIALLY IMMEDIATE
-;
+    ALTER TABLE voucher ADD CONSTRAINT voucher_doc_regalador
+        FOREIGN KEY (regalador_documento)
+        REFERENCES cliente (documento)  
+        NOT DEFERRABLE 
+        INITIALLY IMMEDIATE
+    ;
 
 

@@ -2,10 +2,10 @@ package views
 
 import (
 	"fmt"
+	"time"
 
 	sqlc "TPE/db/sqlc"
 
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 var formCrearTurno = Formulario{
@@ -38,24 +38,21 @@ var formBuscarTurno = Formulario{
 
 var columnasTurnos = []string{"Fecha", "Hora", "Tratamiento", "Cliente", "Acciones"}
 
-func fechaAString(d pgtype.Date) string {
-	if !d.Valid {
-		return ""
-	}
-	return d.Time.Format("02/01/2006")
-}
+func fechaAString(d time.Time) string {
+	return d.Format("02/01/2006")
+}																																																						
 
 templ FilaTurno(t sqlc.GetTurnosCompletoRow) {
 	<tr>
-		<td>{ fechaAString(t.Fecha) }</td>
-		<td>{ fmt.Sprint(t.Hora) }</td>
-		<td>{ fmt.Sprint(t.NombreTratamiento) }</td>
+		<td>{ fechaAString(t.Fecha) }</td>																																																
+		<td>{ fmt.Sprint(t.Hora) }</td>																																	
+		<td>{ fmt.Sprint(t.NombreTratamiento) }</td>																																																																																																																																				
 		<td>{ fmt.Sprint(t.NombreCliente) }</td>
 		<td>
-			@BotonActualizar(fmt.Sprintf("/turno/%s/%d/edit", t.Fecha.Time.Format("2006-01-02"), t.Hora))
-			@BotonBorrar(fmt.Sprintf("/turno/%s/%d", t.Fecha.Time.Format("2006-01-02"), t.Hora), "¿Está seguro de que desea eliminar este turno?")
-		</td>
-	</tr>
+			@BotonActualizar(fmt.Sprintf("/turno/%s/%d/edit", t.Fecha.Format("2006-01-02"), t.Hora))
+			@BotonBorrar(fmt.Sprintf("/turno/%s/%d", t.Fecha.Format("2006-01-02"), t.Hora), "¿Está seguro de que desea eliminar este turno?")
+		</td>																					
+	</tr>																																					
 }
 
 templ FilaTurnoEdit(t sqlc.GetTurnoRow) {
@@ -68,7 +65,7 @@ templ FilaTurnoEdit(t sqlc.GetTurnoRow) {
             <button
                 type="button"
                 class="btn btn-actualizar"
-                hx-put={ fmt.Sprintf("/turno/%s/%d", t.Fecha.Time.Format("2006-01-02") ,t.Hora) }
+                hx-put={ fmt.Sprintf("/turno/%s/%d", t.Fecha.Format("2006-01-02") ,t.Hora) }
                 hx-include="closest tr"
                 hx-target="closest tr"
                 hx-swap="outerHTML"
@@ -78,7 +75,7 @@ templ FilaTurnoEdit(t sqlc.GetTurnoRow) {
             <button
                 type="button"
                 class="btn btn-cancelar"
-                hx-get={ fmt.Sprintf("/turno/%s/%d", t.Fecha.Time.Format("2006-01-02") ,t.Hora) }
+                hx-get={ fmt.Sprintf("/turno/%s/%d", t.Fecha.Format("2006-01-02") ,t.Hora) }
                 hx-target="closest tr"
                 hx-swap="outerHTML"
             >

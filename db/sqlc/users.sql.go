@@ -7,8 +7,7 @@ package db
 
 import (
 	"context"
-
-	pgtype "github.com/jackc/pgx/v5/pgtype"
+	"time"
 )
 
 const createTreatment = `-- name: CreateTreatment :one
@@ -44,14 +43,14 @@ RETURNING fecha, hora, cliente_documento,
 `
 
 type CreateTurnoParams struct {
-	Fecha            pgtype.Date `json:"fecha"`
-	Hora             int32       `json:"hora"`
-	TratamientoID    int64       `json:"tratamiento_id"`
-	ClienteDocumento int64       `json:"cliente_documento"`
+	Fecha            time.Time `json:"fecha"`
+	Hora             int32     `json:"hora"`
+	TratamientoID    int64     `json:"tratamiento_id"`
+	ClienteDocumento int64     `json:"cliente_documento"`
 }
 
 type CreateTurnoRow struct {
-	Fecha             pgtype.Date `json:"fecha"`
+	Fecha             time.Time   `json:"fecha"`
 	Hora              int32       `json:"hora"`
 	ClienteDocumento  int64       `json:"cliente_documento"`
 	NombreTratamiento string      `json:"nombre_tratamiento"`
@@ -165,8 +164,8 @@ WHERE fecha = $1 AND hora = $2
 `
 
 type DeleteTurnoParams struct {
-	Fecha pgtype.Date `json:"fecha"`
-	Hora  int32       `json:"hora"`
+	Fecha time.Time `json:"fecha"`
+	Hora  int32     `json:"hora"`
 }
 
 func (q *Queries) DeleteTurno(ctx context.Context, arg DeleteTurnoParams) error {
@@ -224,12 +223,12 @@ WHERE fecha = $1 AND hora = $2
 `
 
 type GetTurnoParams struct {
-	Fecha pgtype.Date `json:"fecha"`
-	Hora  int32       `json:"hora"`
+	Fecha time.Time `json:"fecha"`
+	Hora  int32     `json:"hora"`
 }
 
 type GetTurnoRow struct {
-	Fecha             pgtype.Date `json:"fecha"`
+	Fecha             time.Time   `json:"fecha"`
 	Hora              int32       `json:"hora"`
 	ClienteDocumento  int64       `json:"cliente_documento"`
 	TratamientoID     int64       `json:"tratamiento_id"`
@@ -260,7 +259,7 @@ FROM turno t
 `
 
 type GetTurnosCompletoRow struct {
-	Fecha             pgtype.Date `json:"fecha"`
+	Fecha             time.Time   `json:"fecha"`
 	Hora              int32       `json:"hora"`
 	ClienteDocumento  int64       `json:"cliente_documento"`
 	TratamientoID     int64       `json:"tratamiento_id"`
@@ -583,14 +582,14 @@ RETURNING fecha, hora, tratamiento_id, cliente_documento,
 `
 
 type UpdateTurnoParams struct {
-	Fecha            pgtype.Date `json:"fecha"`
-	Hora             int32       `json:"hora"`
-	TratamientoID    int64       `json:"tratamiento_id"`
-	ClienteDocumento int64       `json:"cliente_documento"`
+	Fecha            time.Time `json:"fecha"`
+	Hora             int32     `json:"hora"`
+	TratamientoID    int64     `json:"tratamiento_id"`
+	ClienteDocumento int64     `json:"cliente_documento"`
 }
 
 type UpdateTurnoRow struct {
-	Fecha             pgtype.Date `json:"fecha"`
+	Fecha             time.Time   `json:"fecha"`
 	Hora              int32       `json:"hora"`
 	TratamientoID     int64       `json:"tratamiento_id"`
 	ClienteDocumento  int64       `json:"cliente_documento"`

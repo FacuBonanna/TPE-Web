@@ -1,14 +1,18 @@
 APP_NAME := GLAM
 CONTAINER_NAME := postgres-db
 
-.PHONY: generate build clean test pre-test run-test post-test
+.PHONY: generate build clean test pre-test run-test post-test inicializacion finalizar
 
 all: 
-	build
+	inicializacion
 
 test_base: pre-test run-test post-test 
 
 test_api: pre-test hurl-test post-test
+
+generate: 
+	sqlc generate
+	templ generate
 
 pre-test:
 	docker compose down -v 2>/dev/null || true
@@ -36,11 +40,14 @@ rebuild:
 	docker compose build api
 	docker compose up api
 
-inicializacion: 
-	docker compose down -v
-	docker compose build api
-	docker compose up -d database	
-	docker compose up -d --wait database
-	docker exec -i $(CONTAINER_NAME) psql -U postgres -d apirest < ./db/schema/schema.sql 
+# genera, levanta y en el detach baja
+inicializacion: generate
+	@trap 'echo "[FINALIZAR] limpiando"; docker compose down -v' EXIT INT TERM; \
+	docker compose down -v && \
+	docker compose build api && \
+	docker compose up -d --wait database && \
+	docker exec -i $(CONTAINER_NAME) psql -U postgres -d apirest < ./db/schema/schema.sql && \
 	docker compose up api
-	
+
+finalizar:
+	docker compose down -v
