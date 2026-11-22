@@ -133,9 +133,7 @@ func motivoCreacion(err error, entidad string) string {
 	var pgErr *pgconn.PgError
 	if errors.As(err, &pgErr) {
 		switch pgErr.Code {
-		case "23503": // foreign_key_violation
-			return "El cliente o el tratamiento ingresado no existe."
-		case "23505": // unique_violation
+		case "23505":
 			return "Ya existe un " + entidad + " con esos datos."
 		}
 	}

@@ -4,9 +4,12 @@ import (
 	sqlc "TPE/db/sqlc"
 	"TPE/views"
 	"context"
+	"errors"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/jackc/pgx/v5/pgconn"
 )
 
 func getVoucher(w http.ResponseWriter, r *http.Request) {
@@ -66,7 +69,7 @@ func createVoucher(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		log.Printf("crearVoucher: %v", err)
-		errorHTMX(w, r, motivoCreacion(err, "voucher"))
+		errorHTMX(w, r, getMotivoVoucher(err, "crear"))
 		return
 	}
 
@@ -175,9 +178,32 @@ func actualizarVoucher(w http.ResponseWriter, r *http.Request) {
 		ClienteDocumento:   clienteIdStr,
 	})
 	if err != nil {
-		http.Error(w, "Error al actualizar el voucher: "+err.Error(), http.StatusInternalServerError)
+		errorHTMX(w, r, getMotivoVoucher(err, "actualizar"))
 		return
 	}
 	vo := sqlc.GetVouchersRow{IDVoucher: v.IDVoucher, RegaladorDocumento: v.RegaladorDocumento, ClienteDocumento: v.ClienteDocumento, Regalador: v.Regalador, Cliente: v.Cliente, Tratamiento: v.Tratamiento}
 	_ = views.FilaVoucher(vo).Render(r.Context(), w)
+}
+
+func getMotivoVoucher(err error, funcion string) string {
+	var pgErr *pgconn.PgError
+	if errors.As(err, &pgErr) {
+		switch pgErr.Code {
+		case "23503":
+			{
+				switch pgErr.ConstraintName {
+				case "voucher_doc_regalador":
+					return "El regalador ingresado no existe."
+				case "voucher_cliente":
+					return "El cliente ingresado no existe."
+				case "voucher_tratamiento":
+					return "El tratamiento ingresado no existe."
+				}
+			}
+			return "El cliente o el tratamiento ingresado no existe." + pgErr.ConstraintName
+		case "23505":
+			return "Ya existe un voucher con esos datos."
+		}
+	}
+	return "No se pudo " + funcion + " el voucher."
 }
