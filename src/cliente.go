@@ -48,6 +48,11 @@ func crearCliente(w http.ResponseWriter, r *http.Request) {
 	nombre := r.FormValue("name")
 	apellido := r.FormValue("surname")
 
+	 if nombre == "" || apellido == "" {
+        errorHTMX(w, r, "Faltan campos por completar.")
+        return
+    }
+
 	// Convertir deuda a float64
 	deuda, err := strconv.ParseFloat(r.FormValue("debt"), 64)
 	if err != nil {
@@ -85,7 +90,7 @@ func crearCliente(w http.ResponseWriter, r *http.Request) {
 	clientes := getClientes(r.Context())
 	err = views.TablaClientes(clientes).Render(r.Context(), w)
 	if err != nil {
-		http.Error(w, "Error al renderizar la lista de clientes", http.StatusInternalServerError)
+		errorHTMX(w, r, "Error al renderizar la lista de clientes")
 		return
 	}
 }
@@ -94,7 +99,7 @@ func deleteCliente(w http.ResponseWriter, r *http.Request) {
 	idStr := r.PathValue("id")
 	documento, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
-		http.Error(w, "El Documento del cliente debe ser un número entero válido", http.StatusBadRequest)
+		errorHTMX(w, r, "El Documento del cliente debe ser un número entero válido")
 		return
 	}
 
@@ -112,13 +117,13 @@ func getClienteFila(w http.ResponseWriter, r *http.Request) {
 	idStr := r.PathValue("id")
 	documento, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
-		http.Error(w, "Documento inválido", http.StatusBadRequest)
+		errorHTMX(w, r, "Documento invalido")
 		return
 	}
 
 	cliente, err := queries.GetUser(r.Context(), documento)
 	if err != nil {
-		http.Error(w, "Cliente no encontrado", http.StatusNotFound)
+		errorHTMX(w, r, "Cliente no encontrado")
 		return
 	}
 
@@ -129,13 +134,13 @@ func editarClienteFila(w http.ResponseWriter, r *http.Request) {
 	idStr := r.PathValue("id")
 	documento, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
-		http.Error(w, "Documento inválido", http.StatusBadRequest)
+		errorHTMX(w, r, "Documento invalido")
 		return
 	}
 
 	cliente, err := queries.GetUser(r.Context(), documento)
 	if err != nil {
-		http.Error(w, "Cliente no encontrado", http.StatusNotFound)
+		errorHTMX(w, r, "Cliente no encontrado")
 		return
 	}
 
@@ -144,7 +149,7 @@ func editarClienteFila(w http.ResponseWriter, r *http.Request) {
 
 func actualizarCliente(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
-		http.Error(w, "Error al procesar el formulario", http.StatusBadRequest)
+		errorHTMX(w, r, "Error al procesar el formulario")
 		return
 	}
 
@@ -184,7 +189,7 @@ func actualizarCliente(w http.ResponseWriter, r *http.Request) {
 		NroTelefono: int32(telefono),
 	})
 	if err != nil {
-		http.Error(w, "Error al actualizar el cliente: "+err.Error(), http.StatusInternalServerError)
+		errorHTMX(w, r, "Error al actualizar el cliente")
 		return
 	}
 

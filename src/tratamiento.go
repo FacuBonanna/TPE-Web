@@ -37,7 +37,8 @@ func getTratamiento(w http.ResponseWriter, r *http.Request) {
 
 	err = views.FilasTratamientos(tratamientos).Render(r.Context(), w)
 	if err != nil {
-		http.Error(w, "Error al renderizar la página", http.StatusInternalServerError)
+		errorHTMX(w, r, "El tratamiento no existe.")
+		return
 	}
 }
 
@@ -50,6 +51,11 @@ func crearTratamiento(w http.ResponseWriter, r *http.Request) {
 	nombre := r.FormValue("nombre")
 	descripcionCortaStr := r.FormValue("descripcion_corta")
 	costoStr := r.FormValue("costo")
+
+	if nombre == "" || descripcionCortaStr == "" {
+        errorHTMX(w, r, "Faltan campos por completar.")
+        return
+    }
 
 	costo, err := strconv.ParseFloat(costoStr, 64)
 	if err != nil {
@@ -71,7 +77,7 @@ func crearTratamiento(w http.ResponseWriter, r *http.Request) {
 	tratamientos := getTratamientos(r.Context())
 	err = views.TablaTratamientos(tratamientos).Render(r.Context(), w)
 	if err != nil {
-		http.Error(w, "Error al renderizar los tratamientos", http.StatusInternalServerError)
+		errorHTMX(w, r, "Error al renderizar los tratamientos")
 		return
 	}
 }
@@ -80,14 +86,14 @@ func deleteTratamiento(w http.ResponseWriter, r *http.Request) {
 	idStr := r.PathValue("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
-		http.Error(w, "El ID del tratamiento debe ser un número entero válido", http.StatusBadRequest)
+		errorHTMX(w, r, "El ID del tratamiento debe ser un número entero válido")
 		return
 	}
 
 	err = queries.DeleteTreatment(r.Context(), id)
 	if err != nil {
 		log.Printf("deleteTreatment %d: %v", id, err) // el detalle técnico queda en el log
-		errorHTMX(w, r, motivoBorrado(err, "Tratamiento"))
+		errorHTMX(w, r, "Tratamiento")
 		return
 	}
 
@@ -98,13 +104,13 @@ func getTratamientoFila(w http.ResponseWriter, r *http.Request) {
 	idStr := r.PathValue("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
-		http.Error(w, "ID inválido", http.StatusBadRequest)
+		errorHTMX(w, r, "ID invalido")
 		return
 	}
 
 	t, err := queries.GetTreatment(r.Context(), id)
 	if err != nil {
-		http.Error(w, "Tratamiento no encontrado", http.StatusNotFound)
+		errorHTMX(w, r, "Tratamiento no encontrado")
 		return
 	}
 
@@ -115,13 +121,13 @@ func editarTratamientoFila(w http.ResponseWriter, r *http.Request) {
 	idStr := r.PathValue("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
-		http.Error(w, "ID inválido", http.StatusBadRequest)
+		errorHTMX(w, r, "ID invalido")
 		return
 	}
 
 	t, err := queries.GetTreatment(r.Context(), id)
 	if err != nil {
-		http.Error(w, "Tratamiento no encontrado", http.StatusNotFound)
+		errorHTMX(w, r, "Tratamiento no encontrado")
 		return
 	}
 
@@ -130,14 +136,14 @@ func editarTratamientoFila(w http.ResponseWriter, r *http.Request) {
 
 func actualizarTratamiento(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
-		http.Error(w, "Error al procesar el formulario", http.StatusBadRequest)
+		errorHTMX(w, r, "Error al procesar el formulario")
 		return
 	}
 
 	idStr := r.PathValue("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
-		http.Error(w, "ID inválido", http.StatusBadRequest)
+		errorHTMX(w, r, "ID invalido")
 		return
 	}
 
@@ -166,7 +172,7 @@ func actualizarTratamiento(w http.ResponseWriter, r *http.Request) {
 		Costo:            int32(costo),
 	})
 	if err != nil {
-		http.Error(w, "Error al actualizar el tratamiento: "+err.Error(), http.StatusInternalServerError)
+		errorHTMX(w, r, "Error al actualizar el tratamiento")
 		return
 	}
 

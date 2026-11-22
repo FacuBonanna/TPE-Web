@@ -171,6 +171,10 @@ func editarTurnoFila(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	turno, err := queries.GetTurno(r.Context(), sqlc.GetTurnoParams{Fecha: fecha, Hora: int32(hora64)})
+	if err != nil {
+	errorHTMX(w, r, "El turno no existe.")
+	return
+	}
 
 	_ = views.FilaTurnoEdit(turno).Render(r.Context(), w)
 }
@@ -194,6 +198,10 @@ func getTurnoFila(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	tu, err := queries.GetTurno(r.Context(), sqlc.GetTurnoParams{Fecha: fecha, Hora: int32(hora64)})
+	if err != nil {
+	errorHTMX(w, r, "El turno no existe.")
+	return
+}
 	turno := sqlc.GetTurnosCompletoRow{Fecha: tu.Fecha, Hora: tu.Hora, ClienteDocumento: tu.ClienteDocumento, TratamientoID: tu.TratamientoID, NombreCliente: tu.NombreCliente, NombreTratamiento: tu.NombreTratamiento}
 	_ = views.FilaTurno(turno).Render(r.Context(), w)
 }
