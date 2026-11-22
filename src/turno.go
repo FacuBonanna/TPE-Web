@@ -2,12 +2,14 @@ package main
 
 import (
 	"context"
+	"errors"
+	"log"
 	"net/http"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
-	"log"
-	"sort"
+	"github.com/jackc/pgx/v5/pgconn"
 
 	sqlc "TPE/db/sqlc"
 	"TPE/views"
@@ -15,13 +17,13 @@ import (
 )
 
 func getTurnos(ctx context.Context) []sqlc.GetTurnosCompletoRow {
-tur, _ := queries.GetTurnosCompleto(ctx)
+	tur, _ := queries.GetTurnosCompleto(ctx)
 
 	sort.Slice(tur, func(i, j int) bool {
-	if !tur[i].Fecha.Equal(tur[j].Fecha) {
-		return tur[i].Fecha.Before(tur[j].Fecha)
-	}
-	return tur[i].Hora < tur[j].Hora
+		if !tur[i].Fecha.Equal(tur[j].Fecha) {
+			return tur[i].Fecha.Before(tur[j].Fecha)
+		}
+		return tur[i].Hora < tur[j].Hora
 	})
 	return tur
 }
@@ -31,45 +33,55 @@ func listarTurnos(w http.ResponseWriter, r *http.Request) {
 }
 
 func createTurno(w http.ResponseWriter, r *http.Request) {
-    if err := r.ParseForm(); err != nil {
-        errorHTMX(w, r, "No se pudo procesar el formulario.")
-        return
-    }
+	if err := r.ParseForm(); err != nil {
+		errorHTMX(w, r, "No se pudo procesar el formulario.")
+		return
+	}
 
-    fechaStr := strings.TrimSpace(r.FormValue("fecha"))
-    horaStr := strings.TrimSpace(r.FormValue("hora"))
-    idTratamientoStr := strings.TrimSpace(r.FormValue("tratamiento_id"))
-    idClienteStr := strings.TrimSpace(r.FormValue("cliente_documento"))
+	fechaStr := strings.TrimSpace(r.FormValue("fecha"))
+	horaStr := strings.TrimSpace(r.FormValue("hora"))
+	idTratamientoStr := strings.TrimSpace(r.FormValue("tratamiento_id"))
+	idClienteStr := strings.TrimSpace(r.FormValue("cliente_documento"))
 
-
-    // validar valores
-    t, err1 := time.Parse("2006-01-02", fechaStr)
-    hora64, err2 := strconv.ParseInt(horaStr, 10, 32)
-    idTratamiento, err3 := strconv.ParseInt(idTratamientoStr, 10, 64)
-    idCliente, err4 := strconv.ParseInt(idClienteStr, 10, 64)
-    if err1 != nil || err2 != nil || err3 != nil || err4 != nil {
-        errorHTMX(w, r, "Alguno de los valores ingresados no es válido.")
-        return
-    }
-    //fecha := pgtype.Date{Time: t, Valid: true}
+	// validar valores
+	t, err1 := time.Parse("2006-01-02", fechaStr)
+	if err1 != nil {
+		errorHTMX(w, r, "La fecha ingresada no es válida.")
+		return
+	}
+	hora64, err2 := strconv.ParseInt(horaStr, 10, 32)
+	if err2 != nil {
+		errorHTMX(w, r, "La hora ingresada no es válida.")
+		return
+	}
+	idTratamiento, err3 := strconv.ParseInt(idTratamientoStr, 10, 64)
+	if err3 != nil {
+		errorHTMX(w, r, "El ID del tratamiento debe ser un número entero.")
+		return
+	}
+	idCliente, err4 := strconv.ParseInt(idClienteStr, 10, 64)
+	if err4 != nil {
+		errorHTMX(w, r, "El documento del cliente debe ser un número entero.")
+		return
+	}
 	fecha := t
 
-    _, err := queries.CreateTurno(r.Context(), sqlc.CreateTurnoParams{
-        Fecha:            fecha,
-        Hora:             int32(hora64),
-        TratamientoID:    idTratamiento,
-        ClienteDocumento: idCliente,
-    })
-    if err != nil {
-        log.Printf("createTurno: %v", err)
-        errorHTMX(w, r, motivoCreacion(err, "turno"))
-        return
-    }
+	_, err := queries.CreateTurno(r.Context(), sqlc.CreateTurnoParams{
+		Fecha:            fecha,
+		Hora:             int32(hora64),
+		TratamientoID:    idTratamiento,
+		ClienteDocumento: idCliente,
+	})
+	if err != nil {
+		log.Printf("createTurno: %v", err)
+		errorHTMX(w, r, getMotivoTurno(err, "crear"))
+		return
+	}
 
-    turnos := getTurnos(r.Context())
-    if err := views.TablaTurnos(turnos).Render(r.Context(), w); err != nil {
-        log.Printf("createTurno render: %v", err)
-    }
+	turnos := getTurnos(r.Context())
+	if err := views.TablaTurnos(turnos).Render(r.Context(), w); err != nil {
+		log.Printf("createTurno render: %v", err)
+	}
 }
 
 func deleteTurno(w http.ResponseWriter, r *http.Request) {
@@ -220,7 +232,7 @@ func getTurnoFila(w http.ResponseWriter, r *http.Request) {
 		ClienteDocumento: clienteDoc,
 	})
 	if err != nil {
-		http.Error(w, "Error al actualizar el turno: "+err.Error(), http.StatusInternalServerError)
+		errorHTMX(w, r, getMotivoTurno(err, "actualizar"))
 		return
 	}
 	turno := sqlc.GetTurnosCompletoRow{Fecha: t.Fecha, Hora: t.Hora, ClienteDocumento: t.ClienteDocumento, TratamientoID: t.ClienteDocumento, NombreCliente: t.NombreCliente, NombreTratamiento: t.NombreTratamiento}
@@ -273,4 +285,25 @@ func actualizarTurno(w http.ResponseWriter, r *http.Request) {
 		NombreTratamiento: t.NombreTratamiento,
 	}
 	_ = views.FilaTurno(turno).Render(r.Context(), w)
+}
+
+func getMotivoTurno(err error, funcion string) string {
+	var pgErr *pgconn.PgError
+	if errors.As(err, &pgErr) {
+		switch pgErr.Code {
+		case "23503":
+			{
+				switch pgErr.ConstraintName {
+				case "turno_cliente":
+					return "El cliente ingresado no existe."
+				case "turno_tratamiento":
+					return "El tratamiento ingresado no existe."
+				}
+			}
+			return "El cliente o el tratamiento ingresado no existe." + pgErr.ConstraintName
+		case "23505":
+			return "Ya existe un turno en esa fecha."
+		}
+	}
+	return "No se pudo " + funcion + " el turno."
 }

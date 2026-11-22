@@ -4,9 +4,9 @@ import (
 	sqlc "TPE/db/sqlc"
 	"TPE/views"
 	"context"
+	"log"
 	"net/http"
 	"strconv"
-	"log"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
@@ -63,8 +63,8 @@ func crearTratamiento(w http.ResponseWriter, r *http.Request) {
 		Costo:            (int32(costo)),
 	})
 	if err != nil {
-        log.Printf("createTurno: %v", err)
-        errorHTMX(w, r, motivoCreacion(err, "turno"))
+		log.Printf("createTratamiento: %v", err)
+		errorHTMX(w, r, motivoCreacion(err, "tratamiento"))
 		return
 	}
 
@@ -87,8 +87,8 @@ func deleteTratamiento(w http.ResponseWriter, r *http.Request) {
 	err = queries.DeleteTreatment(r.Context(), id)
 	if err != nil {
 		log.Printf("deleteTreatment %d: %v", id, err) // el detalle técnico queda en el log
-    	errorHTMX(w, r, motivoBorrado(err, "Tratamiento"))
-    	return
+		errorHTMX(w, r, motivoBorrado(err, "Tratamiento"))
+		return
 	}
 
 	w.WriteHeader(http.StatusOK)
@@ -142,10 +142,20 @@ func actualizarTratamiento(w http.ResponseWriter, r *http.Request) {
 	}
 
 	nombre := r.FormValue("nombre")
+	if nombre == "" {
+		errorHTMX(w, r, "El nombre del tratamiento no puede ser vacío.")
+		return
+	}
+
 	descripcionCorta := r.FormValue("descripcion_corta")
+	if descripcionCorta == "" {
+		errorHTMX(w, r, "La del tratamiento no puede ser vacía.")
+		return
+	}
+
 	costo, err := strconv.ParseFloat(r.FormValue("costo"), 64)
 	if err != nil {
-		http.Error(w, "Costo inválido", http.StatusBadRequest)
+		errorHTMX(w, r, "El costo ingresado no es válido.")
 		return
 	}
 

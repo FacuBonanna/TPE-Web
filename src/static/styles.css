@@ -502,17 +502,6 @@ table td,
   transition: background-color 0.2s ease;
 }
 
-/* Filas alternadas suaves */
-table tbody tr:nth-child(even),
-.tabla tbody tr:nth-child(even) {
-  background-color: var(--fondo-soft);
-}
-
-table tbody tr:nth-child(odd),
-.tabla tbody tr:nth-child(odd) {
-  background-color: #FFFFFF;
-}
-
 /* Hover sólido sobre filas */
 table tbody tr:hover,
 .tabla tbody tr:hover {

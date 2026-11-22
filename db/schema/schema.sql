@@ -12,8 +12,8 @@ CONSTRAINT PK_CLIENTE PRIMARY KEY (documento)
 -- Table: tratamiento
 CREATE TABLE tratamiento (
     id bigserial  NOT NULL,
-    nombre varchar(20)  NOT NULL,
-    descripcion_corta varchar(20)  NOT NULL,
+    nombre varchar(30)  NOT NULL,
+    descripcion_corta varchar(200)  NOT NULL,
     costo int  NOT NULL,
     CONSTRAINT PK_TRATAMIENTO PRIMARY KEY (id)
 );

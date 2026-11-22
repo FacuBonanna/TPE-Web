@@ -1,152 +1,111 @@
-# ===================== CLIENTE =====================
+# Tests HTTP (HURL) - GLAM Estetica Integral
+# Requiere HURL 6+ (en versiones anteriores, [Form] se llama [FormParams]).
+# Supuestos: éxito = 200, validación fallida = 400, recurso inexistente = 404.
+# Las respuestas son filas HTML sin tags de id: los ids de tratamiento y voucher
+# se capturan de la primera <td> de la fila (columna Id).
+# Documentos de prueba: 11111111 (valentina) y 22222222 (rocio).
 
-# Crear cliente 1
+# CLIENTE
 POST http://localhost:8080/cliente
-HX-Request: true
-[FormParams]
-cliente_documento: 1001
-name: valentina
-surname: bisogni
-debt: 1000
-phone: 12345678
+[Form]
+documento: 11111111
+nombre: valentina
+apellido: bisogni
+deuda: 1000
+nro_telefono: 12345678
 HTTP 200
 [Asserts]
 body contains "valentina"
 body contains "bisogni"
 
-# Crear cliente 2
 POST http://localhost:8080/cliente
-HX-Request: true
-[FormParams]
-cliente_documento: 1002
-name: rocio
-surname: lopez
-debt: 0
-phone: 2494
+[Form]
+documento: 22222222
+nombre: rocio
+apellido: lopez
+nro_telefono: 2494
 HTTP 200
 [Asserts]
 body contains "rocio"
+body contains "lopez"
 
-# Buscar cliente
-GET http://localhost:8080/search-client
-HX-Request: true
-[QueryStringParams]
-cliente_documento: 1001
+GET http://localhost:8080/cliente/11111111
 HTTP 200
 [Asserts]
 body contains "valentina"
-body not contains "rocio"
+body contains "bisogni"
 
-# Estado vacío: buscar uno que no existe
-GET http://localhost:8080/search-client
-HX-Request: true
-[QueryStringParams]
-cliente_documento: 999999
-HTTP 200
-[Asserts]
-body contains "No se encontraron clientes"
-
-# Listar todos (ajustá la ruta a la que uses en el botón "Mostrar clientes")
 GET http://localhost:8080/clientes-filas
-HX-Request: true
 HTTP 200
 [Asserts]
-body contains "valentina"
-body contains "rocio"
+xpath "count(//tr)" == 2
 
-# Fila de un cliente
-GET http://localhost:8080/cliente/1001
-HX-Request: true
+# UPDATE
+PUT http://localhost:8080/cliente/11111111
+[Form]
+nombre: valentina
+apellido: bisogni
+deuda: 1000
+nro_telefono: 12345678
+HTTP 200
+
+GET http://localhost:8080/cliente/11111111
 HTTP 200
 [Asserts]
-body contains "bisogni"
+body contains "1000"
 
-# Fila en modo edición
-GET http://localhost:8080/cliente/1001/edit
-HX-Request: true
-HTTP 200
-[Asserts]
-body contains "editing"
+# Casos de Create sin información necesaria
 
-# Actualizar
-PUT http://localhost:8080/cliente/1001
-HX-Request: true
-[FormParams]
-name: valentina
-surname: bisogni
-debt: 2000
-phone: 12345678
-HTTP 200
-[Asserts]
-body contains "2000"
-
-# --- Crear cliente con datos inválidos ---
-
-# Sin teléfono
+#   Sin número de teléfono
 POST http://localhost:8080/cliente
-HX-Request: true
-[FormParams]
-cliente_documento: 1003
-name: rocio
-surname: lopez
-debt: 0
-HTTP 200
-[Asserts]
-body contains "Faltan campos por completar"
+[Form]
+documento: 33333333
+nombre: rocio
+apellido: lopez
+HTTP 400
 
-# Sin apellido
+#   Sin apellido
 POST http://localhost:8080/cliente
-HX-Request: true
-[FormParams]
-cliente_documento: 1003
-name: rocio
-debt: 0
-phone: 12345
-HTTP 200
-[Asserts]
-body contains "Faltan campos por completar"
+[Form]
+documento: 33333333
+nombre: rocio
+nro_telefono: 12345
+HTTP 400
 
-# Sin nombre
+#   Sin nombre
 POST http://localhost:8080/cliente
-HX-Request: true
-[FormParams]
-cliente_documento: 1003
-surname: lopez
-debt: 0
-phone: 12345
-HTTP 200
-[Asserts]
-body contains "Faltan campos por completar"
+[Form]
+documento: 33333333
+apellido: Lopez
+nro_telefono: 12345
+HTTP 400
 
-# Valor no numérico
+#   Sin documento
 POST http://localhost:8080/cliente
-HX-Request: true
-[FormParams]
-cliente_documento: abc
-name: rocio
-surname: lopez
-debt: 0
-phone: 12345
-HTTP 200
-[Asserts]
-body contains "no es válido"
+[Form]
+nombre: rocio
+apellido: lopez
+nro_telefono: 12345
+HTTP 400
 
 
-# ===================== TRATAMIENTO =====================
-
-# Crear (la tabla devuelta tiene una sola fila; capturamos su id del botón Borrar)
+# TRATAMIENTOS
 POST http://localhost:8080/tratamiento
-HX-Request: true
-[FormParams]
+[Form]
 nombre: Masaje
 descripcion_corta: masaje relajante
 costo: 12000
 HTTP 200
 [Captures]
-tratamiento_id: regex "hx-delete=\"/tratamiento/(\\d+)\""
+tratamiento_id: xpath "normalize-space(//td[1])"
 [Asserts]
 body contains "Masaje"
-body contains "masaje relajante"
+
+GET http://localhost:8080/tratamiento-filas
+HTTP 200
+[Asserts]
+xpath "count(//tr)" == 1
+xpath "normalize-space(//tr[1]/td[1])" == "{{tratamiento_id}}"
 
 # Fila de un tratamiento
 GET http://localhost:8080/tratamiento/{{tratamiento_id}}
@@ -154,91 +113,84 @@ HX-Request: true
 HTTP 200
 [Asserts]
 body contains "Masaje"
+body contains "masaje relajante"
 body contains "12000"
 
-# Actualizar
+# UPDATE
 PUT http://localhost:8080/tratamiento/{{tratamiento_id}}
-HX-Request: true
-[FormParams]
+[Form]
 nombre: Masaje
 descripcion_corta: masaje relajante
 costo: 15000
 HTTP 200
+
+GET http://localhost:8080/tratamiento/{{tratamiento_id}}
+HTTP 200
 [Asserts]
 body contains "15000"
 
-# --- Crear tratamiento con datos inválidos ---
-
-# Sin nombre ni costo
+# create sin nombre ni costo
 POST http://localhost:8080/tratamiento
-HX-Request: true
-[FormParams]
+[Form]
 descripcion_corta: masaje atleta
-HTTP 200
-[Asserts]
-body contains "Faltan campos por completar"
+HTTP 400
 
-# Sin nombre
+# create sin nombre
 POST http://localhost:8080/tratamiento
-HX-Request: true
-[FormParams]
+[Form]
 descripcion_corta: masaje atleta
 costo: 5000
-HTTP 200
-[Asserts]
-body contains "Faltan campos por completar"
+HTTP 400
 
-# Sin costo
+# create sin costo
 POST http://localhost:8080/tratamiento
-HX-Request: true
-[FormParams]
+[Form]
 nombre: masaje
 descripcion_corta: masaje atleta
-HTTP 200
-[Asserts]
-body contains "Faltan campos por completar"
+HTTP 400
 
 
-# ===================== TURNO =====================
-
+# TURNO
 POST http://localhost:8080/turno
-HX-Request: true
-[FormParams]
+[Form]
 fecha: 2026-10-11
 hora: 17
 tratamiento_id: {{tratamiento_id}}
-cliente_documento: 1001
+cliente_documento: 11111111
 HTTP 200
 [Asserts]
-body contains "Masaje"
-body contains "valentina"
+body contains "2026-10-11"
+body contains "17"
 
-# Fila del turno
+GET http://localhost:8080/turno-filas
+HTTP 200
+[Asserts]
+xpath "count(//tr)" == 1
+body contains "2026-10-11"
+body contains "17"
+
 GET http://localhost:8080/turno/2026-10-11/17
-HX-Request: true
 HTTP 200
 [Asserts]
-body contains "Masaje"
+body contains "2026-10-11"
+body contains "17"
+body contains "11111111"
 
-# Buscar turno
-GET http://localhost:8080/search-turno
-HX-Request: true
-[QueryStringParams]
-fecha: 2026-10-11
-hora: 17
-HTTP 200
-[Asserts]
-body contains "Masaje"
-
-# Cambiar el turno al cliente 2
 PUT http://localhost:8080/turno/2026-10-11/17
-HX-Request: true
-[FormParams]
+[Form]
 tratamiento_id: {{tratamiento_id}}
-cliente_documento: 1002
+cliente_documento: 22222222
 HTTP 200
 [Asserts]
-body contains "rocio"
+body contains "2026-10-11"
+body contains "17"
+body contains "22222222"
+
+DELETE http://localhost:8080/turno/2026-10-11/17
+HTTP 200
+
+GET http://localhost:8080/turno/2026-10-11/17
+HTTP 404
 
 # --- Turnos con información inválida ---
 
@@ -251,50 +203,53 @@ body contains "no es válido"
 
 # Cliente inexistente
 POST http://localhost:8080/turno
-HX-Request: true
-[FormParams]
-fecha: 2026-10-12
-hora: 17
-tratamiento_id: {{tratamiento_id}}
-cliente_documento: 999999
-HTTP 200
-[Asserts]
-body contains "no existe"
-
-# Hora negativa (depende de que la base tenga un CHECK)
-POST http://localhost:8080/turno
-HX-Request: true
-[FormParams]
+[Form]
 fecha: 2026-10-11
 hora: -1
 tratamiento_id: {{tratamiento_id}}
-cliente_documento: 1001
-HTTP 200
-[Asserts]
-body contains "No se pudo crear el turno"
+cliente_documento: 11111111
+HTTP 400
 
-# Hora fuera de horario permitido (idem)
+# Hora negativa (depende de que la base tenga un CHECK)
 POST http://localhost:8080/turno
-HX-Request: true
-[FormParams]
+[Form]
 fecha: 2026-10-11
 hora: 21
 tratamiento_id: {{tratamiento_id}}
-cliente_documento: 1001
+cliente_documento: 11111111
+HTTP 400
+
+
+# VOUCHER
+POST http://localhost:8080/voucher
+[Form]
+regalador_documento: 11111111
+tratamiento_id: {{tratamiento_id}}
+cliente_documento: 22222222
+HTTP 200
+[Captures]
+voucher_id: xpath "normalize-space(//td[1])"
+
+GET http://localhost:8080/vouchers-filas
 HTTP 200
 [Asserts]
-body contains "No se pudo crear el turno"
+xpath "count(//tr)" == 1
+xpath "normalize-space(//tr[1]/td[1])" == "{{voucher_id}}"
 
 # Cliente con turno asociado: no se puede borrar
 DELETE http://localhost:8080/cliente/1002
 HX-Request: true
 HTTP 200
 [Asserts]
-body contains "No se puede eliminar"
+xpath "normalize-space(//td[1])" == "{{voucher_id}}"
+body contains "11111111"
+body contains "22222222"
 
-# Borrar turno
-DELETE http://localhost:8080/turno/2026-10-11/17
-HX-Request: true
+PUT http://localhost:8080/voucher/{{voucher_id}}
+[Form]
+regalador_documento: 11111111
+tratamiento_id: {{tratamiento_id}}
+cliente_documento: 11111111
 HTTP 200
 
 
@@ -314,34 +269,36 @@ voucher_id: regex "hx-delete=\"/voucher/(\\d+)\""
 GET http://localhost:8080/voucher/{{voucher_id}}
 HX-Request: true
 HTTP 200
+[Asserts]
+body contains "11111111"
+body not contains "22222222"
 
 DELETE http://localhost:8080/voucher/{{voucher_id}}
-HX-Request: true
 HTTP 200
-
 
 # ===================== LIMPIEZA =====================
 
+
+# Limpieza
+
+# elimino el tratamiento
 DELETE http://localhost:8080/tratamiento/{{tratamiento_id}}
-HX-Request: true
 HTTP 200
 
 GET http://localhost:8080/tratamiento/{{tratamiento_id}}
 HX-Request: true
 HTTP 404
 
-DELETE http://localhost:8080/cliente/1001
-HX-Request: true
+# elimino cliente 1
+DELETE http://localhost:8080/cliente/11111111
 HTTP 200
 
-GET http://localhost:8080/cliente/1001
-HX-Request: true
+GET http://localhost:8080/cliente/11111111
 HTTP 404
 
-DELETE http://localhost:8080/cliente/1002
-HX-Request: true
+# elimino cliente 2
+DELETE http://localhost:8080/cliente/22222222
 HTTP 200
 
-GET http://localhost:8080/cliente/1002
-HX-Request: true
+GET http://localhost:8080/cliente/22222222
 HTTP 404
