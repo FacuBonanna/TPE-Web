@@ -51,3 +51,10 @@ inicializacion: generate
 
 finalizar:
 	docker compose down -v
+
+levantar:
+	docker compose down -v 
+	docker compose build api
+	docker compose up -d --wait database 
+	docker exec -i $(CONTAINER_NAME) psql -U postgres -d apirest < ./db/schema/schema.sql 
+	docker compose up api
