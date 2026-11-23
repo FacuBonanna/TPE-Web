@@ -1,16 +1,11 @@
 package views
 
-// Campo describe un <input>.
 type Campo struct {
 	Tipo        string
 	Nombre      string
 	Placeholder string
 }
 
-// Formulario describe un <form>.
-// - ID: para formularios que maneja app.js (fetch).
-// - Accion: para formularios GET tradicionales.
-// - HxPost, HxGet, HxTarget, HxSwap: para integración dinámica con HTMX.
 type Formulario struct {
     ID       string
     Accion   string
@@ -30,7 +25,6 @@ func metodoDe(f Formulario) string {
 	return f.Metodo
 }
 
-// Atajos para no repetir el tipo en cada campo.
 func Texto(nombre, placeholder string) Campo {
 	return Campo{Tipo: "text", Nombre: nombre, Placeholder: placeholder}
 }
@@ -39,7 +33,6 @@ func Numero(nombre, placeholder string) Campo {
 	return Campo{Tipo: "number", Nombre: nombre, Placeholder: placeholder}
 }
 
-// Form renderiza un formulario genérico a partir de su descripción.
 templ Form(f Formulario) {
     <form
         if f.ID != "" {
@@ -72,14 +65,11 @@ templ Form(f Formulario) {
     </form>
 }
 
-// Bloque = subtítulo + formulario.
 templ Bloque(titulo string, f Formulario) {
 	<h3>{ titulo }</h3>
 	@Form(f)
 }
 
-// Seccion es el contenedor de cada entidad: título, botón "Mostrar" y contenido.
-// Si rutaListado está vacía, el botón queda sin action (igual que el HTML original).
 templ Seccion(id, titulo, etiquetaListar, rutaListado, idCuerpo string) {
     <div id={ id } class="item-flex">
         <h2>
@@ -97,7 +87,6 @@ templ Seccion(id, titulo, etiquetaListar, rutaListado, idCuerpo string) {
     </div>
 }
 
-// Tabla genérica: cabecera + las filas que se le pasen como children.
 templ Tabla(id, idCuerpo string, columnas []string) {
 	<table id={ id }>
 		<thead>
@@ -113,7 +102,6 @@ templ Tabla(id, idCuerpo string, columnas []string) {
 	</table>
 }
 
-// Fila genérica: una celda <td> por cada string.
 templ Fila(celdas []string) {
 	<tr>
 		for _, celda := range celdas {
@@ -122,7 +110,6 @@ templ Fila(celdas []string) {
 	</tr>
 }
 
-// BotonBorrar genera un botón con HTMX para eliminar una fila del DOM sin recargar la página.
 templ BotonBorrar(ruta string, confirmacion string) {
     <button
         type="button"
@@ -138,7 +125,6 @@ templ BotonBorrar(ruta string, confirmacion string) {
     </button>
 }
 
-// BotonActualizar genera un botón al lado de Borrar para actualizar o editar con HTMX.
 templ BotonActualizar(ruta string) {
     <button
         type="button"

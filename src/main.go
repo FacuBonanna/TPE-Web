@@ -44,7 +44,7 @@ func main() {
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	http.HandleFunc("/", servidor)
-	//http.HandleFunc("Get /{$}", servidor)
+
 	http.HandleFunc("POST /cliente", crearCliente)
 	http.HandleFunc("DELETE /cliente/{id}", deleteCliente)
 	http.HandleFunc("GET /cliente/{id}/edit", editarClienteFila)
@@ -120,9 +120,9 @@ func motivoBorrado(err error, entidad string) string {
 	var pgErr *pgconn.PgError
 	if errors.As(err, &pgErr) {
 		switch pgErr.Code {
-		case "23503": // foreign_key_violation
+		case "23503":
 			return "No se puede eliminar: el " + entidad + " tiene registros asociados (" + pgErr.TableName + ")."
-		case "23502": // not_null_violation
+		case "23502":
 			return "No se puede eliminar: falta un dato obligatorio."
 		}
 	}

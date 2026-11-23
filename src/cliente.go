@@ -22,7 +22,6 @@ func listarClientes(w http.ResponseWriter, r *http.Request) {
 func getCliente(w http.ResponseWriter, r *http.Request) {
 	documento, err := strconv.ParseInt(r.URL.Query().Get("cliente_documento"), 10, 64)
 	if err != nil {
-		// 200 a propósito, ver nota abajo
 		views.FilasClientes(nil).Render(r.Context(), w)
 		return
 	}
@@ -48,19 +47,17 @@ func crearCliente(w http.ResponseWriter, r *http.Request) {
 	nombre := r.FormValue("name")
 	apellido := r.FormValue("surname")
 
-	 if nombre == "" || apellido == "" {
-        errorHTMX(w, r, "Faltan campos por completar.")
-        return
-    }
+	if nombre == "" || apellido == "" {
+		errorHTMX(w, r, "Faltan campos por completar.")
+		return
+	}
 
-	// Convertir deuda a float64
 	deuda, err := strconv.ParseFloat(r.FormValue("debt"), 64)
 	if err != nil {
 		errorHTMX(w, r, "La deuda debe ser un número entero válido")
 		return
 	}
 
-	// Convertir teléfono a int32
 	telefono, err := strconv.ParseInt(r.FormValue("phone"), 10, 32)
 	if err != nil {
 		errorHTMX(w, r, "El teléfono debe ser un número entero válido")
@@ -105,7 +102,7 @@ func deleteCliente(w http.ResponseWriter, r *http.Request) {
 
 	err = queries.DeleteUser(r.Context(), documento)
 	if err != nil {
-		log.Printf("deleteCliente %d: %v", documento, err) // el detalle técnico queda en el log
+		log.Printf("deleteCliente %d: %v", documento, err)
 		errorHTMX(w, r, motivoBorrado(err, "Cliente"))
 		return
 	}

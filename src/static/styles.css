@@ -1,7 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=GFS+Didot&family=Marcellus&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  /* Paleta Verde */
   --verde-1: #CFF0EA;
   --verde-2: #ACDCD7;
   --verde-3: #88C9C4;
@@ -9,14 +8,12 @@
   --verde-5: #20666B;
   --verde-6: #0C3B45;
 
-  /* Paleta Rosa */
   --rosa-1: #FDE2E4;
   --rosa-2: #FAD2E1;
   --rosa-3: #F7B5CD;
   --rosa-4: #E57399;
   --rosa-5: #C04370;
 
-  /* Superficies y Neutros */
   --blanco: #FFFFFF;
   --fondo-soft: #F4FAF9;
   --texto-principal: #0C3B45;
@@ -25,21 +22,18 @@
   --borde-suave: rgba(136, 201, 196, 0.45);
   --borde-rosa: rgba(250, 210, 225, 0.7);
 
-  /* Sombras */
   --sombra-sm: 0 4px 12px rgba(12, 59, 69, 0.06), 0 2px 6px rgba(250, 210, 225, 0.15);
   --sombra-md: 0 10px 25px -4px rgba(12, 59, 69, 0.08), 0 6px 14px -2px rgba(229, 115, 153, 0.12);
   --sombra-lg: 0 20px 40px -8px rgba(12, 59, 69, 0.14), 0 10px 24px -4px rgba(62, 155, 148, 0.18);
   --sombra-glow-verde: 0 0 14px rgba(62, 155, 148, 0.3);
   --sombra-glow-rosa: 0 0 14px rgba(229, 115, 153, 0.3);
 
-  /* Radio de bordes */
   --radius-sm: 10px;
   --radius-md: 18px;
   --radius-lg: 28px;
   --radius-pill: 9999px;
 }
 
-/* Reset y Base */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -59,9 +53,6 @@ body {
   background-color: var(--verde-1);
 }
 
-/* ==========================================================================
-   ENCABEZADO / HERO
-   ========================================================================== */
 .header {
   position: relative;
   background-color: var(--verde-6);
@@ -89,7 +80,6 @@ body {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
-/* TÍTULO PRINCIPAL: Didot (GFS Didot) */
 .header_letras h1 {
   font-family: 'GFS Didot', 'Didot', serif;
   font-size: 3.4rem;
@@ -113,9 +103,6 @@ body {
   font-weight: 600;
 }
 
-/* ==========================================================================
-   MENÚ DE NAVEGACIÓN FLOTANTE
-   ========================================================================== */
 .menu {
   background-color: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(16px);
@@ -153,19 +140,14 @@ body {
   box-shadow: 0 4px 12px rgba(62, 155, 148, 0.35);
 }
 
-/* Pestaña activa en el menú */
+
 .menu a.active {
   color: #FFFFFF;
   background-color: var(--rosa-4);
   box-shadow: 0 4px 12px rgba(62, 155, 148, 0.35);
 }
 
-/*
- * Resaltar el enlace del menú cuando su sección está activa por :target.
- * Usamos el selector :has() para detectar cuál sección está en :target
- * y aplicar estilo al enlace correspondiente dentro del nav.
- * El menu .a[href="#X"] se resalta cuando #X es :target.
- */
+
 .menu:has(~ .contenedor-flex #clientes:target) a[href="#clientes"],
 .menu:has(~ .contenedor-flex #tratamientos:target) a[href="#tratamientos"],
 .menu:has(~ .contenedor-flex #vouchers:target) a[href="#vouchers"],
@@ -175,15 +157,12 @@ body {
   box-shadow: 0 4px 12px rgba(62, 155, 148, 0.35);
 }
 
-/* Por defecto (sin hash activo) resaltar "Turnos" en el menú */
 .menu:not(:has(~ .contenedor-flex .item-flex:target)) a[href="#turnos"] {
   color: #FFFFFF;
   background-color: var(--verde-5);
   box-shadow: 0 4px 12px rgba(62, 155, 148, 0.35);
 }
-/* ==========================================================================
-   CONTENEDOR CENTRAL - LÓGICA DE PESTAÑAS CON :target (SIN JS)
-   ========================================================================== */
+
 .contenedor-flex {
   display: flex;
   justify-content: center;
@@ -192,14 +171,7 @@ body {
   margin-bottom: 40px;
 }
 
-/*
- * Todas las secciones ocultas por defecto.
- * Cuando el contenedor contiene alguna sección con :target activo,
- * se muestra sólo esa. Si ninguna está targetada, se muestra #turnos
- * (que es el primero en el DOM gracias a index.templ).
- */
 
-/* Por defecto: ocultar todo */
 .item-flex {
   display: none;
   width: 100%;
@@ -215,33 +187,27 @@ body {
   transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
-/* 1. La tabla ocupa el ancho de la tarjeta y reparte las columnas */
 .item-flex table {
   width: 100%;
   table-layout: fixed;
 }
 
-/* 2. El contenido de las celdas no empuja el ancho */
 .item-flex th,
 .item-flex td {
   overflow-wrap: anywhere;
 }
 
-/* 3. Los inputs de la fila en edición se adaptan a su celda */
 tr.editing .campo {
   width: 100%;
   min-width: 0;
   box-sizing: border-box;
 }
 
-/* Mostrar la sección apuntada por el hash de la URL */
 .item-flex:target {
   display: block;
 }
 
-/* Cuando hay algún :target activo en el contenedor,
-   el default (#turnos = primer hijo) queda oculto.
-   Cuando NO hay ningún :target, el primer .item-flex (turnos) se muestra. */
+
 .contenedor-flex:not(:has(.item-flex:target)) .item-flex:first-child {
   display: block;
 }
@@ -251,7 +217,6 @@ tr.editing .campo {
   box-shadow: var(--sombra-lg);
 }
 
-/* TÍTULOS DE LOS GRIDS: Marcellus */
 .item-flex > h2 {
   font-family: 'Marcellus', serif;
   font-size: 2.1rem;
@@ -268,7 +233,6 @@ tr.editing .campo {
   padding-bottom: 12px;
 }
 
-/* SIN CAJITA EN LOS BOTONES DE "MOSTRAR X" */
 .item-flex > h2 form {
   background: transparent !important;
   background-color: transparent !important;
@@ -296,7 +260,6 @@ tr.editing .campo {
   box-shadow: none;
 }
 
-/* TEXTOS INTERNOS DE LOS GRIDS: Plus Jakarta Sans */
 .item-flex h3 {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 1.08rem;
@@ -313,9 +276,6 @@ tr.editing .campo {
   box-shadow: none;
 }
 
-/* ==========================================================================
-   FORMULARIOS Y CAMPOS
-   ========================================================================== */
 form {
   display: flex;
   flex-wrap: wrap;
@@ -359,7 +319,6 @@ input:focus {
   box-shadow: 0 0 0 3px rgba(62, 155, 148, 0.2);
 }
 
-/* BOTONES PRINCIPALES */
 .btn {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.92rem;
@@ -384,7 +343,6 @@ input:focus {
   box-shadow: 0 4px 16px rgba(32, 102, 107, 0.35);
 }
 
-/* BOTÓN ACTUALIZAR / EDITAR */
 .btn-actualizar {
   background-color: var(--verde-4);
   color: #FFFFFF;
@@ -406,7 +364,6 @@ input:focus {
   background-color: var(--verde-5);
 }
 
-/* BOTÓN BORRAR */
 .delete-cliente-tabla,
 .btn-borrar {
   background-color: var(--rosa-4);
@@ -429,7 +386,6 @@ input:focus {
   background-color: var(--rosa-5);
 }
 
-/* BOTÓN CANCELAR */
 .btn-cancelar {
   background-color: #8fa5aa;
   color: #FFFFFF;
@@ -448,9 +404,7 @@ input:focus {
   background-color: #748c91;
 }
 
-/* ==========================================================================
-   TABLAS
-   ========================================================================== */
+
 table,
 .tabla {
   width: 100%;
@@ -466,7 +420,6 @@ table,
   border: 1px solid var(--borde-suave);
 }
 
-/* Cabecera de la tabla */
 table thead,
 .tabla thead {
   background-color: var(--verde-5);
@@ -492,7 +445,6 @@ table th:last-child {
   border-top-right-radius: var(--radius-md);
 }
 
-/* Filas y Celdas */
 table td,
 .tabla td {
   padding: 13px 16px;
@@ -502,13 +454,11 @@ table td,
   transition: background-color 0.2s ease;
 }
 
-/* Hover sólido sobre filas */
 table tbody tr:hover,
 .tabla tbody tr:hover {
   background-color: var(--verde-1);
 }
 
-/* Fila en modo de edición interactiva */
 tr.editing {
   background-color: var(--rosa-1) !important;
 }
@@ -524,61 +474,6 @@ table tbody tr:last-child td,
   border-bottom: none;
 }
 
-/* ==========================================================================
-   SECCIÓN SOPORTE TÉCNICO / CONTACTO
-   ========================================================================== */
-/*body > h2:last-of-type {
-  text-align: center;
-  font-family: 'Marcellus', serif;
-  font-size: 2.1rem;
-  font-weight: 400;
-  letter-spacing: 1.5px;
-  color: var(--verde-6);
-  margin-top: 40px;
-  margin-bottom: 15px;
-  text-transform: uppercase;
-}
-
-body > div:last-of-type {
-  background-color: rgba(255, 255, 255, 0.9);
-  border-radius: var(--radius-lg);
-  padding: 30px 40px;
-  margin-top: 20px;
-  border: 1.5px solid var(--borde-rosa);
-  box-shadow: var(--sombra-md);
-  text-align: center;
-  max-width: 960px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-body > div:last-of-type p {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  color: var(--texto-secundario);
-  font-size: 1.05rem;
-  max-width: 700px;
-  margin: 0 auto;
-}
-
-body > div:last-of-type a {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  color: var(--rosa-5);
-  font-weight: 700;
-  text-decoration: none;
-  background-color: #FFFFFF;
-  padding: 6px 16px;
-  border-radius: var(--radius-pill);
-  border: 1.5px solid var(--rosa-2);
-  display: inline-block;
-  margin-top: 8px;
-  box-shadow: 0 2px 8px rgba(192, 67, 112, 0.15);
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-body > div:last-of-type a:hover {
-  background-color: var(--rosa-5);
-  color: #FFFFFF;
-}*/
 
 .footer-contacto {
     margin-top: auto;

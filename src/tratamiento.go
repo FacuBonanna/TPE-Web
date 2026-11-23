@@ -53,9 +53,9 @@ func crearTratamiento(w http.ResponseWriter, r *http.Request) {
 	costoStr := r.FormValue("costo")
 
 	if nombre == "" || descripcionCortaStr == "" {
-        errorHTMX(w, r, "Faltan campos por completar.")
-        return
-    }
+		errorHTMX(w, r, "Faltan campos por completar.")
+		return
+	}
 
 	costo, err := strconv.ParseFloat(costoStr, 64)
 	if err != nil {
@@ -92,8 +92,8 @@ func deleteTratamiento(w http.ResponseWriter, r *http.Request) {
 
 	err = queries.DeleteTreatment(r.Context(), id)
 	if err != nil {
-		log.Printf("deleteTreatment %d: %v", id, err) // el detalle técnico queda en el log
-		errorHTMX(w, r, motivoBorrado(err,"Tratamiento"))
+		log.Printf("deleteTreatment %d: %v", id, err)
+		errorHTMX(w, r, motivoBorrado(err, "Tratamiento"))
 		return
 	}
 

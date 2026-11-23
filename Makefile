@@ -40,7 +40,6 @@ rebuild:
 	docker compose build api
 	docker compose up api
 
-# genera, levanta y en el detach baja
 inicializacion: generate
 	@trap 'echo "[FINALIZAR] limpiando"; docker compose down -v' EXIT INT TERM; \
 	docker compose down -v && \

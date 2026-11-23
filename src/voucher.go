@@ -44,7 +44,6 @@ func createVoucher(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Convertir documentos a int32
 	regalador_documento, err := strconv.ParseInt(r.FormValue("regalador_documento"), 10, 32)
 	if err != nil {
 		errorHTMX(w, r, "El documento del regalador debe ser un número entero válido")
