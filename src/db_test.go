@@ -8,7 +8,6 @@ import (
 	"testing"
 	"time"
 
-	pgtype "github.com/jackc/pgx/v5/pgtype"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
@@ -36,7 +35,7 @@ func TestQueries_CRUD(t *testing.T) {
 	// CLIENTE
 
 	t.Run("Crear cliente", func(t *testing.T) {
-		paramsCreacion := sqlc.CreateUserParams{Nombre: "valentina", Apellido: "bisogni", Deuda: 10000, NroTelefono: 123456}
+		paramsCreacion := sqlc.CreateUserParams{Documento: 1, Nombre: "valentina", Apellido: "bisogni", Deuda: 10000, NroTelefono: 123456}
 
 		cliente, err := queries.CreateUser(ctx, paramsCreacion)
 		if err != nil {
@@ -134,7 +133,7 @@ func TestQueries_CRUD(t *testing.T) {
 	//VOUCHER
 
 	t.Run("Crear voucher", func(t *testing.T) {
-		paramsCreacionUsuario := sqlc.CreateUserParams{Nombre: "Facundo", Apellido: "Bonanna", Deuda: 5000, NroTelefono: 123456}
+		paramsCreacionUsuario := sqlc.CreateUserParams{Documento: 2, Nombre: "Facundo", Apellido: "Bonanna", Deuda: 5000, NroTelefono: 123456}
 		user, err := queries.CreateUser(ctx, paramsCreacionUsuario)
 		otroClienteDocumento = user.Documento
 		paramsCreacion := sqlc.CreateVoucherParams{RegaladorDocumento: clienteDocumento, ClienteDocumento: otroClienteDocumento, TratamientoID: 1}
@@ -206,13 +205,10 @@ func TestQueries_CRUD(t *testing.T) {
 
 	//TURNO
 
-	var fecha pgtype.Date
+	var fecha time.Time
 	var hora int32
 
-	fecha = pgtype.Date{
-		Time:  time.Date(2026, 9, 25, 0, 0, 0, 0, time.UTC),
-		Valid: true,
-	}
+	fecha = time.Date(2026, 9, 25, 0, 0, 0, 0, time.UTC)
 	hora = 1
 
 	t.Run("Crear turno", func(t *testing.T) {
@@ -232,7 +228,7 @@ func TestQueries_CRUD(t *testing.T) {
 		if err != nil {
 			t.Errorf("No se pudo obtener el turno :%v", err)
 		} else {
-			if turno.Fecha != fecha || turno.Hora != hora || turno.TratamientoID != tratamientoID || turno.ClienteDocumento != clienteDocumento {
+			if !turno.Fecha.Equal(fecha) || turno.Hora != hora || turno.TratamientoID != tratamientoID || turno.ClienteDocumento != clienteDocumento {
 				fmt.Print("aca")
 				t.Errorf("Turno no se pudo obtener :%v", err)
 			} else {
@@ -260,7 +256,7 @@ func TestQueries_CRUD(t *testing.T) {
 		if err != nil {
 			t.Errorf("Turno no se pudo obtener luego de actualizacion :%v", err)
 		} else {
-			if turno.Fecha != fecha || turno.Hora != hora || turno.TratamientoID != tratamientoID || turno.ClienteDocumento != otroClienteDocumento {
+			if !turno.Fecha.Equal(fecha)|| turno.Hora != hora || turno.TratamientoID != tratamientoID || turno.ClienteDocumento != otroClienteDocumento {
 				t.Errorf("Turno no se pudo obtener luego de actualizar por parametros :%v", err)
 			} else {
 				fmt.Println("se comprobó la actualización de los turnos.")

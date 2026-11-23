@@ -129,7 +129,7 @@ body contains "Masaje"
 GET http://localhost:8080/tratamiento-filas
 HTTP 200
 [Asserts]
-xpath "count(//tr)" == 1
+xpath "count(//tr)" == 1.0
 xpath "normalize-space(//tr[1]/td[1])" == "{{tratamiento_id}}"
 
 # Fila de un tratamiento
@@ -192,20 +192,20 @@ tratamiento_id: {{tratamiento_id}}
 cliente_documento: 11111111
 HTTP 200
 [Asserts]
-body contains "2026-10-11"
+body contains "11/10/2026"
 body contains "17"
 
 GET http://localhost:8080/turno-filas
 HTTP 200
 [Asserts]
-xpath "count(//tr)" == 1
-body contains "2026-10-11"
+xpath "count(//tr)" == 1.0
+body contains "11/10/2026"
 body contains "17"
 
 GET http://localhost:8080/turno/2026-10-11/17
 HTTP 200
 [Asserts]
-body contains "2026-10-11"
+body contains "11/10/2026"
 body contains "Masaje"
 body contains "valentina"
 
@@ -215,7 +215,7 @@ tratamiento_id: {{tratamiento_id}}
 cliente_documento: 22222222
 HTTP 200
 [Asserts]
-body contains "2026-10-11"
+body contains "11/10/2026"
 body contains "Masaje"
 body contains "rocio"
 
